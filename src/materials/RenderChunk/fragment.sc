@@ -156,8 +156,34 @@ void main() {
 
       // RTX-style: drop diffuse and push the mirror reflection forward so
       // smooth blocks (iron, diamond, quartz) read like a true mirror
-      diffuse.rgb *= 1.0 - 0.75*mask;
-      diffuse.rgb += v_refl.rgb*mask*1.15;
+      #ifdef NL_PBR_BLOCK_REFL
+        // === V3 PBR block reflection (normal-map + TBN + Cook-Torrance) ===
+        vec3 viewDir = v_reflPbr.xyz;
+        float rainFactor = v_reflPbr.w;
+        vec3 sunDir = v_reflSun.xyz;
+
+        // Clear blocks use a smooth normal, avoiding four texture samples per
+        // reflected pixel. Rain restores the detailed texture-derived normal
+        // so wet surfaces keep the existing high-quality PBR response.
+        vec3 texNormal = vec3(0.0, 0.0, 1.0);
+        if (rainFactor > 0.001) {
+          texNormal = nlTexNormal(s_MatTexture, v_texcoord0, NL_PBR_ATLAS_TEXEL, NL_PBR_NORMAL_STRENGTH);
+        }
+
+        // rain makes the ground wetter -> stronger, smoother mirror
+        float pbrMask = mask;
+        #ifdef NL_PBR_RAIN_BOOST
+          pbrMask *= 1.0 + NL_PBR_RAIN_BOOST*rainFactor;
+        #endif
+        pbrMask = min(pbrMask, 1.0);
+
+        // drop some diffuse so the mirror reads through, then apply V3 layer
+        diffuse.rgb *= 1.0 - 0.6*pbrMask;
+        diffuse.rgb = nlApplyPbrRefl(diffuse.rgb, v_refl.rgb, pbrMask, texNormal, v_position, viewDir, sunDir);
+      #else
+        diffuse.rgb *= 1.0 - 0.75*mask;
+        diffuse.rgb += v_refl.rgb*mask*1.15;
+      #endif
     }
   }
 
