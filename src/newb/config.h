@@ -65,8 +65,8 @@
 #define NL_NIGHT_ZENITH_COL  vec3(0.008,0.022,0.11)   // dark blue night
 #define NL_NIGHT_HORIZON_COL vec3(0.015,0.040,0.15)   // dark blue horizon
 #define NL_NIGHT_EDGE_COL    vec3(0.020,0.050,0.17)   // dark blue edge
-#define NL_RAIN_ZENITH_COL   vec3(0.42,0.45,0.5)   // desaturated overcast grey
-#define NL_RAIN_HORIZON_COL  vec3(0.55,0.55,0.56)
+#define NL_RAIN_ZENITH_COL   vec3(0.35,0.38,0.42)     // overcast grey
+#define NL_RAIN_HORIZON_COL  vec3(0.48,0.5,0.52)
 #define NL_END_ZENITH_COL    vec3(0.08,0.001,0.1)
 #define NL_END_HORIZON_COL   vec3(0.6,0.02,0.6)
 
@@ -211,7 +211,7 @@
 
 /* Ground reflection - reflective wet ground (fakes ray-traced GI look) */
 #define NL_GROUND_REFL 1.2              // ON: strong mirror-like reflection (RTX look)
-#define NL_GROUND_RAIN_WETNESS 1.4     // strong puddle reflections while raining
+#define NL_GROUND_RAIN_WETNESS 1.6     // strong puddle reflections while raining
 #define NL_GROUND_RAIN_PUDDLES 0.9     // more scattered, natural puddle shapes
 
 /* Rain reflection - strong wet/puddle mirror only while raining */
