@@ -10,8 +10,8 @@ vec3 colorCorrection(vec3 col) {
 
   // ref - https://64.github.io/tonemapping/
   #if NL_TONEMAP_TYPE == 3
-    // extended reinhard tonemap
-    const float whiteScale = 0.063;
+    // extended reinhard tonemap - BSL-like highlight rolloff
+    const float whiteScale = 0.068;
     col = col*(1.0+col*whiteScale)/(1.0+col);
   #elif NL_TONEMAP_TYPE == 4
     // aces tonemap

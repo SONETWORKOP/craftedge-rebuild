@@ -8,13 +8,13 @@
 */
 
 /* Color correction */
-#define NL_TONEMAP_TYPE 3              // Extended Reinhard - natural highlight rolloff
-#define NL_GAMMA 1.3                   // slightly punchier contrast
-#define NL_EXPOSURE 1.08               // [toggle] subtle brightness lift
-#define NL_SATURATION 1.35             // [toggle] vivid but not oversaturated
-//#define NL_TINT                      // OFF - keeps colors neutral/realistic
-#define NL_TINT_LOW  vec3(0.3,0.5,1.4)
-#define NL_TINT_HIGH vec3(1.4,0.7,0.3)
+#define NL_TONEMAP_TYPE 4              // ACES filmic - cinematic highlight rolloff + natural desaturation
+#define NL_GAMMA 1.2                   // slightly moodier midtones (less lift than vivid)
+#define NL_EXPOSURE 1.12               // keep brightness (ACES *0.85 already darkens a touch)
+#define NL_SATURATION 1.08             // pulled back from 1.4 -> restrained, filmic color
+#define NL_TINT                        // ON: subtle teal-orange cinematic split-tone
+#define NL_TINT_LOW  vec3(0.85,0.92,1.08)  // shadows lean cool/teal
+#define NL_TINT_HIGH vec3(1.08,1.0,0.86)   // highlights lean warm/orange
 
 /* Lighting - BSL-like strong directional light */
 #define NL_SUNLIGHT_INTENSITY   4.8    // strong BSL-style sunlight
