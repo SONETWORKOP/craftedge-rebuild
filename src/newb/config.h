@@ -172,7 +172,7 @@
 #define NL_AURORA_COL2 vec3(0.35,0.85,1.0)  // bright cyan-blue
 
 // aurora borealis spills cyan light onto exposed ground at night
-#define NL_AURORA_GROUND_LIGHT 0.35
+#define NL_AURORA_GROUND_LIGHT 0.8
 #define NL_CLOUD_AURORA_REFLECTION
 
 /* Shooting star */
@@ -200,7 +200,7 @@
 #define NL_GODRAY 0.75
 
 /* Ground reflection - reflective wet ground (fakes ray-traced GI look) */
-#define NL_GROUND_REFL 0.5             // ON: subtle always-on ground reflection
+#define NL_GROUND_REFL 1.2              // ON: strong mirror-like reflection (RTX look)
 #define NL_GROUND_RAIN_WETNESS 1.4     // strong puddle reflections while raining
 #define NL_GROUND_RAIN_PUDDLES 0.9     // more scattered, natural puddle shapes
 
