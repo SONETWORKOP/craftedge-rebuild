@@ -20,7 +20,7 @@
 #define NL_SUNLIGHT_INTENSITY   4.8    // strong BSL-style sunlight
 #define NL_TORCHLIGHT_INTENSITY 1.6    // warmer brighter torches
 #define NL_SHADOW_INTENSITY     1.7    // slightly deeper shadows for cinematic mood
-#define NL_MIN_LIGHTING_BOOST   0.92   // less ambient fill = moodier shadow contrast
+#define NL_MIN_LIGHTING_BOOST   0.7    // lower ambient fill = darker nights, moodier shadows
 //#define NL_BLINKING_TORCH
 #define NL_CLOUD_SHADOW
 
@@ -31,7 +31,7 @@
 /* Sun/moon - vivid but natural */
 #define NL_DAWN_SUNLIGHT_COL   vec3(1.2,0.55,0.18)   // warm orange sunrise
 #define NL_NOON_SUNLIGHT_COL   vec3(1.1,1.0,0.85)    // bright clean noon
-#define NL_NIGHT_MOONLIGHT_COL vec3(0.03,0.06,0.28)  // cool moonlight
+#define NL_NIGHT_MOONLIGHT_COL vec3(0.02,0.04,0.20)  // dimmer cool moonlight
 
 /* Torch */
 #define NL_OVERWORLD_TORCH_COL  vec3(1.0,0.55,0.2)
@@ -62,9 +62,9 @@
 #define NL_DAY_ZENITH_COL    vec3(0.12,0.48,2.1)      // deep realistic sky blue
 #define NL_DAY_HORIZON_COL   vec3(0.55,1.1,1.65)      // soft hazy blue horizon
 #define NL_DAY_EDGE_COL      vec3(1.2,1.45,1.65)      // light atmospheric haze
-#define NL_NIGHT_ZENITH_COL  vec3(0.008,0.022,0.11)   // dark blue night
-#define NL_NIGHT_HORIZON_COL vec3(0.015,0.040,0.15)   // dark blue horizon
-#define NL_NIGHT_EDGE_COL    vec3(0.020,0.050,0.17)   // dark blue edge
+#define NL_NIGHT_ZENITH_COL  vec3(0.005,0.014,0.07)   // darker night zenith
+#define NL_NIGHT_HORIZON_COL vec3(0.010,0.026,0.10)   // darker night horizon
+#define NL_NIGHT_EDGE_COL    vec3(0.013,0.032,0.11)   // darker night edge
 #define NL_RAIN_ZENITH_COL   vec3(0.35,0.38,0.42)     // overcast grey
 #define NL_RAIN_HORIZON_COL  vec3(0.48,0.5,0.52)
 #define NL_END_ZENITH_COL    vec3(0.08,0.001,0.1)
