@@ -1,0 +1,297 @@
+#ifndef NL_CONFIG_H
+#define NL_CONFIG_H
+
+/*
+  CraftEdge Visuals - Vivid & Realistic
+  Based on Newb Shader (https://github.com/devendrn/newb-x-mcbe)
+  Tuned for punchy, saturated colors with natural lighting and soft shadows.
+*/
+
+/* Color correction */
+#define NL_TONEMAP_TYPE 3              // Extended Reinhard - natural highlight rolloff
+#define NL_GAMMA 1.3                   // slightly punchier contrast
+#define NL_EXPOSURE 1.08               // [toggle] subtle brightness lift
+#define NL_SATURATION 1.35             // [toggle] vivid but not oversaturated
+//#define NL_TINT                      // OFF - keeps colors neutral/realistic
+#define NL_TINT_LOW  vec3(0.3,0.5,1.4)
+#define NL_TINT_HIGH vec3(1.4,0.7,0.3)
+
+/* Lighting */
+#define NL_SUNLIGHT_INTENSITY   3.9    // bright but controlled sunlight
+#define NL_TORCHLIGHT_INTENSITY 1.5    // slightly warmer/brighter torches
+#define NL_SHADOW_INTENSITY     0.9    // deeper, more contrast-y shadows (ray-traced feel)
+#define NL_MIN_LIGHTING_BOOST   1.15   // less flat ambient fill -> stronger shadow contrast
+//#define NL_BLINKING_TORCH
+#define NL_CLOUD_SHADOW
+
+/* Ambient */
+#define NL_NETHER_AMBIENT vec3(3.0,2.16,1.89)
+#define NL_END_AMBIENT    vec3(1.98,1.25,2.3)
+
+/* Sun/moon - vivid but natural */
+#define NL_DAWN_SUNLIGHT_COL   vec3(1.0,0.5,0.16)
+#define NL_NOON_SUNLIGHT_COL   vec3(1.0,0.95,0.82)  // warm-clean noon light
+#define NL_NIGHT_MOONLIGHT_COL vec3(0.02,0.05,0.24)
+
+/* Torch */
+#define NL_OVERWORLD_TORCH_COL  vec3(1.0,0.55,0.2)
+#define NL_UNDERWATER_TORCH_COL vec3(1.0,0.55,0.2)
+#define NL_NETHER_TORCH_COL     vec3(1.0,0.5,0.18)
+#define NL_END_TORCH_COL        vec3(1.0,0.55,0.28)
+
+/* Fog - realistic atmospheric depth */
+#define NL_FOG 1.35
+#define NL_MIST_DENSITY 0.42            // thicker natural distance haze
+#define NL_RAIN_MIST_OPACITY 0.4        // much thicker mist in rain
+#define NL_CLOUDY_FOG 0.28              // stronger overcast haze on cloudy days
+
+/* Height fog - ground-hugging mist that thins with altitude */
+#define NL_HEIGHT_FOG 0.55
+#define NL_HEIGHT_FOG_START 56.0
+#define NL_HEIGHT_FOG_RANGE 55.0
+
+/* Sky */
+#define NL_SKY_VOID_FACTOR     0.5
+#define NL_SKY_VOID_DARKNESS   0.3
+#define NL_SKY_RAIN_MIX_FACTOR 0.95
+
+/* Sky colors - vivid realistic sky */
+#define NL_DAWN_ZENITH_COL   vec3(0.12,0.4,0.78)
+#define NL_DAWN_HORIZON_COL  vec3(3.0,0.48,0.26)
+#define NL_DAWN_EDGE_COL     vec3(2.2,0.9,0.62)
+#define NL_DAY_ZENITH_COL    vec3(0.2,0.82,2.05)    // richer sky blue
+#define NL_DAY_HORIZON_COL   vec3(0.92,1.55,1.9)
+#define NL_DAY_EDGE_COL      vec3(1.5,1.62,1.68)
+#define NL_NIGHT_ZENITH_COL  vec3(0.008,0.048,0.08)
+#define NL_NIGHT_HORIZON_COL vec3(0.02,0.06,0.1)
+#define NL_NIGHT_EDGE_COL    vec3(0.04,0.08,0.1)
+#define NL_RAIN_ZENITH_COL   vec3(0.42,0.45,0.5)   // desaturated overcast grey
+#define NL_RAIN_HORIZON_COL  vec3(0.55,0.55,0.56)
+#define NL_END_ZENITH_COL    vec3(0.08,0.001,0.1)
+#define NL_END_HORIZON_COL   vec3(0.6,0.02,0.6)
+
+/* End black hole */
+#define NL_END_BLACK_HOLE
+#define NL_BH_COL_LOW  vec3(0.1,0.1,1.0)
+#define NL_BH_COL_HIGH vec3(2.8,0.1,0.6)
+#define NL_BH_DIST  1.8
+#define NL_BH_SPEED 0.3
+
+/* Rainbow */
+#define NL_RAINBOW
+#define NL_RAINBOW_CLEAR 0.0
+#define NL_RAINBOW_RAIN  0.45
+
+/* Ore glow */
+#define NL_GLOW_TEX 2.8
+#define NL_GLOW_SHIMMER 0.9
+#define NL_GLOW_SHIMMER_SPEED 0.9
+#define NL_GLOW_LEAK 0.5
+
+/* Waving */
+#define NL_PLANTS_WAVE 0.055
+#define NL_LANTERN_WAVE 0.16
+#define NL_WAVE_SPEED 2.8
+#define NL_WAVE_RANGE 14.0
+
+/* Water - vivid, realistic reflections */
+#define NL_WATER_TRANSPARENCY 0.94      // clearer, less murky water
+#define NL_WATER_BUMP 0.28              // stronger ripples -> sharper reflection detail
+#define NL_WATER_WAVE_SPEED  0.6        // calmer, more natural wave motion
+#define NL_WATER_TEX_OPACITY 0.18       // let reflections read through more than texture
+#define NL_WATER_CLOUD_MIRROR 0.42      // soft, realistic cloud mirror on water (1.0 = full)
+#define NL_WATER_CLOUD_HEIGHT 192.0     // cloud height used by legacy cloud samplers
+#define NL_WATER_CLOUD_REFLECTION_DEPTH 2.0 // clouds appear this many blocks below the surface
+#define NL_WATER_CLOUD_REFL_RIPPLE 0.012 // very subtle swell drift (0.0 = dead-flat mirror)
+#define NL_WATER_WAVE
+//#define NL_WATER_REFL_MASK             // OFF: full reflection instead of patchy masked reflection
+#define NL_WATER_TINT vec3(0.28,0.7,0.88)  // slightly deeper, more natural blue-green
+
+/* Underwater */
+#define NL_UNDERWATER_BRIGHTNESS 0.85
+#define NL_CAUSTIC_INTENSITY 2.1
+#define NL_UNDERWATER_WAVE 0.11
+#define NL_UNDERWATER_STREAKS 1.1
+#define NL_UNDERWATER_TINT vec3(0.8,0.95,1.0)
+
+/* Cloud type - old vanilla box clouds default (type 4) */
+#define NL_CLOUD_TYPE 4            // 4=old vanilla box clouds (default)
+
+/* Sky-dome procedural clouds (vibrant) - OFF by default, enabled via VIBRANT_CLOUD subpack */
+//#define NL_SKY_CLOUDS
+#define NL_SKY_CLOUD_SPEED 0.09    // drift speed (cell units/sec) - sky and water reflection
+#define NL_SKY_CLOUD_DIR vec2(1.0, 0.35) // wind direction the dome clouds drift along
+#define NL_SKY_CLOUD_OPACITY 0.9   // max cloud opacity
+
+/* Soft cloud */
+#define NL_CLOUD1_SCALE vec2(0.016, 0.022)
+#define NL_CLOUD1_DEPTH 1.4
+#define NL_CLOUD1_SPEED 0.04
+#define NL_CLOUD1_DENSITY 0.55
+#define NL_CLOUD1_OPACITY 0.92
+
+/* Vanilla cloud */
+#define NL_CLOUD0_THICKNESS 2.1
+#define NL_CLOUD0_RAIN_THICKNESS 4.0
+#define NL_CLOUD0_OPACITY 0.0      // disabled: replaced by sky-dome procedural clouds
+//#define NL_CLOUD0_MULTILAYER
+
+/* Rounded cloud */
+#define NL_CLOUD2_THICKNESS 2.1
+#define NL_CLOUD2_RAIN_THICKNESS 2.5
+#define NL_CLOUD2_STEPS 5
+#define NL_CLOUD2_SCALE vec2(0.033, 0.033)
+#define NL_CLOUD2_SHAPE vec2(0.5, 0.4)
+#define NL_CLOUD2_DENSITY 25.0
+#define NL_CLOUD2_VELOCITY 0.8
+#define NL_CLOUD2_LAYER2_OFFSET 143.0
+#define NL_CLOUD2_LAYER2_THICKNESS 2.5
+#define NL_CLOUD2_LAYER2_RAIN_THICKNESS 3.0
+#define NL_CLOUD2_LAYER2_STEPS 3
+#define NL_CLOUD2_LAYER2_SCALE vec2(0.03, 0.03)
+#define NL_CLOUD2_LAYER2_SHAPE vec2(0.5, 0.4)
+#define NL_CLOUD2_LAYER2_DENSITY 25.0
+#define NL_CLOUD2_LAYER2_VELOCITY 0.8
+
+/* Realistic cloud */
+#define NL_CLOUD3_SCALE vec2(0.03, 0.03)
+#define NL_CLOUD3_SPEED 0.005
+#define NL_CLOUD3_SHADOW 0.9
+#define NL_CLOUD3_SHADOW_OFFSET 0.3
+
+/* Aurora */
+#define NL_AURORA 1.3
+#define NL_AURORA_TEX 1.0          // texture-based sky aurora brightness (night only)
+#define NL_AURORA_TEX_LAYERS 10    // curtain layers - main cost knob (2 taps each)
+#define NL_AURORA_TEX_COL1 vec3(0.6,7.5,9.5)  // cool cyan, near layers
+#define NL_AURORA_TEX_COL2 vec3(0.2,4.2,8.0)  // deeper teal-blue, far layers
+#define NL_AURORA_VELOCITY 0.03
+#define NL_AURORA_SCALE 0.04
+#define NL_AURORA_WIDTH 0.18
+#define NL_AURORA_COL1 vec3(0.2,0.6,1.0)   // sky blue
+#define NL_AURORA_COL2 vec3(0.35,0.85,1.0)  // bright cyan-blue
+#define NL_CLOUD_AURORA_REFLECTION
+
+/* Shooting star */
+#define NL_SHOOTING_STAR 1.0
+#define NL_SHOOTING_STAR_PERIOD 6.0
+#define NL_SHOOTING_STAR_DELAY 64.0
+
+/* Galaxy */
+//#define NL_GALAXY_STARS 2.0
+#define NL_GALAXY_VIBRANCE 0.7
+#define NL_GALAXY_SPEED 0.03
+#define NL_GALAXY_DAY_VISIBILITY 0.0
+
+/* Sun/Moon */
+#define NL_SUN_SIZE  1.1
+#define NL_MOON_SIZE 1.0
+#define NL_SUN_PATH_YAW    15.0
+#define NL_MOON_PATH_YAW   17.0
+#define NL_SUN_PATH_TILT   31.0
+#define NL_MOON_PATH_TILT -28.0
+#define NL_SUN_TILT        45.0
+#define NL_MOON_TILT       45.0
+
+/* Godrays - strong volumetric light shafts (ray-traced light look) */
+#define NL_GODRAY 0.75
+
+/* Ground reflection - reflective wet ground (fakes ray-traced GI look) */
+#define NL_GROUND_REFL 0.5             // ON: subtle always-on ground reflection
+#define NL_GROUND_RAIN_WETNESS 1.4     // strong puddle reflections while raining
+#define NL_GROUND_RAIN_PUDDLES 0.9     // more scattered, natural puddle shapes
+
+/* Rain reflection - strong wet/puddle mirror only while raining */
+#define NL_RAIN_REFL_STRENGTH 1.5      // 0 = off, higher = stronger wet ground mirror
+
+/* Entity */
+#define NL_ENTITY_BRIGHTNESS     0.68
+#define NL_ENTITY_EDGE_HIGHLIGHT 0.42
+
+/* Weather - realistic rain look */
+#define NL_WEATHER_SPECK 0.5             // less glossy/artificial speck highlight
+#define NL_WEATHER_RAIN_SLANT 5.0        // more natural wind-driven slant
+#define NL_WEATHER_PARTICLE_SIZE 0.85    // thinner, more realistic raindrops
+
+/* Lava */
+#define NL_LAVA_NOISE
+#define NL_LAVA_NOISE_SPEED 0.2
+
+/* ---- SUBPACK CONFIG ---- */
+#ifdef LITE
+  #define NO_WAVE
+  #undef NL_GLOW_SHIMMER
+  #undef NL_LAVA_NOISE
+  #undef NL_WEATHER_SPECK
+  #undef NL_SHOOTING_STAR
+  #undef NL_CLOUD_AURORA_REFLECTION
+  #undef NL_UNDERWATER_STREAKS
+  #undef NL_RAIN_MIST_OPACITY
+  #undef NL_CLOUDY_FOG
+  #undef NL_ENTITY_EDGE_HIGHLIGHT
+  #undef NL_PBR_BLOCK_REFL
+  // halve the aurora curtain: 2 texture taps per layer per sky pixel
+  #undef NL_AURORA_TEX_LAYERS
+  #define NL_AURORA_TEX_LAYERS 5
+#endif
+
+#ifdef NO_WAVE_NO_FOG
+  #define NO_WAVE
+  #define NO_FOG
+  #define NL_NO_WATER_CLOUD_REFL
+#endif
+
+#ifdef NO_FOG
+  #undef NL_FOG
+  #define NL_NO_WATER_CLOUD_REFL
+#endif
+
+#ifdef NO_WAVE
+  #undef NL_PLANTS_WAVE
+  #undef NL_LANTERN_WAVE
+  #undef NL_UNDERWATER_WAVE
+  #undef NL_WATER_WAVE
+  #undef NL_RAIN_MIST_OPACITY
+  #define NL_NO_WATER_CLOUD_REFL
+#endif
+
+#ifdef CHUNK_ANIM
+  #define NL_CHUNK_LOAD_ANIM 100.0
+#endif
+
+#ifdef ROUNDED_CLOUDS
+  #undef NL_CLOUD_TYPE
+  #define NL_CLOUD_TYPE 2
+  #undef NL_CLOUD_SHADOW
+  #undef NL_SKY_CLOUDS
+#endif
+
+#ifdef BOX_CLOUDS
+  #undef NL_CLOUD_TYPE
+  #define NL_CLOUD_TYPE 0
+  #undef NL_CLOUD_SHADOW
+  #undef NL_SKY_CLOUDS
+#endif
+
+#ifdef REALISTIC_CLOUDS
+  #undef NL_CLOUD_TYPE
+  #define NL_CLOUD_TYPE 3
+  #undef NL_CLOUD_SHADOW
+  #undef NL_SKY_CLOUDS
+#endif
+
+#ifdef VIBRANT_CLOUD
+  #undef NL_CLOUD_TYPE
+  #define NL_CLOUD_TYPE 0
+  #define NL_SKY_CLOUDS
+#endif
+
+#ifdef NO_REFLECTIONS
+  #undef NL_GROUND_REFL
+  #undef NL_RAIN_REFL_STRENGTH
+  #define NL_NO_GROUND_REFL
+  #define NL_NO_WATER_CLOUD_REFL
+  #undef NL_PBR_BLOCK_REFL
+#endif
+
+#endif

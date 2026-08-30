@@ -1,0 +1,106 @@
+name = "CraftEdge Visuals"
+version = [1, 0, 0]
+min_supported_mc_version = [1, 26, 30]
+description = '''
+§c%w
+§7- Vivid & realistic visuals for Minecraft!
+%v
+§3CraftEdge Visuals
+''' # %w = patch warning, %v = version
+authors = ["Shivam"]
+url = ""
+uuid = "ac1e50f9-319f-4d3d-a32c-3a7073ddaf32" # Use https://www.uuidgenerator.net/version4
+materials = ["Sky", "RenderChunk", "Actor", "ActorGlint", "EndSky", "Clouds", "SunMoon", "Weather", "ItemInHandTextured", "ItemInHandColor", "ItemInHandColorGlint", "Stars"]
+
+[info] 
+copyright = '''
+Copyright © 2026 %a
+
+"CraftEdge Visuals" is a variant of "Newb Shader" (source: https://github.com/devendrn/newb-x-mcbe, MIT License), modified and recompiled under the terms of the MIT License.
+
+This compiled resource pack is licensed under CC BY-ND 4.0 (https://creativecommons.org/licenses/by-nd/4.0/). Redistribute only unmodified copies with proper attribution to "CraftEdge Visuals" and the original "Newb Shader" project. Do not distribute derivatives of this compiled pack.
+
+You can compile the shader from source and distribute the result under your own terms (compatible with the MIT License).
+''' # %a = authors
+credits = '''
+Based on Newb Shader by devendrn (https://github.com/devendrn/newb-x-mcbe)
+'''
+
+# subpacks are arranged in left to right order
+# right-most subpack is enabled by default
+[[subpack]]
+define = "REALISTIC_CLOUDS"
+materials = ["Clouds", "RenderChunk"]
+description = '''
+Realistic clouds
+'''
+
+[[subpack]]
+define = "ROUNDED_CLOUDS"
+materials = ["Clouds"]
+description = '''
+Rounded Clouds
+'''
+
+[[subpack]]
+define = "BOX_CLOUDS"
+materials = ["Clouds", "RenderChunk"]
+description = '''
+Box Clouds
+'''
+
+[[subpack]]
+define = "CHUNK_ANIM"
+materials = ["RenderChunk"]
+description = '''
+Chunk loading animation
+'''
+
+[[subpack]]
+define = "NO_WAVE_NO_FOG"
+materials = ["RenderChunk"]
+description = '''
+No fog and wave effects
+'''
+
+[[subpack]]
+define = "NO_FOG"
+materials = ["RenderChunk"]
+description = '''
+No fog effect
+'''
+
+[[subpack]]
+define = "NO_WAVE"
+materials = ["RenderChunk"]
+description = '''
+No wave effects
+'''
+
+[[subpack]]
+define = "VIBRANT_CLOUD"
+materials = ["Sky", "RenderChunk"]
+description = '''
+Vibrant Clouds
+'''
+
+[[subpack]]
+define = "NO_REFLECTIONS"
+materials = ["RenderChunk"]
+description = '''
+No Reflections
+'''
+
+#[[subpack]]
+#define = "LITE"
+#materials = ["Sky", "RenderChunk", "Actor", "ActorGlint", "EndSky", "Clouds", "SunMoon", "Weather", "ItemInHandTextured", "ItemInHandColor", "ItemInHandColorGlint", "Stars"]
+#description = '''
+#Many effects disabled. A bit lighter!
+#'''
+
+[[subpack]]
+define = "DEFAULT"
+materials = []
+description = '''
+Default
+'''

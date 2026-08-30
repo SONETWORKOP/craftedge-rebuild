@@ -1,0 +1,32 @@
+name: Build Newb Shader
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Setup build environment
+        run: ./build.sh setup
+
+      - name: Build shader pack
+        run: ./build.sh pack -p android
+
+      - name: Upload mcpack
+        uses: actions/upload-artifact@v4
+        with:
+          name: NewbShader-Custom
+          path: build/*.mcpack
