@@ -140,20 +140,20 @@ vec3 renderOverworldSky(nl_skycolor skyCol, nl_environment env, vec3 viewDir, bo
 
   // dawn warming: at sunrise/sunset the sun's own light travels through more
   // atmosphere, so the disc/glow/halo shift from white-yellow toward gold-orange
-  float sunWarm = 0.55*dawnFactor;
+  float sunWarm = 0.6*dawnFactor;
 
   // yellow-white sun core -> warm gold at dawn (drop green & blue, keep red)
-  vec3 sunCore = vec3(1.5, 1.4 - 0.55*sunWarm, 1.0 - 0.72*sunWarm) * sunDisc;
+  vec3 sunCore = vec3(1.5, 1.4 - 0.5*sunWarm, 1.0 - 0.6*sunWarm) * sunDisc;
   // warm yellow glow -> deeper orange at dawn
-  vec3 sunGlowCol = mix(vec3(1.4, 1.0, 0.3), vec3(1.55, 0.80, 0.18), sunWarm) * sunGlow * 0.4;
+  vec3 sunGlowCol = mix(vec3(1.4, 1.0, 0.3), vec3(1.6, 0.85, 0.22), sunWarm) * sunGlow * 0.45;
   // atmospheric yellow scatter - strong during day
   vec3 sunScatterCol = vec3(1.2, 0.85, 0.2) * sunScatter * 0.15 * dayBrightness;
   // warm halo -> golden-orange at dawn
-  vec3 sunHaloCol = mix(vec3(1.3, 0.9, 0.35), vec3(1.5, 0.72, 0.24), sunWarm) * sunHalo * 0.2;
+  vec3 sunHaloCol = mix(vec3(1.3, 0.9, 0.35), vec3(1.55, 0.78, 0.28), sunWarm) * sunHalo * 0.22;
 
   // sunrise/sunset - extra orange scatter. use dawnFactor^2 so this warm halo
   // stays tied to true twilight and doesn't leak orange onto the daytime sun
-  vec3 dawnScatter = vec3(2.6, 0.72, 0.09) * sunScatter * 0.3 * dawnFactor*dawnFactor;
+  vec3 dawnScatter = vec3(3.0, 0.85, 0.15) * sunScatter * 0.35 * dawnFactor*dawnFactor;
 
   vec3 sunLight = (sunCore + sunGlowCol + sunScatterCol + sunHaloCol + dawnScatter);
   // fade out sun contribution below horizon (smooth, avoids hard pop at sunset)

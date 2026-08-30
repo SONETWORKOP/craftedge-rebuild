@@ -29,7 +29,7 @@
 #define NL_END_AMBIENT    vec3(1.98,1.25,2.3)
 
 /* Sun/moon - vivid but natural */
-#define NL_DAWN_SUNLIGHT_COL   vec3(1.2,0.55,0.18)   // warm orange sunrise
+#define NL_DAWN_SUNLIGHT_COL   vec3(1.5,0.75,0.25)   // brighter warm orange sunrise light
 #define NL_NOON_SUNLIGHT_COL   vec3(1.1,1.0,0.85)    // bright clean noon
 #define NL_NIGHT_MOONLIGHT_COL vec3(0.02,0.04,0.20)  // dimmer cool moonlight
 
@@ -56,9 +56,9 @@
 #define NL_SKY_RAIN_MIX_FACTOR 0.95
 
 /* Sky colors - warm realistic sky */
-#define NL_DAWN_ZENITH_COL   vec3(0.15,0.30,0.92)     // vivid twilight blue
-#define NL_DAWN_HORIZON_COL  vec3(2.9,0.62,0.16)      // deep sunrise orange
-#define NL_DAWN_EDGE_COL     vec3(3.1,1.15,0.34)      // warm golden edge
+#define NL_DAWN_ZENITH_COL   vec3(0.45,0.30,0.50)     // warm twilight purple (less pink)
+#define NL_DAWN_HORIZON_COL  vec3(3.2,0.85,0.20)      // golden orange sunrise
+#define NL_DAWN_EDGE_COL     vec3(3.8,1.5,0.45)       // warm golden edge (brighter)
 #define NL_DAY_ZENITH_COL    vec3(0.12,0.48,2.1)      // deep realistic sky blue
 #define NL_DAY_HORIZON_COL   vec3(0.55,1.1,1.65)      // soft hazy blue horizon
 #define NL_DAY_EDGE_COL      vec3(1.2,1.45,1.65)      // light atmospheric haze
