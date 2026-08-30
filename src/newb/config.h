@@ -170,9 +170,6 @@
 #define NL_AURORA_WIDTH 0.18
 #define NL_AURORA_COL1 vec3(0.2,0.6,1.0)   // sky blue
 #define NL_AURORA_COL2 vec3(0.35,0.85,1.0)  // bright cyan-blue
-
-// aurora borealis spills cyan light onto exposed ground at night
-#define NL_AURORA_GROUND_LIGHT 0.8
 #define NL_CLOUD_AURORA_REFLECTION
 
 /* Shooting star */
