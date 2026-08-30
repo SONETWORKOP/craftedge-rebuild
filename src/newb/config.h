@@ -30,7 +30,7 @@
 
 /* Sun/moon - vivid but natural */
 #define NL_DAWN_SUNLIGHT_COL   vec3(1.0,0.5,0.16)
-#define NL_NOON_SUNLIGHT_COL   vec3(1.0,0.95,0.82)  // warm-clean noon light
+#define NL_NOON_SUNLIGHT_COL   vec3(1.0,0.93,0.75)  // warm golden noon light
 #define NL_NIGHT_MOONLIGHT_COL vec3(0.02,0.05,0.24)
 
 /* Torch */
@@ -40,13 +40,13 @@
 #define NL_END_TORCH_COL        vec3(1.0,0.55,0.28)
 
 /* Fog - realistic atmospheric depth */
-#define NL_FOG 1.35
-#define NL_MIST_DENSITY 0.42            // thicker natural distance haze
+#define NL_FOG 1.3
+#define NL_MIST_DENSITY 0.38            // natural distance haze
 #define NL_RAIN_MIST_OPACITY 0.4        // much thicker mist in rain
-#define NL_CLOUDY_FOG 0.28              // stronger overcast haze on cloudy days
+#define NL_CLOUDY_FOG 0.25              // stronger overcast haze on cloudy days
 
 /* Height fog - ground-hugging mist that thins with altitude */
-#define NL_HEIGHT_FOG 0.55
+#define NL_HEIGHT_FOG 0.5
 #define NL_HEIGHT_FOG_START 56.0
 #define NL_HEIGHT_FOG_RANGE 55.0
 
@@ -55,16 +55,16 @@
 #define NL_SKY_VOID_DARKNESS   0.3
 #define NL_SKY_RAIN_MIX_FACTOR 0.95
 
-/* Sky colors - vivid realistic sky */
-#define NL_DAWN_ZENITH_COL   vec3(0.12,0.4,0.78)
-#define NL_DAWN_HORIZON_COL  vec3(3.0,0.48,0.26)
-#define NL_DAWN_EDGE_COL     vec3(2.2,0.9,0.62)
-#define NL_DAY_ZENITH_COL    vec3(0.2,0.82,2.05)    // richer sky blue
-#define NL_DAY_HORIZON_COL   vec3(0.92,1.55,1.9)
-#define NL_DAY_EDGE_COL      vec3(1.5,1.62,1.68)
-#define NL_NIGHT_ZENITH_COL  vec3(0.008,0.048,0.08)
-#define NL_NIGHT_HORIZON_COL vec3(0.02,0.06,0.1)
-#define NL_NIGHT_EDGE_COL    vec3(0.04,0.08,0.1)
+/* Sky colors - warm realistic sky */
+#define NL_DAWN_ZENITH_COL   vec3(0.5,0.32,0.66)    // twilight violet
+#define NL_DAWN_HORIZON_COL  vec3(2.6,0.8,0.25)     // golden amber
+#define NL_DAWN_EDGE_COL     vec3(2.6,1.15,0.5)     // warm peach glow
+#define NL_DAY_ZENITH_COL    vec3(0.3,0.68,1.5)     // warm rich blue
+#define NL_DAY_HORIZON_COL   vec3(1.2,1.28,1.15)    // warm cream horizon
+#define NL_DAY_EDGE_COL      vec3(1.5,1.4,1.25)     // warm daylight
+#define NL_NIGHT_ZENITH_COL  vec3(0.01,0.035,0.09)  // deep navy
+#define NL_NIGHT_HORIZON_COL vec3(0.03,0.08,0.16)   // deep blue horizon
+#define NL_NIGHT_EDGE_COL    vec3(0.06,0.11,0.18)   // subtle horizon lift
 #define NL_RAIN_ZENITH_COL   vec3(0.42,0.45,0.5)   // desaturated overcast grey
 #define NL_RAIN_HORIZON_COL  vec3(0.55,0.55,0.56)
 #define NL_END_ZENITH_COL    vec3(0.08,0.001,0.1)
@@ -170,6 +170,9 @@
 #define NL_AURORA_WIDTH 0.18
 #define NL_AURORA_COL1 vec3(0.2,0.6,1.0)   // sky blue
 #define NL_AURORA_COL2 vec3(0.35,0.85,1.0)  // bright cyan-blue
+
+// aurora borealis spills cyan light onto exposed ground at night
+#define NL_AURORA_GROUND_LIGHT 0.35
 #define NL_CLOUD_AURORA_REFLECTION
 
 /* Shooting star */
@@ -229,34 +232,16 @@
   #undef NL_RAIN_MIST_OPACITY
   #undef NL_CLOUDY_FOG
   #undef NL_ENTITY_EDGE_HIGHLIGHT
-  #undef NL_PBR_BLOCK_REFL
   // halve the aurora curtain: 2 texture taps per layer per sky pixel
   #undef NL_AURORA_TEX_LAYERS
   #define NL_AURORA_TEX_LAYERS 5
-#endif
-
-#ifdef NO_WAVE_NO_FOG
-  #define NO_WAVE
-  #define NO_FOG
-  #define NL_NO_WATER_CLOUD_REFL
-#endif
-
-#ifdef NO_FOG
-  #undef NL_FOG
-  #define NL_NO_WATER_CLOUD_REFL
-#endif
-
-#ifdef NO_WAVE
+  // NO_WAVE / NO_FOG handling (inline, since those subpacks were removed)
   #undef NL_PLANTS_WAVE
   #undef NL_LANTERN_WAVE
   #undef NL_UNDERWATER_WAVE
   #undef NL_WATER_WAVE
-  #undef NL_RAIN_MIST_OPACITY
+  #undef NL_FOG
   #define NL_NO_WATER_CLOUD_REFL
-#endif
-
-#ifdef CHUNK_ANIM
-  #define NL_CHUNK_LOAD_ANIM 100.0
 #endif
 
 #ifdef ROUNDED_CLOUDS
@@ -273,13 +258,6 @@
   #undef NL_SKY_CLOUDS
 #endif
 
-#ifdef REALISTIC_CLOUDS
-  #undef NL_CLOUD_TYPE
-  #define NL_CLOUD_TYPE 3
-  #undef NL_CLOUD_SHADOW
-  #undef NL_SKY_CLOUDS
-#endif
-
 #ifdef VIBRANT_CLOUD
   #undef NL_CLOUD_TYPE
   #define NL_CLOUD_TYPE 0
@@ -291,7 +269,6 @@
   #undef NL_RAIN_REFL_STRENGTH
   #define NL_NO_GROUND_REFL
   #define NL_NO_WATER_CLOUD_REFL
-  #undef NL_PBR_BLOCK_REFL
 #endif
 
 #endif

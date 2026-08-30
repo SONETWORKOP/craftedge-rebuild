@@ -89,6 +89,16 @@ vec3 nlLighting(
     lum = luminance(light);
     light += (skycol.horizon + skycol.zenith)*(uv1.y/(1.0+lum));
 
+    #ifdef NL_AURORA_GROUND_LIGHT
+      // aurora borealis: cyan light spills onto sky-exposed ground at night.
+      // uv1.y is the sky-light factor, so open surfaces (grass, dirt, blocks)
+      // catch the glow while caves/overhangs stay dark. The gentle sin()
+      // sweep makes the light drift like the aurora band itself.
+      float auroraNight = nightFactor*nightIntensity;
+      auroraNight *= uv1.y*(0.5+0.5*sin(t*0.02 + wPos.x*0.01 + wPos.z*0.013));
+      light += NL_AURORA_GROUND_LIGHT*auroraNight*NL_AURORA_COL2;
+    #endif
+
   }
 
   // torch light
