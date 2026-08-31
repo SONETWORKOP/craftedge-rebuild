@@ -62,9 +62,13 @@
 #define NL_DAY_ZENITH_COL    vec3(0.12,0.48,2.1)      // deep realistic sky blue
 #define NL_DAY_HORIZON_COL   vec3(0.55,1.1,1.65)      // soft hazy blue horizon
 #define NL_DAY_EDGE_COL      vec3(1.2,1.45,1.65)      // light atmospheric haze
-#define NL_NIGHT_ZENITH_COL  vec3(0.10,0.40,0.70)    // vivid cyan zenith
-#define NL_NIGHT_HORIZON_COL vec3(0.14,0.50,0.80)    // vivid cyan horizon
-#define NL_NIGHT_EDGE_COL    vec3(0.18,0.60,0.90)    // bright cyan edge
+#define NL_NIGHT_ZENITH_COL  vec3(0.05,0.16,0.30)    // cyan zenith
+#define NL_NIGHT_HORIZON_COL vec3(0.08,0.24,0.38)    // cyan horizon
+#define NL_NIGHT_EDGE_COL    vec3(0.10,0.30,0.45)    // bright cyan edge
+
+// midnight boost for the night sky: multiplies night colors so the cyan
+// survives the atmosphere dimmer + ACES tonemap. 0 = no boost (old behavior)
+#define NL_NIGHT_SKY_BRIGHTNESS 3.0
 #define NL_RAIN_ZENITH_COL   vec3(0.35,0.38,0.42)     // overcast grey
 #define NL_RAIN_HORIZON_COL  vec3(0.48,0.5,0.52)
 #define NL_END_ZENITH_COL    vec3(0.08,0.001,0.1)

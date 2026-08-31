@@ -39,7 +39,7 @@ nl_skycolor nlEndSkyColors(nl_environment env) {
 
 nl_skycolor nlOverworldSkyColors(nl_environment env) {
   nl_skycolor s;
-  float f = 1.0 + 2.0*(1.0-max(-env.dayFactor, 0.0));
+  float f = 1.0 + NL_NIGHT_SKY_BRIGHTNESS*max(-env.dayFactor, 0.0);
   float nightFactor = step(env.dayFactor, 0.0);
   s.zenith = mix(NL_DAY_ZENITH_COL, NL_NIGHT_ZENITH_COL*f, nightFactor);
   s.horizon = mix(NL_DAY_HORIZON_COL, NL_NIGHT_HORIZON_COL*f, nightFactor);
