@@ -147,20 +147,6 @@ void main() {
         wskycol.horizonEdge, ViewPositionAndTime.w
       );
       diffuse.rgb = mix(diffuse.rgb,cloudReflection.rgb,cloudReflection.a);
-
-      // per-pixel sun disc mirror, same mechanism as the cloud reflection:
-      // reflect the view ray and sample the sun disc from the reflected
-      // direction, so a crisp full sun shows on the water at any sun height
-      vec3 V = normalize(v_reflPbr.xyz);
-      vec3 reflDir = vec3(-V.x, V.y, -V.z);
-      if (reflDir.y > 0.004) {
-        float sunAngle = max(dot(reflDir, wenv.sunDir), 0.0);
-        float sunDisc = pow(sunAngle, 200.0*NL_SUN_SIZE);
-        sunDisc *= (1.0 - wenv.rainFactor)*smoothstep(-0.12, 0.06, wenv.dayFactor);
-        vec3 sunCol = sunLightTint(wenv.dayFactor, wenv.rainFactor);
-        sunCol *= NL_SUNLIGHT_INTENSITY;
-        diffuse.rgb += sunDisc*sunCol*NL_WATER_SUN_DISC;
-      }
     #endif
   } else if (v_refl.a > 0.0) {
     // reflective effect - only on xz plane (ground / flat smooth blocks)
