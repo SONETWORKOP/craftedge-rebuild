@@ -6,7 +6,6 @@ $input v_color0, v_color1, v_fog, v_refl, v_texcoord0, v_lightmapUV, v_extra, v_
 SAMPLER2D_AUTOREG(s_MatTexture);
 SAMPLER2D_AUTOREG(s_SeasonsTexture);
 SAMPLER2D_AUTOREG(s_LightMapTexture);
-SAMPLER2D_AUTOREG(s_SunMoonTexture);
 
 uniform vec4 CameraPosition;
 uniform vec4 ViewPositionAndTime;
@@ -149,8 +148,8 @@ void main() {
       );
       diffuse.rgb = mix(diffuse.rgb,cloudReflection.rgb,cloudReflection.a);
 
-      // per-pixel sun mirror, same mechanism as the cloud reflection:
-      // reflect the view ray and sample the sun from the reflected
+      // per-pixel sun disc mirror, same mechanism as the cloud reflection:
+      // reflect the view ray and sample the sun disc from the reflected
       // direction, so a crisp full sun shows on the water at any sun height
       vec3 V = normalize(v_reflPbr.xyz);
       vec3 reflDir = vec3(-V.x, V.y, -V.z);
@@ -160,23 +159,7 @@ void main() {
         sunDisc *= (1.0 - wenv.rainFactor)*smoothstep(-0.12, 0.06, wenv.dayFactor);
         vec3 sunCol = sunLightTint(wenv.dayFactor, wenv.rainFactor);
         sunCol *= NL_SUNLIGHT_INTENSITY;
-
-        #ifdef NL_WATER_SUN_TEXTURE
-          // sample the real textured sun quad (SunMoonTexture) from the
-          // reflected ray, so the vanilla sun (disc + rays) shows in water
-          vec3 sunD = normalize(wenv.sunDir);
-          vec3 right = normalize(cross(vec3(0.0,1.0,0.0), sunD));
-          vec3 fwd = cross(right, sunD);
-          float tx = dot(reflDir, right)/max(sunAngle, 0.001);
-          float ty = dot(reflDir, fwd)/max(sunAngle, 0.001);
-          float quadTan = NL_WATER_SUN_QUAD_TAN;
-          vec2 sunUV = vec2(0.5) + 0.5*vec2(tx, ty)/quadTan;
-          vec3 sunTex = texture2D(s_SunMoonTexture, sunUV).rgb;
-          sunTex *= sunTex;
-          diffuse.rgb += sunTex*sunCol*NL_WATER_SUN_DISC*sunDisc;
-        #else
-          diffuse.rgb += sunDisc*sunCol*NL_WATER_SUN_DISC;
-        #endif
+        diffuse.rgb += sunDisc*sunCol*NL_WATER_SUN_DISC;
       }
     #endif
   } else if (v_refl.a > 0.0) {
