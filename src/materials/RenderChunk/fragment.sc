@@ -182,7 +182,7 @@ void main() {
       // vanishes as the sun rises.
       vec3 sunV = normalize(v_reflPbr.xyz);
       vec2 sunBump = vec2_splat(movingNoise2D(
-        surfacePos.xz + surfacePos.yy, NL_WATER_WAVE_SPEED*t, 0.6
+        surfacePos.xz + surfacePos.yy, NL_WATER_WAVE_SPEED*ViewPositionAndTime.w, 0.6
       ));
       vec3 sunNrm = normalize(vec3(sunBump*NL_WATER_BUMP, 1.0));
       vec3 sunReflDir = reflect(-sunV, sunNrm);
