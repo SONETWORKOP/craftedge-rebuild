@@ -6,6 +6,7 @@ $input v_color0, v_color1, v_fog, v_refl, v_texcoord0, v_lightmapUV, v_extra, v_
 SAMPLER2D_AUTOREG(s_MatTexture);
 SAMPLER2D_AUTOREG(s_SeasonsTexture);
 SAMPLER2D_AUTOREG(s_LightMapTexture);
+SAMPLER2D_AUTOREG(s_SunTexture);
 
 uniform vec4 CameraPosition;
 uniform vec4 ViewPositionAndTime;
@@ -88,6 +89,33 @@ vec4 waterCloudReflection(
   return clouds;
 }
 
+/*
+  Real textured sun mirror on water.
+
+  Projects the reflected view ray into the sun's local plane (built from the
+  sun direction), samples the vanilla sun texture there, and keeps only the
+  bright sun pixels (luminance mask) inside a soft circular falloff (dist
+  mask). The texture is bound through `SunTexture` buffer -> textures/
+  environment/sun, NOT a white default - a white default rendered the mirror
+  invisible.
+*/
+vec3 sunTextureMovement(vec3 sunDir, vec3 rayDir, out float mask) {
+  vec3 forward = normalize(sunDir);
+  vec3 right = normalize(cross(vec3(0.0, 1.0, 0.0), forward));
+  vec3 up = cross(forward, right);
+
+  vec2 uv = vec2(dot(rayDir, right), dot(rayDir, up));
+  float sunSize = NL_WATER_SUN_QUAD_TAN;
+  uv = uv / sunSize * 0.5 + 0.5;
+
+  vec3 sunColor = texture2D(s_SunTexture, uv).rgb;
+  float lum = dot(sunColor, vec3(0.299, 0.587, 0.114));
+  float maskLum = smoothstep(0.0, 0.9, lum);
+  float distMask = smoothstep(0.5, 0.48, length(uv - 0.5));
+  mask = maskLum * distMask;
+  return sunColor * mask;
+}
+
 void main() {
   #if defined(DEPTH_ONLY_OPAQUE) || defined(DEPTH_ONLY) || defined(INSTANCING)
     gl_FragColor = vec4(1.0,1.0,1.0,1.0);
@@ -147,6 +175,18 @@ void main() {
         wskycol.horizonEdge, ViewPositionAndTime.w
       );
       diffuse.rgb = mix(diffuse.rgb,cloudReflection.rgb,cloudReflection.a);
+
+      // real textured sun mirror on water (same flat-mirror ray as the clouds)
+      vec3 sunV = normalize(v_reflPbr.xyz);
+      vec3 sunReflDir = vec3(-sunV.x, sunV.y, -sunV.z);
+      if (sunReflDir.y > 0.004) {
+        float sunMask;
+        vec3 sunTex = sunTextureMovement(wenv.sunDir, sunReflDir, sunMask);
+        float sunVisible = (1.0 - wenv.rainFactor)*smoothstep(-0.12, 0.06, wenv.dayFactor);
+        vec3 sunCol = sunLightTint(wenv.dayFactor, wenv.rainFactor);
+        sunCol *= NL_SUNLIGHT_INTENSITY;
+        diffuse.rgb += sunTex*sunCol*NL_WATER_SUN_DISC*sunVisible;
+      }
     #endif
   } else if (v_refl.a > 0.0) {
     // reflective effect - only on xz plane (ground / flat smooth blocks)
