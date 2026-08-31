@@ -102,6 +102,8 @@
 #define NL_WATER_TRANSPARENCY 0.94      // clearer, less murky water
 #define NL_WATER_BUMP 0.28              // stronger ripples -> sharper reflection detail
 #define NL_WATER_WAVE_SPEED  0.6        // calmer, more natural wave motion
+#define NL_WATER_SUN_GLITTER 1.2        // sun/moon glitter path visible on water
+#define NL_WATER_SUN_GLITTER_SHARPNESS 24.0 // lower = wider, longer reflection path
 #define NL_WATER_TEX_OPACITY 0.18       // let reflections read through more than texture
 #define NL_WATER_CLOUD_MIRROR 0.42      // soft, realistic cloud mirror on water (1.0 = full)
 #define NL_WATER_CLOUD_HEIGHT 192.0     // cloud height used by legacy cloud samplers

@@ -72,6 +72,13 @@ vec4 nlWater(
     float specAngle = max(dot(nrm, halfDir), 0.0);
     float specHighlight = pow(specAngle, 256.0)*lit.y;
     waterRefl += specHighlight*NL_SUNLIGHT_INTENSITY*sunLightTint(env.dayFactor, env.rainFactor);
+
+    // broad sun/moon glitter path: a wide reflection along the horizon-facing
+    // direction, strongest at low sun angles (sunrise/sunset). The tight
+    // pow(256) dot above alone is invisible at grazing angles, this spreads it.
+    float sunAlign = max(dot(reflDir, sunDir), 0.0);
+    float glitter = pow(sunAlign, NL_WATER_SUN_GLITTER_SHARPNESS)*lit.y;
+    waterRefl += glitter*NL_WATER_SUN_GLITTER*NL_SUNLIGHT_INTENSITY*sunLightTint(env.dayFactor, env.rainFactor);
   #endif
 
   // mask sky reflection under shade
