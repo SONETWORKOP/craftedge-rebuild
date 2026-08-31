@@ -255,20 +255,6 @@
   #define NL_NO_WATER_CLOUD_REFL
 #endif
 
-#ifdef ROUNDED_CLOUDS
-  #undef NL_CLOUD_TYPE
-  #define NL_CLOUD_TYPE 2
-  #undef NL_CLOUD_SHADOW
-  #undef NL_SKY_CLOUDS
-#endif
-
-#ifdef BOX_CLOUDS
-  #undef NL_CLOUD_TYPE
-  #define NL_CLOUD_TYPE 0
-  #undef NL_CLOUD_SHADOW
-  #undef NL_SKY_CLOUDS
-#endif
-
 #ifdef VIBRANT_CLOUD
   #undef NL_CLOUD_TYPE
   #define NL_CLOUD_TYPE 0
