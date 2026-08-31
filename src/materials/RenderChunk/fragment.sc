@@ -176,9 +176,16 @@ void main() {
       );
       diffuse.rgb = mix(diffuse.rgb,cloudReflection.rgb,cloudReflection.a);
 
-      // real textured sun mirror on water (same flat-mirror ray as the clouds)
+      // real textured sun mirror on water. The reflected ray uses a wavy water
+      // normal (same movingNoise2D bump as nlWater), so the sun glitters as a
+      // path across the surface instead of a single flat-mirror point that
+      // vanishes as the sun rises.
       vec3 sunV = normalize(v_reflPbr.xyz);
-      vec3 sunReflDir = vec3(-sunV.x, sunV.y, -sunV.z);
+      vec2 sunBump = vec2_splat(movingNoise2D(
+        surfacePos.xz + surfacePos.yy, NL_WATER_WAVE_SPEED*t, 0.6
+      ));
+      vec3 sunNrm = normalize(vec3(sunBump*NL_WATER_BUMP, 1.0));
+      vec3 sunReflDir = reflect(-sunV, sunNrm);
       if (sunReflDir.y > 0.004) {
         float sunMask;
         vec3 sunTex = sunTextureMovement(wenv.sunDir, sunReflDir, sunMask);
