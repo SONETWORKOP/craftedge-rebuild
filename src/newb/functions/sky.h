@@ -167,9 +167,9 @@ vec3 renderOverworldSky(nl_skycolor skyCol, nl_environment env, vec3 viewDir, bo
   // wide atmospheric halo - real moonlight scatters far across the sky
   float moonHalo = pow(moonAngle, 4.0);
 
-  vec3 moonLight = vec3(0.35, 0.4, 0.55) * moonDisc * 1.5;
-  moonLight += vec3(0.15, 0.2, 0.35) * moonGlow * 0.3;
-  moonLight += vec3(0.10, 0.14, 0.26) * moonHalo * 0.12;
+  vec3 moonLight = vec3(0.35, 0.55, 0.75) * moonDisc * 1.5;
+  moonLight += vec3(0.15, 0.28, 0.45) * moonGlow * 0.3;
+  moonLight += vec3(0.10, 0.20, 0.34) * moonHalo * 0.12;
   moonLight *= (1.0 - env.rainFactor);
   sky += moonLight;
 

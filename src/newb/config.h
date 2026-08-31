@@ -62,9 +62,9 @@
 #define NL_DAY_ZENITH_COL    vec3(0.12,0.48,2.1)      // deep realistic sky blue
 #define NL_DAY_HORIZON_COL   vec3(0.55,1.1,1.65)      // soft hazy blue horizon
 #define NL_DAY_EDGE_COL      vec3(1.2,1.45,1.65)      // light atmospheric haze
-#define NL_NIGHT_ZENITH_COL  vec3(0.020,0.060,0.15)   // cyan zenith
-#define NL_NIGHT_HORIZON_COL vec3(0.030,0.120,0.18)   // cyan horizon
-#define NL_NIGHT_EDGE_COL    vec3(0.040,0.160,0.22)   // bright cyan edge
+#define NL_NIGHT_ZENITH_COL  vec3(0.05,0.16,0.30)    // cyan zenith
+#define NL_NIGHT_HORIZON_COL vec3(0.08,0.24,0.38)    // cyan horizon
+#define NL_NIGHT_EDGE_COL    vec3(0.10,0.30,0.45)    // bright cyan edge
 #define NL_RAIN_ZENITH_COL   vec3(0.35,0.38,0.42)     // overcast grey
 #define NL_RAIN_HORIZON_COL  vec3(0.48,0.5,0.52)
 #define NL_END_ZENITH_COL    vec3(0.08,0.001,0.1)
@@ -174,7 +174,7 @@
 
 /* Shooting star */
 #define NL_SHOOTING_STAR 1.0
-#define NL_SHOOTING_STAR_PERIOD 6.0
+#define NL_SHOOTING_STAR_PERIOD 5.0
 #define NL_SHOOTING_STAR_DELAY 16.0
 
 /* Galaxy */
