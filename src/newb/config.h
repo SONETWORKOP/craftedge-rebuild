@@ -103,6 +103,8 @@
 #define NL_WATER_BUMP 0.28              // stronger ripples -> sharper reflection detail
 #define NL_WATER_WAVE_SPEED  0.6        // calmer, more natural wave motion
 #define NL_WATER_SUN_DISC    0.35       // per-pixel sun disc mirror strength on water (0 = off)
+#define NL_WATER_SUN_TEXTURE 1.0        // sample the real textured sun quad (SunMoonTexture) instead of a procedural disc
+#define NL_WATER_SUN_QUAD_TAN 0.1283    // tan of half the sun quad angular size (35*NL_SUN_SIZE/300)
 #define NL_WATER_TEX_OPACITY 0.18       // let reflections read through more than texture
 #define NL_WATER_CLOUD_MIRROR 0.42      // soft, realistic cloud mirror on water (1.0 = full)
 #define NL_WATER_CLOUD_HEIGHT 192.0     // cloud height used by legacy cloud samplers
