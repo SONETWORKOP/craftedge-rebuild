@@ -7,10 +7,12 @@ SAMPLER2D_AUTOREG(s_MatTexture);
 SAMPLER2D_AUTOREG(s_SeasonsTexture);
 SAMPLER2D_AUTOREG(s_LightMapTexture);
 SAMPLER2D_AUTOREG(s_SunTexture);
+SAMPLER2D_AUTOREG(s_MoonTexture);
 
 uniform vec4 CameraPosition;
 uniform vec4 ViewPositionAndTime;
 uniform vec4 FogColor;
+uniform vec4 MoonPhase;
 
 /*
   Water cloud mirror.
@@ -90,30 +92,36 @@ vec4 waterCloudReflection(
 }
 
 /*
-  Real textured sun mirror on water.
+  Real textured sun/moon mirror on water.
 
-  Projects the reflected view ray into the sun's local plane (built from the
-  sun direction), samples the vanilla sun texture there, and keeps only the
-  bright sun pixels (luminance mask) inside a soft circular falloff (dist
-  mask). The texture is bound through `SunTexture` buffer -> textures/
-  environment/sun, NOT a white default - a white default rendered the mirror
-  invisible.
+  Projects the reflected view ray into the celestial body's local plane (built
+  from its direction), samples the vanilla sun or moon texture there, and keeps
+  only the bright pixels (luminance mask) inside a soft circular falloff (dist
+  mask). `quadTan` is half the body's angular size; `cellScale`/`cellOffset`
+  select a sub-rectangle of the texture (the moon_phases.png 4x2 grid). The
+  textures are bound through the `SunTexture`/`MoonTexture` buffers -> textures/
+  environment/sun / moon_phases, NOT a white default - a white default rendered
+  the mirror invisible.
 */
-vec3 sunTextureMovement(vec3 sunDir, vec3 rayDir, out float mask) {
-  vec3 forward = normalize(sunDir);
+vec3 celestialTextureMovement(
+  sampler2D tex, vec3 bodyDir, vec3 rayDir, float quadTan,
+  vec2 cellScale, vec2 cellOffset, out float mask
+) {
+  vec3 forward = normalize(bodyDir);
   vec3 right = normalize(cross(vec3(0.0, 1.0, 0.0), forward));
   vec3 up = cross(forward, right);
 
   vec2 uv = vec2(dot(rayDir, right), dot(rayDir, up));
-  float sunSize = NL_WATER_SUN_QUAD_TAN;
-  uv = uv / sunSize * 0.5 + 0.5;
+  uv = uv / quadTan * 0.5 + 0.5;
 
-  vec3 sunColor = texture2D(s_SunTexture, uv).rgb;
-  float lum = dot(sunColor, vec3(0.299, 0.587, 0.114));
-  float maskLum = smoothstep(0.0, 0.9, lum);
   float distMask = smoothstep(0.5, 0.48, length(uv - 0.5));
+  vec2 texUV = uv*cellScale + cellOffset;
+
+  vec3 bodyColor = texture2D(tex, texUV).rgb;
+  float lum = dot(bodyColor, vec3(0.299, 0.587, 0.114));
+  float maskLum = smoothstep(0.0, 0.9, lum);
   mask = maskLum * distMask;
-  return sunColor * mask;
+  return bodyColor * mask;
 }
 
 void main() {
@@ -176,16 +184,36 @@ void main() {
       );
       diffuse.rgb = mix(diffuse.rgb,cloudReflection.rgb,cloudReflection.a);
 
-      // real textured sun mirror on water (same flat-mirror ray as the clouds)
+      // real textured sun/moon mirror on water (same flat-mirror ray as the
+      // clouds). v_reflSun.xyz already holds the ACTIVE body (sun by day,
+      // moon by night), so pick the matching texture and phase cell.
       vec3 sunV = normalize(v_reflPbr.xyz);
       vec3 sunReflDir = vec3(-sunV.x, sunV.y, -sunV.z);
       if (sunReflDir.y > 0.004) {
         float sunMask;
-        vec3 sunTex = sunTextureMovement(wenv.sunDir, sunReflDir, sunMask);
-        float sunVisible = (1.0 - wenv.rainFactor)*smoothstep(-0.12, 0.06, wenv.dayFactor);
+        vec3 sunTex;
+        // moon is visible when the sun is down (dayFactor < 0), sun when it is up
+        float bodyVisible;
+        if (wenv.dayFactor > 0.0) {
+          sunTex = celestialTextureMovement(
+            s_SunTexture, wenv.sunDir, sunReflDir, NL_WATER_SUN_QUAD_TAN,
+            vec2_splat(1.0), vec2_splat(0.0), sunMask
+          );
+          bodyVisible = smoothstep(-0.12, 0.06, wenv.dayFactor);
+        } else {
+          // moon_phases.png is a 4x2 grid (8 phases, row-major)
+          float phase = mod(floor(MoonPhase.x + 0.5), 8.0);
+          vec2 moonCell = vec2(mod(phase, 4.0), floor(phase / 4.0));
+          sunTex = celestialTextureMovement(
+            s_MoonTexture, wenv.sunDir, sunReflDir, NL_WATER_MOON_QUAD_TAN,
+            vec2(0.25, 0.5), moonCell*vec2(0.25, 0.5), sunMask
+          );
+          bodyVisible = 1.0 - smoothstep(-0.12, 0.06, wenv.dayFactor);
+        }
+        bodyVisible *= (1.0 - wenv.rainFactor);
         vec3 sunCol = sunLightTint(wenv.dayFactor, wenv.rainFactor);
         sunCol *= NL_SUNLIGHT_INTENSITY;
-        diffuse.rgb += sunTex*sunCol*NL_WATER_SUN_DISC*sunVisible;
+        diffuse.rgb += sunTex*sunCol*NL_WATER_SUN_DISC*bodyVisible;
       }
     #endif
   } else if (v_refl.a > 0.0) {

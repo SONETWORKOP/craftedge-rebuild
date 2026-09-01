@@ -105,6 +105,7 @@
 #define NL_WATER_TEX_OPACITY 0.18       // let reflections read through more than texture
 #define NL_WATER_SUN_DISC    0.35       // per-pixel sun disc mirror strength on water (0 = off)
 #define NL_WATER_SUN_QUAD_TAN 0.1283    // tan of half the sun quad angular size (35*NL_SUN_SIZE/300)
+#define NL_WATER_MOON_QUAD_TAN 0.1167   // tan of half the moon quad angular size (35*NL_MOON_SIZE/300)
 #define NL_WATER_CLOUD_MIRROR 0.42      // soft, realistic cloud mirror on water (1.0 = full)
 #define NL_WATER_CLOUD_HEIGHT 192.0     // cloud height used by legacy cloud samplers
 #define NL_WATER_CLOUD_REFLECTION_DEPTH 2.0 // clouds appear this many blocks below the surface
