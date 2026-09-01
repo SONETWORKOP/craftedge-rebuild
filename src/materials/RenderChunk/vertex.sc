@@ -2,7 +2,7 @@ $input a_color0, a_position, a_texcoord0, a_texcoord1
 #ifdef INSTANCING
   $input i_data0, i_data1, i_data2, i_data3
 #endif
-$output v_color0, v_color1, v_fog, v_refl, v_texcoord0, v_lightmapUV, v_extra, v_position, v_reflPbr, v_reflSun
+$output v_color0, v_color1, v_fog, v_refl, v_texcoord0, v_lightmapUV, v_extra, v_position, v_reflPbr, v_reflSun, v_sunMoon
 
 #include <bgfx_shader.sh>
 #include <newb/main.sh>
@@ -197,9 +197,11 @@ void main() {
   v_position = worldPos;
   // viewDir (surface->camera) in xyz, rainFactor in w
   v_reflPbr = vec4(viewDir, env.rainFactor);
-  // active sun/moon direction in xyz, dayFactor in w
-  vec3 pbrSunDir = env.dayFactor > 0.0 ? env.sunDir : env.moonDir;
-  v_reflSun = vec4(pbrSunDir, env.dayFactor);
+  // real sun dir in xyz, dayFactor in w; real moon dir in v_sunMoon.xyz.
+  // The fragment picks sun vs moon by the sun's height above the horizon
+  // (v_reflSun.y), so the sun leaves the water the moment it visually sets.
+  v_reflSun = vec4(env.sunDir, env.dayFactor);
+  v_sunMoon = vec4(env.moonDir, 0.0);
 
   #else
 

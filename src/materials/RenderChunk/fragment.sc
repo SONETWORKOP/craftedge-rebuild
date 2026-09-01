@@ -1,4 +1,4 @@
-$input v_color0, v_color1, v_fog, v_refl, v_texcoord0, v_lightmapUV, v_extra, v_position, v_reflPbr, v_reflSun
+$input v_color0, v_color1, v_fog, v_refl, v_texcoord0, v_lightmapUV, v_extra, v_position, v_reflPbr, v_reflSun, v_sunMoon
 
 #include <bgfx_shader.sh>
 #include <newb/main.sh>
@@ -174,7 +174,7 @@ void main() {
       wenv.rainFactor = v_reflPbr.w;
       wenv.dayFactor = v_reflSun.w;
       wenv.sunDir = v_reflSun.xyz;
-      wenv.moonDir = -v_reflSun.xyz;
+      wenv.moonDir = v_sunMoon.xyz;
       wenv.fogCol = FogColor.rgb;
       nl_skycolor wskycol = nlOverworldSkyColors(wenv);
 
@@ -185,31 +185,32 @@ void main() {
       diffuse.rgb = mix(diffuse.rgb,cloudReflection.rgb,cloudReflection.a);
 
       // real textured sun/moon mirror on water (same flat-mirror ray as the
-      // clouds). v_reflSun.xyz already holds the ACTIVE body (sun by day,
-      // moon by night), so pick the matching texture and phase cell.
+      // clouds). v_reflSun.xyz is the real sun dir, v_sunMoon.xyz the real
+      // moon dir. Which body shows is decided by the sun's actual height
+      // (v_reflSun.y) - not dayFactor - so at sunset the sun leaves the
+      // water exactly when it visually sets and the moon takes over.
       vec3 sunV = normalize(v_reflPbr.xyz);
       vec3 sunReflDir = vec3(-sunV.x, sunV.y, -sunV.z);
       if (sunReflDir.y > 0.004) {
         float sunMask;
         vec3 sunTex;
-        // moon is visible when the sun is down (dayFactor < 0), sun when it is up
-        float bodyVisible;
-        if (wenv.dayFactor > 0.0) {
+        float sunHeight = v_reflSun.y;
+        float sunFade = smoothstep(-0.03, 0.03, sunHeight);
+        if (sunHeight > 0.0) {
           sunTex = celestialTextureMovement(
             s_SunTexture, wenv.sunDir, sunReflDir, NL_WATER_SUN_QUAD_TAN,
             vec2_splat(1.0), vec2_splat(0.0), sunMask
           );
-          bodyVisible = smoothstep(-0.12, 0.06, wenv.dayFactor);
         } else {
           // moon_phases.png is a 4x2 grid (8 phases, row-major)
           float phase = mod(floor(MoonPhase.x + 0.5), 8.0);
           vec2 moonCell = vec2(mod(phase, 4.0), floor(phase / 4.0));
           sunTex = celestialTextureMovement(
-            s_MoonTexture, wenv.sunDir, sunReflDir, NL_WATER_MOON_QUAD_TAN,
+            s_MoonTexture, wenv.moonDir, sunReflDir, NL_WATER_MOON_QUAD_TAN,
             vec2(0.25, 0.5), moonCell*vec2(0.25, 0.5), sunMask
           );
-          bodyVisible = 1.0 - smoothstep(-0.12, 0.06, wenv.dayFactor);
         }
+        float bodyVisible = sunHeight > 0.0 ? sunFade : (1.0 - sunFade);
         bodyVisible *= (1.0 - wenv.rainFactor);
         vec3 sunCol = sunLightTint(wenv.dayFactor, wenv.rainFactor);
         sunCol *= NL_SUNLIGHT_INTENSITY;
