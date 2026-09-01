@@ -198,7 +198,7 @@ void main() {
   // viewDir (surface->camera) in xyz, rainFactor in w
   v_reflPbr = vec4(viewDir, env.rainFactor);
   // active sun/moon direction in xyz, dayFactor in w
-  vec3 pbrSunDir = env.sunDir.y > 0.0 ? env.sunDir : env.moonDir;
+  vec3 pbrSunDir = env.dayFactor > 0.0 ? env.sunDir : env.moonDir;
   v_reflSun = vec4(pbrSunDir, env.dayFactor);
 
   #else
