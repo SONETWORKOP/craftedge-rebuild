@@ -42,6 +42,7 @@
 /* Fog - realistic atmospheric depth */
 #define NL_FOG 1.3
 #define NL_MIST_DENSITY 0.38            // natural distance haze
+#define NL_END_FOG 1.6                  // End-only extra fog thickness (1.0 = same as overworld)
 #define NL_RAIN_MIST_OPACITY 0.4        // much thicker mist in rain
 #define NL_CLOUDY_FOG 0.25              // stronger overcast haze on cloudy days
 
@@ -71,8 +72,8 @@
 #define NL_NIGHT_SKY_BRIGHTNESS 1.5
 #define NL_RAIN_ZENITH_COL   vec3(0.35,0.38,0.42)     // overcast grey
 #define NL_RAIN_HORIZON_COL  vec3(0.48,0.5,0.52)
-#define NL_END_ZENITH_COL    vec3(0.08,0.001,0.1)
-#define NL_END_HORIZON_COL   vec3(0.6,0.02,0.6)
+#define NL_END_ZENITH_COL    vec3(0.32,0.004,0.4)
+#define NL_END_HORIZON_COL   vec3(1.2,0.04,1.2)
 
 /* End black hole */
 #define NL_END_BLACK_HOLE

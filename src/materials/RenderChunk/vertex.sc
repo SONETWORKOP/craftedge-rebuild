@@ -118,7 +118,7 @@ void main() {
 
   vec4 fogColor;
   fogColor.rgb = nlRenderSky(skycol, env, viewDir, t, true);
-  fogColor.a = nlRenderFogFade(relativeDist, FogColor.rgb, FogAndDistanceControl.xy);
+  fogColor.a = nlRenderFogFade(relativeDist, FogColor.rgb, FogAndDistanceControl.xy, env.end);
   fogColor.a = nlRenderHeightFog(fogColor.a, worldPos.y, relativeDist);
   #if defined(NL_GODRAY) && defined(NL_FOG)
     float godRayAmount = min(NL_GODRAY*nlRenderGodRayIntensity(cPos, worldPos, t, uv1, relativeDist, FogColor.rgb), 1.0);
