@@ -179,10 +179,10 @@
 #define NL_AURORA_COL2 vec3(0.35,0.85,1.0)  // bright cyan-blue
 #define NL_CLOUD_AURORA_REFLECTION
 
-/* Shooting star */
+/* Shooting star - 4 streaks fire together every NL_SHOOTING_STAR_PERIOD seconds */
 #define NL_SHOOTING_STAR 1.0
 #define NL_SHOOTING_STAR_PERIOD 5.0
-#define NL_SHOOTING_STAR_DELAY 16.0
+#define NL_SHOOTING_STAR_DELAY 0.0
 
 /* Galaxy */
 //#define NL_GALAXY_STARS 2.0
