@@ -2,7 +2,11 @@ $input v_color0, v_color1, v_fog, v_refl, v_texcoord0, v_lightmapUV, v_extra, v_
 
 #include <bgfx_shader.sh>
 SAMPLER2D_AUTOREG(s_NoiseTexture);
+// noise texture driving the aurora curtain - shared with the Sky dome via
+// newb/functions/clouds.h so the water mirror draws the same aurora shape
+SAMPLER2D_AUTOREG(s_NoiseVoxel);
 #define NL_ROUNDED_CLOUDS
+#define NL_AURORA_REFLECTION
 #include <newb/main.sh>
 
 SAMPLER2D_AUTOREG(s_MatTexture);
@@ -78,6 +82,24 @@ vec4 waterCloudReflection(
     // mirror lines up with the sky's RoundedClouds exactly
     float jitter = fract(sin(dot(reflDir.xy, vec2(12.9898, 78.233))) * 43758.5453);
     clouds = nlRoundedClouds(reflDir, t, jitter);
+  #endif
+
+  // the night sky's textured aurora - sampled on the same reflected ray as
+  // the clouds, from the exact function the Sky dome draws, so the water
+  // mirror shows the identical aurora shape (night only, rain fades it like
+  // the sky version). Added to the cloud reflection, so both are scaled
+  // together by the fresnel/mirror factors below.
+  #ifdef NL_AURORA_REFLECTION
+    float VdotU = clamp(reflDir.y, 0.0, 1.0);
+    float nightFactor = 1.0 - smoothstep(-0.02, 0.32, dayFactor);
+    if (nightFactor > 0.001 && VdotU > 0.15) {
+      float dither = fract(sin(dot(reflDir.xy, vec2(12.9898, 78.233))) * 43758.5453);
+      vec3 aurora = NL_AURORA_TEX*nightFactor*nlAuroraBorealis(
+        reflDir, VdotU, dither, rain, CameraPosition.xz, t
+      );
+      clouds.rgb += aurora;
+      clouds.a = max(clouds.a, clamp(dot(aurora, vec3(0.2126, 0.7152, 0.0722)), 0.0, 1.0));
+    }
   #endif
 
   // water is more mirror-like at grazing angles

@@ -43,18 +43,14 @@ vec4 nlWater(
 
   vec3 waterRefl = nlRenderSky(skycol, env, reflDir, t, false);
 
-  #if defined(NL_CLOUD_AURORA_REFLECTION)
+  // The fragment-stage waterCloudReflection now mirrors the clouds AND the
+  // textured night aurora (the exact nlAuroraBorealis shape the Sky dome
+  // draws) per-pixel, matching the sky. This vertex path is only a fallback
+  // for subpacks that disable the per-pixel mirror (NL_NO_WATER_CLOUD_REFL),
+  // where it has to supply the full cloud + aurora reflection itself.
+  #if defined(NL_CLOUD_AURORA_REFLECTION) && defined(NL_NO_WATER_CLOUD_REFL)
     if (reflDir.y < 0.0) {
-      // Clouds themselves are mirrored per-pixel in the RenderChunk fragment
-      // stage (waterCloudReflection), which matches the sky shapes exactly.
-      // Only take the aurora layer here so two different cloud shapes don't
-      // stack on the water surface.
-      #ifdef NL_NO_WATER_CLOUD_REFL
-        float vertexCloudAmount = 1.0;
-      #else
-        float vertexCloudAmount = 0.0;
-      #endif
-      vec4 cloudRefl = nlCloudAuroraReflection(skycol, env, reflDir, wPos, CAMERA_POS, t, vertexCloudAmount);
+      vec4 cloudRefl = nlCloudAuroraReflection(skycol, env, reflDir, wPos, CAMERA_POS, t, 1.0);
       waterRefl = mix(waterRefl, cloudRefl.rgb, cloudRefl.a);
     }
   #endif

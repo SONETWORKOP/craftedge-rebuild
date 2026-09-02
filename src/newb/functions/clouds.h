@@ -441,6 +441,50 @@ vec4 renderAurora(vec3 p, float t, float rain, vec3 FOG_COLOR) {
 }
 #endif
 
+// Texture-based aurora borealis - the night sky's curtain. Moved out of the
+// Sky fragment (which alone used to draw it) so the water mirror in RenderChunk
+// can sample the identical shape. Requires the material to bind s_NoiseVoxel.
+#ifdef NL_AURORA_REFLECTION
+float nlAurPow2(float x) { return x*x; }
+float nlAurPow1_5(float x) { return x*sqrt(max(x, 0.0)); }
+float nlAurClamp01(float x) { return clamp(x, 0.0, 1.0); }
+float nlAurSqrt1(float x) { return sqrt(max(x, 0.0)); }
+
+vec3 nlAuroraBorealis(vec3 vDir, float VdotU, float dither, float rain, vec2 camPosXZ, highp float t) {
+  float visibility = nlAurSqrt1(nlAurClamp01(VdotU*1.5 - 0.225)) - rain;
+  visibility *= 1.0 - VdotU*0.9;
+  if (visibility <= 0.0) return vec3_splat(0.0);
+
+  vec3 aurora = vec3_splat(0.0);
+
+  vec3 wpos = vDir;
+  wpos.xz /= max(0.0001, wpos.y);
+  vec2 cameraPositionM = camPosXZ*0.0075;
+  cameraPositionM.x += t*0.04;
+
+  const int sampleCountP = NL_AURORA_TEX_LAYERS + 10;
+  float ditherM = dither + 5.0;
+  float auroraAnimate = t*0.001;
+
+  for (int i = 0; i < NL_AURORA_TEX_LAYERS; i++) {
+    float current = nlAurPow2((float(i) + ditherM)/float(sampleCountP));
+
+    vec2 planePos = wpos.xz*(0.8 + current)*11.0 + cameraPositionM;
+    planePos = floor(planePos)*0.0007;
+
+    float n = texture2D(s_NoiseVoxel, planePos).b;
+    n = nlAurPow2(nlAurPow2(nlAurPow2(nlAurPow2(1.0 - 2.0*abs(n - 0.5)))));
+    n *= nlAurPow1_5(texture2D(s_NoiseVoxel, planePos*100.0 + auroraAnimate).b);
+
+    float currentM = 1.0 - current;
+    aurora += n*currentM*mix(NL_AURORA_TEX_COL1, NL_AURORA_TEX_COL2, nlAurPow2(nlAurPow2(currentM)));
+  }
+
+  aurora *= 1.3;
+  return aurora*visibility/float(NL_AURORA_TEX_LAYERS);
+}
+#endif
+
 vec4 nlCloudAuroraReflection(nl_skycolor skycol, nl_environment env, vec3 viewDir, vec3 wPos, vec3 CAMERA_POS, highp float t, float cloudAmount) {
   vec2 cloudPos = wPos.xz;
   float viewDirY = viewDir.y >= 0.0 ? max(viewDir.y, 0.01) : min(viewDir.y, -0.01);
