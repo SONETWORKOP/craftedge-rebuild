@@ -239,6 +239,14 @@
 #define NL_LAVA_NOISE_SPEED 0.2
 
 /* ---- SUBPACK CONFIG ---- */
+#ifdef MEDIUM
+  // Disable the cloud + aurora mirror on water (the two heaviest water
+  // reflection layers - per-pixel cloud raymarch + 10-layer aurora curtain).
+  // The cheap textured sun/moon disc and the ground/block reflections stay,
+  // so Medium sits between High and Low.
+  #define NL_NO_WATER_CLOUD_AURORA_REFL
+#endif
+
 #ifdef LITE
   #define NO_WAVE
   #undef NL_GLOW_SHIMMER

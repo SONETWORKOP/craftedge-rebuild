@@ -183,8 +183,6 @@ void main() {
     diffuse.rgb += v_refl.rgb*v_refl.a;
 
     #ifndef NL_NO_WATER_CLOUD_REFL
-      vec3 surfacePos = v_position+CameraPosition.xyz;
-
       // rebuild the sky palette so the mirrored clouds are shaded with the
       // same horizon tint the Clouds material uses (cheap: only mix() ops)
       nl_environment wenv;
@@ -196,13 +194,18 @@ void main() {
       wenv.sunDir = v_reflSun.xyz;
       wenv.moonDir = v_sunMoon.xyz;
       wenv.fogCol = FogColor.rgb;
-      nl_skycolor wskycol = nlOverworldSkyColors(wenv);
 
-      vec4 cloudReflection = waterCloudReflection(
-        surfacePos, v_reflPbr.xyz, wenv.rainFactor, wenv.dayFactor,
-        wskycol.horizonEdge, ViewPositionAndTime.w
-      );
-      diffuse.rgb = mix(diffuse.rgb,cloudReflection.rgb,cloudReflection.a);
+      // cloud + aurora mirror (the two heaviest layers) can be dropped by the
+      // Medium subpack while keeping the cheap sun/moon disc below
+      #ifndef NL_NO_WATER_CLOUD_AURORA_REFL
+        vec3 surfacePos = v_position+CameraPosition.xyz;
+        nl_skycolor wskycol = nlOverworldSkyColors(wenv);
+        vec4 cloudReflection = waterCloudReflection(
+          surfacePos, v_reflPbr.xyz, wenv.rainFactor, wenv.dayFactor,
+          wskycol.horizonEdge, ViewPositionAndTime.w
+        );
+        diffuse.rgb = mix(diffuse.rgb,cloudReflection.rgb,cloudReflection.a);
+      #endif
 
       // real textured sun/moon mirror on water (same flat-mirror ray as the
       // clouds). v_reflSun.xyz is the real sun dir, v_sunMoon.xyz the real

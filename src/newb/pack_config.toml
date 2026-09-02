@@ -34,13 +34,24 @@ define = "VIBRANT_CLOUD"
 materials = ["Sky", "RenderChunk", "Clouds"]
 description = '''
 Vibrant Clouds
+Replace the default clouds with vibrant painted clouds.
+'''
+
+[[subpack]]
+define = "MEDIUM"
+materials = ["RenderChunk"]
+description = '''
+Medium
+Cloud & aurora reflections on water are turned off for better performance.
+Sun/Moon mirror and ground reflections stay on.
 '''
 
 [[subpack]]
 define = "NO_REFLECTIONS"
 materials = ["RenderChunk"]
 description = '''
-No Reflections
+Low
+Ground, block & water reflections are turned off. The lightest option.
 '''
 
 #[[subpack]]
