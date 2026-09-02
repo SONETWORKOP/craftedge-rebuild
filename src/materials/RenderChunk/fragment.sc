@@ -1,6 +1,8 @@
 $input v_color0, v_color1, v_fog, v_refl, v_texcoord0, v_lightmapUV, v_extra, v_position, v_reflPbr, v_reflSun, v_sunMoon
 
 #include <bgfx_shader.sh>
+SAMPLER2D_AUTOREG(s_NoiseTexture);
+#define NL_ROUNDED_CLOUDS
 #include <newb/main.sh>
 
 SAMPLER2D_AUTOREG(s_MatTexture);
@@ -72,14 +74,10 @@ vec4 waterCloudReflection(
     mask *= smoothstep(0.05, 0.35, reflDir.y)*NL_SKY_CLOUD_OPACITY;
     clouds = vec4(nlVibrantCloudColor(dayFactor, sunLightTint(dayFactor, rain)), mask);
   #else
-    // renderOldClouds builds uv as dir.xz*(0.8/dir.y), so pre-multiplying the
-    // wobble by dir.y/0.8 makes it land as an exact, angle-independent uv
-    // offset - no stretching at grazing angles.
-    vec3 sampleDir = reflDir;
-    sampleDir.xz += wobble*max(reflDir.y, 0.025)/0.8;
-    // same sampler and same camera offset the Clouds material uses, so the
-    // mirrored shapes line up 1:1 with the sky
-    clouds = renderOldClouds(sampleDir, CameraPosition.xz + depthShift, t, rain, horizonCol);
+    // raymarched rounded clouds (same function the sky uses), so the water
+    // mirror lines up with the sky's RoundedClouds exactly
+    float jitter = fract(sin(dot(reflDir.xy, vec2(12.9898, 78.233))) * 43758.5453);
+    clouds = nlRoundedClouds(reflDir, t, jitter);
   #endif
 
   // water is more mirror-like at grazing angles

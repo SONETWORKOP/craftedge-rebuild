@@ -5,6 +5,8 @@
 #include <bgfx_shader.sh>
 
 #ifndef INSTANCING
+  SAMPLER2D_AUTOREG(s_NoiseTexture);
+  #define NL_ROUNDED_CLOUDS
   #include <newb/main.sh>
   uniform vec4 TimeOfDay;
   uniform vec4 Day;
@@ -126,6 +128,16 @@ void main() {
         // cloud color tinted by sky/sun, darker at night
         vec3 cloudCol = nlVibrantCloudColor(env.dayFactor, sunLightTint(env.dayFactor, env.rainFactor));
         skyColor.rgb = mix(skyColor.rgb, cloudCol, clamp(cloudA, 0.0, 1.0));
+      }
+    #else
+      // raymarched rounded clouds (RoundedClouds from cloud.txt), the default
+      // replacement for the old blocky box clouds
+      if (!env.underwater && viewDir.y > 0.001) {
+        float jitter = fract(sin(dot(viewDir.xy, vec2(12.9898, 78.233))) * 43758.5453);
+        vec4 clouds = nlRoundedClouds(viewDir, v_underwaterRainTimeDay.z, jitter);
+        float opacity = smoothstep(0.1, 0.3, viewDir.y);
+        float cloudMask = clouds.a * 0.5 * opacity;
+        skyColor.rgb = mix(skyColor.rgb, clouds.rgb, cloudMask);
       }
     #endif
 

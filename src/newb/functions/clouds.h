@@ -363,6 +363,66 @@ vec4 renderClouds(vec2 p, float t, float rain, vec3 horizonCol, vec3 zenithCol, 
   return col;
 }
 
+// --- RoundedClouds from Download/cloud.txt (raymarched clouds) ---
+// Guarded by NL_ROUNDED_CLOUDS: it needs s_NoiseTexture (textures/environment/
+// clouds), which only materials that define NL_ROUNDED_CLOUDS declare.
+#ifdef NL_ROUNDED_CLOUDS
+float nlCloudFbm(vec3 p) {
+  vec2 uv = p.xy * 0.025;
+  uv = fract(uv);
+  return texture2D(s_NoiseTexture, uv).r;
+}
+
+vec4 nlRoundedClouds(vec3 viewDir, float time, float jitter) {
+  float cloudBase = 1.1;
+  float cloudTop = 1.3;
+  int steps = 32;
+  vec3 bottomColor = vec3(0.5, 0.55, 0.6);
+  vec3 sideColor = vec3(0.9, 0.95, 1.0);
+  vec3 colors = mix(sideColor, bottomColor, 0.5);
+  float stepSize = (cloudTop - cloudBase) / float(steps);
+
+  vec3 rayOrigin = vec3(0.0, 0.0, 0.0);
+  vec3 cloudAccum = vec3(0.35, 0.35, 0.35);
+  float alphaAccum = 0.0;
+  float viewLift = step(0.0, viewDir.y);
+
+  float prevDensity = 0.0;
+
+  for (int i = 0; i < steps; i++) {
+    float height = cloudBase + stepSize * (float(i) + jitter);
+    float t = height / max(viewDir.y, 0.001);
+    t = min(t, 55.0);
+    vec3 pos = rayOrigin + viewDir * t;
+
+    vec3 noisePos = vec3(pos.xz * 0.9 + time * 0.05, height * 0.8);
+    float base = nlCloudFbm(noisePos);
+
+    float heightNorm = (height - cloudBase) / (cloudTop - cloudBase);
+    float heightFactor = smoothstep(0.2, 0.9, heightNorm) * (1.0 - smoothstep(0.6, 1.0, heightNorm));
+    heightFactor *= smoothstep(0.2, 0.6, base);
+
+    float density = base;
+    density = 2.4 * clamp(density - 0.0, 0.0, 1.0);
+    density = pow(density, 1.8) * heightFactor;
+
+    float alpha = 1.0 - smoothstep(0.01, 0.0, density);
+    alpha *= (1.0 - alphaAccum) * viewLift;
+
+    vec3 TopColor = vec3(1.0, 0.925, 0.875);
+    vec3 BottomColor = vec3(0.0, 0.15, 0.25);
+    float heightNormal = smoothstep(-0.2, 1.0, heightNorm);
+    vec3 coloredScattering = mix(BottomColor, TopColor, heightNormal);
+    cloudAccum += vec3(1.0, 1.0, 1.0) * coloredScattering * alpha;
+    alphaAccum += alpha;
+
+    if (alphaAccum > 0.98 && viewDir.y < 0.9) break;
+  }
+
+  return vec4(cloudAccum, alphaAccum);
+}
+#endif
+
 // aurora is rendered on clouds layer
 #ifdef NL_AURORA
 vec4 renderAurora(vec3 p, float t, float rain, vec3 FOG_COLOR) {

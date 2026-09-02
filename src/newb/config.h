@@ -121,8 +121,8 @@
 #define NL_UNDERWATER_STREAKS 1.1
 #define NL_UNDERWATER_TINT vec3(0.8,0.95,1.0)
 
-/* Cloud type - old vanilla box clouds default (type 4) */
-#define NL_CLOUD_TYPE 4            // 4=old vanilla box clouds (default)
+/* Cloud type - old vanilla box clouds replaced by sky-dome RoundedClouds (0) */
+#define NL_CLOUD_TYPE 0            // 0=vanilla cloud (opacity 0 = disabled), default sky clouds are RoundedClouds
 
 /* Sky-dome procedural clouds (vibrant) - OFF by default, enabled via VIBRANT_CLOUD subpack */
 //#define NL_SKY_CLOUDS
