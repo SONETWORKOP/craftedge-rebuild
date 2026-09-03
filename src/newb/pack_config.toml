@@ -26,22 +26,15 @@ credits = '''
 Based on Newb Shader by devendrn (https://github.com/devendrn/newb-x-mcbe)
 '''
 
-# subpacks are shown in this order (left to right)
-# High (base pack) is listed first, then Vibrant Clouds, Medium, Low
+# subpacks: listed High first, then Vibrant Clouds, Medium, Low (Low last)
+# High is the default/base quality.
 
 [[subpack]]
-define = "DEFAULT"
-materials = []
+define = "NO_REFLECTIONS"
+materials = ["RenderChunk"]
 description = '''
-High
-'''
-
-[[subpack]]
-define = "VIBRANT_CLOUD"
-materials = ["Sky", "RenderChunk", "Clouds"]
-description = '''
-Vibrant Clouds
-Replace the default clouds with vibrant painted clouds.
+Low
+Ground, block & water reflections are turned off. The lightest option.
 '''
 
 [[subpack]]
@@ -54,11 +47,18 @@ Sun/Moon mirror and ground reflections stay on.
 '''
 
 [[subpack]]
-define = "NO_REFLECTIONS"
-materials = ["RenderChunk"]
+define = "VIBRANT_CLOUD"
+materials = ["Sky", "RenderChunk", "Clouds"]
 description = '''
-Low
-Ground, block & water reflections are turned off. The lightest option.
+Vibrant Clouds
+Replace the default clouds with vibrant painted clouds.
+'''
+
+[[subpack]]
+define = "DEFAULT"
+materials = []
+description = '''
+High
 '''
 
 #[[subpack]]
