@@ -26,8 +26,15 @@ credits = '''
 Based on Newb Shader by devendrn (https://github.com/devendrn/newb-x-mcbe)
 '''
 
-# subpacks are arranged in left to right order
-# right-most subpack is enabled by default
+# subpacks are shown in this order (left to right)
+# High (base pack) is listed first, then Vibrant Clouds, Medium, Low
+
+[[subpack]]
+define = "DEFAULT"
+materials = []
+description = '''
+High
+'''
 
 [[subpack]]
 define = "VIBRANT_CLOUD"
@@ -60,10 +67,3 @@ Ground, block & water reflections are turned off. The lightest option.
 #description = '''
 #Many effects disabled. A bit lighter!
 #'''
-
-[[subpack]]
-define = "DEFAULT"
-materials = []
-description = '''
-High
-'''
