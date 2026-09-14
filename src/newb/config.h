@@ -7,20 +7,20 @@
   Tuned for punchy, saturated colors with natural lighting and soft shadows.
 */
 
-/* Color correction - tone.txt linear workflow */
+/* Color correction - tone.txt linear workflow - cinematic */
 #define NL_TONEMAP_TYPE 4              // ACES filmic - cinematic highlight rolloff + natural desaturation
 #define NL_GAMMA 1.2                   // legacy (unused by tone.txt sRGB path, kept for compat)
-#define NL_EXPOSURE 0.82               // day bright fix - sRGB encode brightens, so low (was 1.0)
-#define NL_SATURATION 1.08             // pulled back from 1.4 -> restrained, filmic color
+#define NL_EXPOSURE 0.72               // cinematic dark - was 0.82, still bright
+#define NL_SATURATION 1.15             // cinematic punch - was 1.08
 #define NL_TINT                        // ON: subtle teal-orange cinematic split-tone
-#define NL_TINT_LOW  vec3(0.85,0.92,1.08)  // shadows lean cool/teal
-#define NL_TINT_HIGH vec3(1.08,1.0,0.86)   // highlights lean warm/orange
+#define NL_TINT_LOW  vec3(0.82,0.90,1.10)  // shadows more cool/teal cinematic
+#define NL_TINT_HIGH vec3(1.10,1.0,0.84)   // highlights warm orange cinematic
 
-/* Lighting - BSL-like strong directional light */
-#define NL_SUNLIGHT_INTENSITY   3.6    // day bright fix - was 4.8, too hot with linear
-#define NL_TORCHLIGHT_INTENSITY 1.6    // warmer brighter torches
-#define NL_SHADOW_INTENSITY     1.7    // slightly deeper shadows for cinematic mood
-#define NL_MIN_LIGHTING_BOOST   0.82   // balanced ambient - dark nights but visible
+/* Lighting - BSL-like strong directional light - cinematic */
+#define NL_SUNLIGHT_INTENSITY   3.2    // cinematic - was 3.6
+#define NL_TORCHLIGHT_INTENSITY 2.0    // torch compensate - exposure low se dark na ho
+#define NL_SHADOW_INTENSITY     1.9    // deeper cinematic shadows - was 1.7
+#define NL_MIN_LIGHTING_BOOST   0.65   // darker ambient, more contrast - was 0.82
 //#define NL_BLINKING_TORCH
 #define NL_CLOUD_SHADOW
 
@@ -69,8 +69,8 @@
 
 // midnight boost for the night sky: multiplies night colors so the cyan
 // survives the atmosphere dimmer + ACES tonemap. 0 = no boost (old behavior)
-// 1.85 = exposure 0.82 ko compensate karke night v1 jaisa perfect rakhta hai
-#define NL_NIGHT_SKY_BRIGHTNESS 1.85
+// 2.1 = exposure 0.72 ko compensate karke night perfect rakhta hai
+#define NL_NIGHT_SKY_BRIGHTNESS 2.1
 #define NL_RAIN_ZENITH_COL   vec3(0.35,0.38,0.42)     // overcast grey
 #define NL_RAIN_HORIZON_COL  vec3(0.48,0.5,0.52)
 #define NL_END_ZENITH_COL    vec3(0.32,0.004,0.4)
