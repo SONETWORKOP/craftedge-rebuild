@@ -49,6 +49,38 @@ vec3 reinhard(vec3 x) {
 }
 
 vec3 colorCorrection(vec3 col) {
+  col = max(col, vec3_splat(0.0));
+
+  #if NL_TONEMAP_TYPE == 5
+    // ---- CraftEdge Preserve (custom): brightness lock, sirf colours ----
+    // Is mode me brightness ka ek hi knob hai: NL_EXPOSURE (1.0 = neutral,
+    // bilkul no boost). Uske baad har step luminance preserve karta hai -
+    // mids ki brightness bilkul same rehti hai, sirf chroma/saturation/tint
+    // improve hote hain. Highlights (>1) ka soft shoulder sirf white clipping
+    // rokta hai (kabhi bright nahi karta).
+    #ifdef NL_EXPOSURE
+      col *= NL_EXPOSURE;
+    #endif
+    float lumIn = luminance(col);
+    // soft shoulder: lum<=1 par 1.0 (no-op), uske upar gentle compress
+    float shoulder = 1.0 / (1.0 + max(lumIn - 1.0, 0.0) * 0.6);
+    col *= shoulder;
+    #ifdef NL_TINT
+      // tint multiply ke baad luma wapas match (brightness lock)
+      float lumG = luminance(col);
+      vec3 tinted = col * mix(NL_TINT_LOW, NL_TINT_HIGH, col);
+      float lumT = luminance(tinted);
+      col = tinted * (lumG / max(lumT, 1e-5));
+    #endif
+    // sRGB encode (display ke liye zaroori - ye boost nahi, correct output hai)
+    col = linearToSRGB(col);
+    #ifdef NL_SATURATION
+      // display luma ke around mix = brightness preserved by construction
+      col = mix(vec3_splat(luminance(col)), col, NL_SATURATION);
+    #endif
+    return col;
+  #endif
+
   #ifdef NL_EXPOSURE
     col *= NL_EXPOSURE;
   #endif
@@ -92,8 +124,23 @@ vec3 colorCorrection(vec3 col) {
   return col;
 }
 
-// inv used in fogcolor for nether (approximate - ACES is not perfectly invertible)
+// inv used in fogcolor (Preserve mode: fog range lum<1 me exact, kyunki shoulder wahan 1.0 tha)
 vec3 colorCorrectionInv(vec3 col) {
+  #if NL_TONEMAP_TYPE == 5
+    #ifdef NL_SATURATION
+      col = mix(vec3_splat(dot(col,vec3(0.21, 0.71, 0.08))), col, 1.0/NL_SATURATION);
+    #endif
+    col = sRGBtoLinear(col);
+    #ifdef NL_TINT
+      // forward luma-restore ka approx inverse (fog-range me accurate)
+      vec3 k = mix(NL_TINT_LOW, NL_TINT_HIGH, col);
+      col /= max(k, vec3_splat(1e-4));
+    #endif
+    #ifdef NL_EXPOSURE
+      col /= NL_EXPOSURE;
+    #endif
+    return col;
+  #endif
   #ifdef NL_TINT
     col /= mix(NL_TINT_LOW, NL_TINT_HIGH, col); // not accurate inverse
   #endif
