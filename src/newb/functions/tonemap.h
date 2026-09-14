@@ -52,19 +52,30 @@ vec3 colorCorrection(vec3 col) {
   col = max(col, vec3_splat(0.0));
 
   #if NL_TONEMAP_TYPE == 5
-    // ---- CraftEdge Preserve (custom): brightness lock, sirf colours ----
-    // Is mode me brightness ka ek hi knob hai: NL_EXPOSURE (1.0 = neutral,
-    // bilkul no boost). Uske baad har step luminance preserve karta hai -
-    // mids ki brightness bilkul same rehti hai, sirf chroma/saturation/tint
-    // improve hote hain. Highlights (>1) ka soft shoulder sirf white clipping
-    // rokta hai (kabhi bright nahi karta).
+    // ---- CraftEdge Custom (full custom filmic, pack-calibrated) ----
+    // Is pack ki lighting hot hai (sun 3.8, day sky 2.1 tak, torch 1.2),
+    // isliye curve pack ke hisab se bani hai - ACES/Reinhard ka koi part nahi:
+    //   toe: shadows thode rich, black crush nahi (0 -> 0 pakka)
+    //   pivot 0.35 (linear): mids ki brightness bilkul same (vanilla jaisi)
+    //   shoulder: suraj/sky ka HDR soft white me, blowout/white-clip nahi
+    // Hue kahin nahi badalta (sirf uniform scale lagta hai).
     #ifdef NL_EXPOSURE
       col *= NL_EXPOSURE;
     #endif
-    float lumIn = luminance(col);
-    // soft shoulder: lum<=1 par 1.0 (no-op), uske upar gentle compress
-    float shoulder = 1.0 / (1.0 + max(lumIn - 1.0, 0.0) * 0.6);
-    col *= shoulder;
+    {
+      const float PIVOT = 0.35;  // mids lock point (linear) - iske aas-paas brightness same
+      const float TOE   = 1.08;  // shadow richness
+      const float WHITE = 1.25;  // shoulder asymptote (soft white)
+      const float SLOPE = 1.08;  // pivot par slope (toe se continuous)
+      float L = luminance(col);
+      float Lc;
+      if (L <= PIVOT) {
+        Lc = (L <= 0.0) ? 0.0 : PIVOT * pow(L / PIVOT, TOE);
+      } else {
+        Lc = PIVOT + (WHITE - PIVOT) * (1.0 - exp(-(L - PIVOT) * SLOPE / (WHITE - PIVOT)));
+      }
+      col *= Lc / max(L, 1e-5);
+    }
     #ifdef NL_TINT
       // tint multiply ke baad luma wapas match (brightness lock)
       float lumG = luminance(col);
@@ -92,7 +103,7 @@ vec3 colorCorrection(vec3 col) {
     col = col*(1.0+col*whiteScale)/(1.0+col);
   #elif NL_TONEMAP_TYPE == 4
     // aces filmic (tone.txt style) - brightness tonemap ke andar hi control
-    // 0.50 sane backup (TYPE 5 Preserve me unused - brightness lock wala mode ACES use nahi karta)
+    // 0.50 sane backup (TYPE 5 Custom me unused)
     col = ACESFilm(col*0.50);
     // highlight desat: ACES oversaturates to white, luma me mix
     // karke noon/sky detail bachao (0.55 se start, max 45% desat)
@@ -124,7 +135,7 @@ vec3 colorCorrection(vec3 col) {
   return col;
 }
 
-// inv used in fogcolor (Preserve mode: fog range lum<1 me exact, kyunki shoulder wahan 1.0 tha)
+// inv used in fogcolor (Custom filmic inverse - fog range ke liye exact)
 vec3 colorCorrectionInv(vec3 col) {
   #if NL_TONEMAP_TYPE == 5
     #ifdef NL_SATURATION
@@ -136,6 +147,22 @@ vec3 colorCorrectionInv(vec3 col) {
       vec3 k = mix(NL_TINT_LOW, NL_TINT_HIGH, col);
       col /= max(k, vec3_splat(1e-4));
     #endif
+    // custom filmic inverse (toe + shoulder, forward ka exact ulta)
+    {
+      const float PIVOT = 0.35;
+      const float TOE   = 1.08;
+      const float WHITE = 1.25;
+      const float SLOPE = 1.08;
+      float Lc = luminance(col);
+      float L;
+      if (Lc <= PIVOT) {
+        L = (Lc <= 0.0) ? 0.0 : PIVOT * pow(Lc / PIVOT, 1.0 / TOE);
+      } else {
+        float t = clamp((Lc - PIVOT) / (WHITE - PIVOT), 0.0, 0.999);
+        L = PIVOT - (WHITE - PIVOT) / SLOPE * log(1.0 - t);
+      }
+      col *= L / max(Lc, 1e-5);
+    }
     #ifdef NL_EXPOSURE
       col /= NL_EXPOSURE;
     #endif
