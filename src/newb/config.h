@@ -18,7 +18,7 @@
 
 /* Lighting - BSL-like strong directional light */
 #define NL_SUNLIGHT_INTENSITY   4.8    // strong BSL-style sunlight
-#define NL_TORCHLIGHT_INTENSITY 1.4    // torch thodi kam - was 1.6
+#define NL_TORCHLIGHT_INTENSITY 1.2    // torch 1.2 - was 1.4
 #define NL_SHADOW_INTENSITY     1.7    // slightly deeper shadows for cinematic mood
 #define NL_MIN_LIGHTING_BOOST   0.82   // balanced ambient - dark nights but visible
 //#define NL_BLINKING_TORCH
