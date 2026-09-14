@@ -10,14 +10,14 @@
 /* Color correction */
 #define NL_TONEMAP_TYPE 4              // ACES filmic - cinematic highlight rolloff + natural desaturation
 #define NL_GAMMA 1.2                   // slightly moodier midtones (less lift than vivid)
-#define NL_EXPOSURE 0.67               // 40% dark - was 0.9 (20% dark)
+#define NL_EXPOSURE 1.06               // 5% dark - original 1.12
 #define NL_SATURATION 1.08             // pulled back from 1.4 -> restrained, filmic color
 #define NL_TINT                        // ON: subtle teal-orange cinematic split-tone
 #define NL_TINT_LOW  vec3(0.85,0.92,1.08)  // shadows lean cool/teal
 #define NL_TINT_HIGH vec3(1.08,1.0,0.86)   // highlights lean warm/orange
 
 /* Lighting - BSL-like strong directional light */
-#define NL_SUNLIGHT_INTENSITY   4.8    // strong BSL-style sunlight
+#define NL_SUNLIGHT_INTENSITY   3.8    // 3.8 as asked - was 4.8
 #define NL_TORCHLIGHT_INTENSITY 1.2    // torch 1.2 - was 1.4
 #define NL_SHADOW_INTENSITY     1.7    // slightly deeper shadows for cinematic mood
 #define NL_MIN_LIGHTING_BOOST   0.82   // balanced ambient - dark nights but visible
