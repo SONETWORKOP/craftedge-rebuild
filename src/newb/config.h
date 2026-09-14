@@ -10,7 +10,7 @@
 /* Color correction */
 #define NL_TONEMAP_TYPE 4              // ACES filmic - cinematic highlight rolloff + natural desaturation
 #define NL_GAMMA 1.2                   // slightly moodier midtones (less lift than vivid)
-#define NL_EXPOSURE 1.12               // keep brightness (ACES *0.85 already darkens a touch)
+#define NL_EXPOSURE 0.9                // aur dark - was 1.12
 #define NL_SATURATION 1.08             // pulled back from 1.4 -> restrained, filmic color
 #define NL_TINT                        // ON: subtle teal-orange cinematic split-tone
 #define NL_TINT_LOW  vec3(0.85,0.92,1.08)  // shadows lean cool/teal
