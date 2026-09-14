@@ -92,8 +92,8 @@ vec3 colorCorrection(vec3 col) {
     col = col*(1.0+col*whiteScale)/(1.0+col);
   #elif NL_TONEMAP_TYPE == 4
     // aces filmic (tone.txt style) - brightness tonemap ke andar hi control
-    // 0.15 as asked (was 0.50)
-    col = ACESFilm(col*0.15);
+    // 0.50 sane backup (TYPE 5 Preserve me unused - brightness lock wala mode ACES use nahi karta)
+    col = ACESFilm(col*0.50);
     // highlight desat: ACES oversaturates to white, luma me mix
     // karke noon/sky detail bachao (0.55 se start, max 45% desat)
     float hl = luminance(col);
@@ -155,8 +155,8 @@ vec3 colorCorrectionInv(vec3 col) {
 
   #if NL_TONEMAP_TYPE == 4
     // inverse highlight desat is skipped (small effect on fog mids)
-    // inverse ACES with 0.15 pre-scale
-    col = ACESFilmInv(col) / 0.15;
+    // inverse ACES with 0.50 pre-scale
+    col = ACESFilmInv(col) / 0.50;
   #elif NL_TONEMAP_TYPE == 3
     float ws = 0.068;
     // inverse of x*(1+x*ws)/(1+x): solve ws*x^2 + (1-y*(1+ws))*x - y = 0 approx
