@@ -36,7 +36,9 @@ void main() {
 
   albedo = applyOverlayColor(albedo, OverlayColor);
 
-  albedo.rgb *= albedo.rgb * v_light.rgb;
+  // tone.txt: sRGB -> linear (replaces albedo*albedo)
+  albedo.rgb = sRGBtoLinear(albedo.rgb);
+  albedo.rgb *= v_light.rgb;
 
   albedo.rgb *= nlEntityEdgeHighlight(v_edgemap);
 

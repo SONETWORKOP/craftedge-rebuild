@@ -165,8 +165,6 @@ void main() {
 
   vec3 glow = nlGlow(s_MatTexture, v_texcoord0, v_extra.a);
 
-  diffuse.rgb *= diffuse.rgb;
-
   #if defined(TRANSPARENT) && !(defined(SEASONS) || defined(RENDER_AS_BILLBOARDS))
     if (v_extra.b > 0.9) {
       diffuse.rgb = vec3_splat(1.0 - NL_WATER_TEX_OPACITY*(1.0 - diffuse.b*1.8));
@@ -177,6 +175,8 @@ void main() {
   #endif
 
   diffuse.rgb *= color.rgb;
+  // tone.txt: sRGB -> linear after vertex color (replaces diffuse*diffuse)
+  diffuse.rgb = sRGBtoLinear(diffuse.rgb);
   diffuse.rgb += glow;
 
   if (v_extra.b > 0.9) {

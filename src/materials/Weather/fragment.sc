@@ -62,7 +62,9 @@ void main() {
 
   vec3 light = texture2D(s_LightingTexture, lightingUV).rgb;
 
-  diffuse.rgb *= diffuse.rgb*light;
+  // tone.txt: sRGB -> linear (replaces diffuse*diffuse)
+  diffuse.rgb = sRGBtoLinear(diffuse.rgb);
+  diffuse.rgb *= light;
   diffuse.rgb += 3.0*v_fog.rgb;
 
   diffuse.rgb = colorCorrection(diffuse.rgb);
