@@ -69,7 +69,8 @@
 
 // midnight boost for the night sky: multiplies night colors so the cyan
 // survives the atmosphere dimmer + ACES tonemap. 0 = no boost (old behavior)
-#define NL_NIGHT_SKY_BRIGHTNESS 1.5
+// 1.85 = exposure 0.82 ko compensate karke night v1 jaisa perfect rakhta hai
+#define NL_NIGHT_SKY_BRIGHTNESS 1.85
 #define NL_RAIN_ZENITH_COL   vec3(0.35,0.38,0.42)     // overcast grey
 #define NL_RAIN_HORIZON_COL  vec3(0.48,0.5,0.52)
 #define NL_END_ZENITH_COL    vec3(0.32,0.004,0.4)
