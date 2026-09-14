@@ -60,8 +60,8 @@ vec3 colorCorrection(vec3 col) {
     col = col*(1.0+col*whiteScale)/(1.0+col);
   #elif NL_TONEMAP_TYPE == 4
     // aces filmic (tone.txt style) - brightness tonemap ke andar hi control
-    // 0.20 as asked (was 0.40)
-    col = ACESFilm(col*0.20);
+    // 0.35 = bright (was 0.20)
+    col = ACESFilm(col*0.35);
     // highlight desat: ACES oversaturates to white, luma me mix
     // karke noon/sky detail bachao (0.55 se start, max 45% desat)
     float hl = luminance(col);
@@ -78,8 +78,8 @@ vec3 colorCorrection(vec3 col) {
   col = linearToSRGB(col);
   // tonemap-internal mids control: sRGB mids ko halka dabao taaki noon
   // doodh jaisa bright na lage (config values ko hath nahi lagana)
-  // 1.25 = aur dark (was 1.17)
-  col = pow(col, vec3_splat(1.25));
+  // 1.15 = bright (was 1.25)
+  col = pow(col, vec3_splat(1.15));
 
   #ifdef NL_SATURATION
     col = mix(vec3_splat(luminance(col)), col, NL_SATURATION);
@@ -103,13 +103,13 @@ vec3 colorCorrectionInv(vec3 col) {
   #endif
 
   // inverse of post gamma + linearToSRGB above
-  col = pow(col, vec3_splat(1.0/1.25));
+  col = pow(col, vec3_splat(1.0/1.15));
   col = sRGBtoLinear(col);
 
   #if NL_TONEMAP_TYPE == 4
     // inverse highlight desat is skipped (small effect on fog mids)
-    // inverse ACES with 0.20 pre-scale
-    col = ACESFilmInv(col) / 0.20;
+    // inverse ACES with 0.35 pre-scale
+    col = ACESFilmInv(col) / 0.35;
   #elif NL_TONEMAP_TYPE == 3
     float ws = 0.068;
     // inverse of x*(1+x*ws)/(1+x): solve ws*x^2 + (1-y*(1+ws))*x - y = 0 approx
