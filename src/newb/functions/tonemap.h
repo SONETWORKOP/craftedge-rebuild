@@ -59,13 +59,13 @@ vec3 colorCorrection(vec3 col) {
     const float whiteScale = 0.068;
     col = col*(1.0+col*whiteScale)/(1.0+col);
   #elif NL_TONEMAP_TYPE == 4
-    // aces filmic (tone.txt style: ACESFilm with pre-scale for mood)
-    // 0.75 = tone.txt original, darker than old 0.85 -> jyda bright nahi hoga
-    col = ACESFilm(col*0.75);
-    // highlight desat: ACES oversaturates cyan/blue to white, luma me mix
-    // karke cyan sky detail bachao (0.6 se start, max 35% desat)
+    // aces filmic (tone.txt style) - brightness tonemap ke andar hi control
+    // 0.60 = noon washout rokne ke liye dark pre-scale (was 0.75)
+    col = ACESFilm(col*0.60);
+    // highlight desat: ACES oversaturates to white, luma me mix
+    // karke noon/sky detail bachao (0.55 se start, max 45% desat)
     float hl = luminance(col);
-    col = mix(col, vec3_splat(hl), smoothstep(0.6, 1.0, hl)*0.35);
+    col = mix(col, vec3_splat(hl), smoothstep(0.55, 1.0, hl)*0.45);
   #elif NL_TONEMAP_TYPE == 2
     // simple reinhard tonemap
     col = col/(1.0+col);
@@ -76,6 +76,9 @@ vec3 colorCorrection(vec3 col) {
 
   // proper sRGB encode (tone.txt, replaces gamma pow)
   col = linearToSRGB(col);
+  // tonemap-internal mids control: sRGB mids ko halka dabao taaki noon
+  // doodh jaisa bright na lage (config values ko hath nahi lagana)
+  col = pow(col, vec3_splat(1.10));
 
   #ifdef NL_SATURATION
     col = mix(vec3_splat(luminance(col)), col, NL_SATURATION);
@@ -98,13 +101,14 @@ vec3 colorCorrectionInv(vec3 col) {
     col = mix(vec3_splat(dot(col,vec3(0.21, 0.71, 0.08))), col, 1.0/NL_SATURATION);
   #endif
 
-  // inverse of linearToSRGB above
+  // inverse of post gamma + linearToSRGB above
+  col = pow(col, vec3_splat(1.0/1.10));
   col = sRGBtoLinear(col);
 
   #if NL_TONEMAP_TYPE == 4
     // inverse highlight desat is skipped (small effect on fog mids)
-    // inverse ACES with 0.75 pre-scale
-    col = ACESFilmInv(col) / 0.75;
+    // inverse ACES with 0.60 pre-scale
+    col = ACESFilmInv(col) / 0.60;
   #elif NL_TONEMAP_TYPE == 3
     float ws = 0.068;
     // inverse of x*(1+x*ws)/(1+x): solve ws*x^2 + (1-y*(1+ws))*x - y = 0 approx
