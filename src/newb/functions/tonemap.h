@@ -78,8 +78,8 @@ vec3 colorCorrection(vec3 col) {
   col = linearToSRGB(col);
   // tonemap-internal mids control: sRGB mids ko halka dabao taaki noon
   // doodh jaisa bright na lage (config values ko hath nahi lagana)
-  // 1.08 = aur bright (was 1.15)
-  col = pow(col, vec3_splat(1.08));
+  // 1.12 = grass bright green fix (was 1.08)
+  col = pow(col, vec3_splat(1.12));
 
   #ifdef NL_SATURATION
     col = mix(vec3_splat(luminance(col)), col, NL_SATURATION);
@@ -103,7 +103,7 @@ vec3 colorCorrectionInv(vec3 col) {
   #endif
 
   // inverse of post gamma + linearToSRGB above
-  col = pow(col, vec3_splat(1.0/1.08));
+  col = pow(col, vec3_splat(1.0/1.12));
   col = sRGBtoLinear(col);
 
   #if NL_TONEMAP_TYPE == 4
