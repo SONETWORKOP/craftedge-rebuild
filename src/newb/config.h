@@ -10,17 +10,17 @@
 /* Color correction - tone.txt linear workflow - cinematic */
 #define NL_TONEMAP_TYPE 4              // ACES filmic - cinematic highlight rolloff + natural desaturation
 #define NL_GAMMA 1.2                   // legacy (unused by tone.txt sRGB path, kept for compat)
-#define NL_EXPOSURE 0.72               // cinematic dark - was 0.82, still bright
-#define NL_SATURATION 1.15             // cinematic punch - was 1.08
+#define NL_EXPOSURE 0.60               // cinematic dark - day bright fix, was 0.72
+#define NL_SATURATION 1.18             // cinematic punch - was 1.15
 #define NL_TINT                        // ON: subtle teal-orange cinematic split-tone
 #define NL_TINT_LOW  vec3(0.82,0.90,1.10)  // shadows more cool/teal cinematic
 #define NL_TINT_HIGH vec3(1.10,1.0,0.84)   // highlights warm orange cinematic
 
 /* Lighting - BSL-like strong directional light - cinematic */
-#define NL_SUNLIGHT_INTENSITY   3.2    // cinematic - was 3.6
+#define NL_SUNLIGHT_INTENSITY   2.6    // day bright fix - was 3.2
 #define NL_TORCHLIGHT_INTENSITY 1.7    // torch thodi kam - was 2.0
-#define NL_SHADOW_INTENSITY     1.9    // deeper cinematic shadows - was 1.7
-#define NL_MIN_LIGHTING_BOOST   0.65   // darker ambient, more contrast - was 0.82
+#define NL_SHADOW_INTENSITY     2.0    // deeper cinematic shadows - was 1.9
+#define NL_MIN_LIGHTING_BOOST   0.50   // darker ambient, more contrast - was 0.65
 //#define NL_BLINKING_TORCH
 #define NL_CLOUD_SHADOW
 
@@ -56,21 +56,21 @@
 #define NL_SKY_VOID_DARKNESS   0.3
 #define NL_SKY_RAIN_MIX_FACTOR 0.95
 
-/* Sky colors - warm realistic sky */
+/* Sky colors - warm realistic sky - cinematic dark day */
 #define NL_DAWN_ZENITH_COL   vec3(0.45,0.30,0.50)     // warm twilight purple (less pink)
 #define NL_DAWN_HORIZON_COL  vec3(3.2,0.85,0.20)      // golden orange sunrise
 #define NL_DAWN_EDGE_COL     vec3(3.8,1.5,0.45)       // warm golden edge (brighter)
-#define NL_DAY_ZENITH_COL    vec3(0.12,0.48,2.1)      // deep realistic sky blue
-#define NL_DAY_HORIZON_COL   vec3(0.55,1.1,1.65)      // soft hazy blue horizon
-#define NL_DAY_EDGE_COL      vec3(1.2,1.45,1.65)      // light atmospheric haze
+#define NL_DAY_ZENITH_COL    vec3(0.10,0.35,1.40)     // cinematic dark blue - was 0.12,0.48,2.1
+#define NL_DAY_HORIZON_COL   vec3(0.40,0.80,1.20)     // cinematic dark haze - was 0.55,1.1,1.65
+#define NL_DAY_EDGE_COL      vec3(0.90,1.10,1.25)     // cinematic dark edge - was 1.2,1.45,1.65
 #define NL_NIGHT_ZENITH_COL  vec3(0.05,0.16,0.30)    // cyan zenith
 #define NL_NIGHT_HORIZON_COL vec3(0.08,0.24,0.38)    // cyan horizon
 #define NL_NIGHT_EDGE_COL    vec3(0.10,0.30,0.45)    // bright cyan edge
 
 // midnight boost for the night sky: multiplies night colors so the cyan
 // survives the atmosphere dimmer + ACES tonemap. 0 = no boost (old behavior)
-// 2.1 = exposure 0.72 ko compensate karke night perfect rakhta hai
-#define NL_NIGHT_SKY_BRIGHTNESS 2.1
+// 2.5 = exposure 0.60 ko compensate karke night perfect rakhta hai
+#define NL_NIGHT_SKY_BRIGHTNESS 2.5
 #define NL_RAIN_ZENITH_COL   vec3(0.35,0.38,0.42)     // overcast grey
 #define NL_RAIN_HORIZON_COL  vec3(0.48,0.5,0.52)
 #define NL_END_ZENITH_COL    vec3(0.32,0.004,0.4)
