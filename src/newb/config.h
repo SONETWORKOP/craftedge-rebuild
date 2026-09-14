@@ -11,13 +11,13 @@
 #define NL_TONEMAP_TYPE 4              // ACES filmic - cinematic highlight rolloff + natural desaturation
 #define NL_GAMMA 1.2                   // slightly moodier midtones (less lift than vivid)
 #define NL_EXPOSURE 1.12               // original - was 1.06
-#define NL_SATURATION 0.95             // grass neon green fix - was 1.08
+#define NL_SATURATION 0.85             // grass green aur kam - was 0.95
 #define NL_TINT                        // ON: subtle teal-orange cinematic split-tone
 #define NL_TINT_LOW  vec3(0.85,0.92,1.08)  // shadows lean cool/teal
 #define NL_TINT_HIGH vec3(1.08,1.0,0.86)   // highlights lean warm/orange
 
 /* Lighting - BSL-like strong directional light */
-#define NL_SUNLIGHT_INTENSITY   4.2    // 4.2 as asked - was 3.8
+#define NL_SUNLIGHT_INTENSITY   3.8    // blocks bright fix - was 4.2
 #define NL_TORCHLIGHT_INTENSITY 1.2    // torch 1.2 - was 1.4
 #define NL_SHADOW_INTENSITY     1.7    // slightly deeper shadows for cinematic mood
 #define NL_MIN_LIGHTING_BOOST   0.82   // balanced ambient - dark nights but visible
