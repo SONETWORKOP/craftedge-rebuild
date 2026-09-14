@@ -18,7 +18,7 @@
 
 /* Lighting - BSL-like strong directional light - cinematic */
 #define NL_SUNLIGHT_INTENSITY   3.2    // cinematic - was 3.6
-#define NL_TORCHLIGHT_INTENSITY 2.0    // torch compensate - exposure low se dark na ho
+#define NL_TORCHLIGHT_INTENSITY 1.7    // torch thodi kam - was 2.0
 #define NL_SHADOW_INTENSITY     1.9    // deeper cinematic shadows - was 1.7
 #define NL_MIN_LIGHTING_BOOST   0.65   // darker ambient, more contrast - was 0.82
 //#define NL_BLINKING_TORCH
