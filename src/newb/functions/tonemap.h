@@ -18,7 +18,7 @@ vec3 craftEdgeFresh(vec3 col) {
   #endif
 
   float L = luminance(col);
-  const float PIVOT = 0.45; // iske neeche zero change - mids/shadows lock
+  const float PIVOT = 0.40; // iske neeche zero change - thoda dark realistic (was 0.45)
   const float SLOPE = 1.0;  // pivot par slope (kink nahi, smooth)
   float Lc;
   if (L <= PIVOT) {
@@ -95,7 +95,7 @@ vec3 colorCorrectionInv(vec3 col) {
       col /= max(k, vec3_splat(1e-4));
     #endif
     {
-      const float PIVOT = 0.45;
+      const float PIVOT = 0.40;
       const float SLOPE = 1.0;
       float Lc = luminance(col);
       float L;
