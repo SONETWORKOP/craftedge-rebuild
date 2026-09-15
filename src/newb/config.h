@@ -10,7 +10,7 @@
 /* Color correction - Newb original (pack default) */
 #define NL_TONEMAP_TYPE 4              // ACES filmic - pack original
 #define NL_GAMMA 1.2                   // legacy (TYPE 1-3 backup slots ke liye)
-#define NL_EXPOSURE 1.0                // Preserve mode me neutral - brightness bilkul same, no boost
+#define NL_EXPOSURE 1.1                // halki lighting enhance (was 1.0 neutral)
 #define NL_SATURATION 0.90             // day lively - neon nahi (was 0.85)
 #define NL_TINT                        // ON: subtle teal-orange cinematic split-tone
 #define NL_TINT_LOW  vec3(0.85,0.92,1.08)  // shadows lean cool/teal
