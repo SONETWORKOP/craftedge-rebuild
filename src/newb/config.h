@@ -11,7 +11,7 @@
 #define NL_TONEMAP_TYPE 4              // ACES filmic - pack original
 #define NL_GAMMA 1.2                   // legacy (TYPE 1-3 backup slots ke liye)
 #define NL_EXPOSURE 1.0                // Preserve mode me neutral - brightness bilkul same, no boost
-#define NL_SATURATION 0.85             // grass green aur kam - was 0.95
+#define NL_SATURATION 0.90             // day lively - neon nahi (was 0.85)
 #define NL_TINT                        // ON: subtle teal-orange cinematic split-tone
 #define NL_TINT_LOW  vec3(0.85,0.92,1.08)  // shadows lean cool/teal
 #define NL_TINT_HIGH vec3(1.08,1.0,0.86)   // highlights lean warm/orange
@@ -30,7 +30,7 @@
 
 /* Sun/moon - vivid but natural */
 #define NL_DAWN_SUNLIGHT_COL   vec3(1.5,0.75,0.25)   // brighter warm orange sunrise light
-#define NL_NOON_SUNLIGHT_COL   vec3(1.1,1.0,0.85)    // bright clean noon
+#define NL_NOON_SUNLIGHT_COL   vec3(1.15,0.98,0.80)    // warm golden noon - same brightness (was 1.1,1.0,0.85)
 #define NL_NIGHT_MOONLIGHT_COL vec3(0.05,0.12,0.32)  // cyan-tinted moonlight
 
 /* Torch */
