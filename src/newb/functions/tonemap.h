@@ -22,6 +22,10 @@ vec3 colorCorrection(vec3 col) {
     const float e = 0.14;
     col *= 0.85;
     col = clamp((col*(a*col + b)) / (col*(c*col + d) + e), 0.0, 1.0);
+    // halka lighting enhance (tonemap-side, exposure untouched):
+    // bright hisso me soft lift, max +8%. Raat/shadows (lum<0.15) zero change.
+    float el = luminance(col);
+    col *= 1.0 + 0.08 * smoothstep(0.15, 0.9, el);
   #elif NL_TONEMAP_TYPE == 2
     // simple reinhard tonemap
     col = col/(1.0+col);
