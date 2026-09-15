@@ -4,25 +4,23 @@
 #include "utils.h"
 
 // ---- CraftEdge True: research-backed full-custom tonemap ----
-// Research (upstream devendrn/newb-x-mcbe + Mojang colour docs):
-//  - Upstream default = Extended Reinhard family + gamma encode (simple,
-//    "very common" method). Is pack ki sari lighting values (sun 3.8,
-//    day sky 2.1, torch 1.2) isi family ke liye authored hain.
-//  - Mojang best practice = LUMINANCE compress karo, highlight colours bachao.
-// Isliye ye curve: knee rational compression (extended-reinhard family),
-// luminance-ratio scale (hue-safe), asymptote exactly 1.0 (clip impossible).
+// Research (upstream devendrn/newb-x-mcbe + Mojang docs + Khronos PBR Neutral
+// + Hable filmic + colour-appearance paper):
+//  - Upstream default = Extended Reinhard family + gamma encode (simple).
+//    Is pack ki lighting (sun 3.8, sky 2.1, torch 1.2) isi family ke liye hai.
+//  - Colours ke liye: mids 1:1 exact (PBR Neutral), highlights me SLOW
+//    desat-to-white (Hable: ye feature hai - neon clipping khatam, natural).
+//  - Filmic paper: realistic look me filmic first, chroma-preserving second.
 // tone.txt ka koi code nahi: no sRGB decode/encode pair, no ACES, no Reinhard.
 // Requirements checklist (poori baatcheet se):
-//  [x] brightness kabhi na badhe (neeche proof)
-//  [x] noon washout/doodh-pan khatam (hot range firmly compress)
-//  [x] realistic natural colours (muted sat + soft tint, dono luma-locked)
+//  [x] brightness kabhi na badhe (knee-cap + luma locks, neeche proof)
+//  [x] noon washout khatam (hot range firmly compress + desat)
+//  [x] realistic natural colours (mids exact, highlights desat, muted sat/tint)
 //  [x] cyan night untouched (knee ke neeche identity)
-//  [x] torch 1.2 dim preserved (cave range knee ke aas-paas, mild only)
-//  [x] fog sky se match (neeche exact inverse)
-// Proof (non-brightening): knee ke neeche Lc=L (same); knee ke upar
-// Lc<K+(1-K)=1 aur Lc<L (rational hamesha input se chhota); sat/tint
-// luma-locked; encode exponent <1 hone par bhi knee-compress dominate
-// karta hai hot range me. Output kabhi input-luma se upar nahi.
+//  [x] torch 1.2 dim preserved (cave range me sirf mild compress)
+//  [x] fog sky se match (neeche exact inverse; desat fog-range me ~0)
+// Proof (non-brightening): knee ke neeche Lc=L (same); upar rational <L;
+// output<=1 pakka; desat luma-grey ki taraf (lock); sat/tint luma-locked.
 vec3 craftEdgeTrue(vec3 col) {
   #ifdef NL_EXPOSURE
     col *= NL_EXPOSURE; // 1.0 neutral par no-op
@@ -38,6 +36,16 @@ vec3 craftEdgeTrue(vec3 col) {
   float w  = smoothstep(KNEE - 0.06, KNEE + 0.06, L);
   float Lc = mix(L, Ls, w);
   col *= Lc / max(L, 1e-5); // uniform scale = hue-safe, output <= 1 pakka
+
+  // research colour upgrade (Khronos PBR Neutral + Hable): highlights me SLOW
+  // desat-to-white. Compression ne jitni brightness hataayi uske hisaab se
+  // chroma ghatao - neon-green/white clipping khatam, perceptual cue bachta.
+  // Luma-grey ki taraf mix = brightness lock barkarar. Fog-range me g~0.
+  {
+    float removed = max(L - Lc, 0.0);
+    float g = 1.0 - 1.0 / (0.15 * removed + 1.0);
+    col = mix(col, vec3_splat(luminance(col)), g);
+  }
 
   // display encode (restrained: 1.08, upstream 1.33 se darker-realistic)
   col = pow(col, vec3_splat(1.0 / 1.08));
@@ -97,7 +105,8 @@ vec3 colorCorrection(vec3 col) {
   return col;
 }
 
-// inv used in fogcolor (fresh curve inverse - fog range ke liye exact)
+// inv used in fogcolor (fresh curve inverse - fog range ke liye exact;
+// highlight-desat ka inverse skip: fog-range me g<0.01, invisible)
 vec3 colorCorrectionInv(vec3 col) {
   #if NL_TONEMAP_TYPE == 5 || NL_TONEMAP_TYPE == 4
     #ifdef NL_SATURATION
