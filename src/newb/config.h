@@ -7,8 +7,8 @@
   Tuned for punchy, saturated colors with natural lighting and soft shadows.
 */
 
-/* Color correction - CraftEdge Preserve (custom tonemap) */
-#define NL_TONEMAP_TYPE 5              // Preserve - brightness lock, sirf colours improve
+/* Color correction - Newb original (pack default) */
+#define NL_TONEMAP_TYPE 4              // ACES filmic - pack original
 #define NL_GAMMA 1.2                   // legacy (TYPE 1-3 backup slots ke liye)
 #define NL_EXPOSURE 1.0                // Preserve mode me neutral - brightness bilkul same, no boost
 #define NL_SATURATION 0.85             // grass green aur kam - was 0.95
@@ -69,7 +69,8 @@
 
 // midnight boost for the night sky: multiplies night colors so the cyan
 // survives the atmosphere dimmer + ACES tonemap. 0 = no boost (old behavior)
-#define NL_NIGHT_SKY_BRIGHTNESS 1.5
+// 1.0 = night dark (boost off) - day sky bright same rahega
+#define NL_NIGHT_SKY_BRIGHTNESS 1.0
 #define NL_RAIN_ZENITH_COL   vec3(0.35,0.38,0.42)     // overcast grey
 #define NL_RAIN_HORIZON_COL  vec3(0.48,0.5,0.52)
 #define NL_END_ZENITH_COL    vec3(0.32,0.004,0.4)
