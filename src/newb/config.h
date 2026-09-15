@@ -9,7 +9,7 @@
 
 /* Color correction - CraftEdge Preserve (custom tonemap) */
 #define NL_TONEMAP_TYPE 5              // Preserve - brightness lock, sirf colours improve
-#define NL_GAMMA 1.2                   // legacy (unused by tone.txt sRGB path, kept for compat)
+#define NL_GAMMA 1.2                   // legacy (TYPE 1-3 backup slots ke liye)
 #define NL_EXPOSURE 1.0                // Preserve mode me neutral - brightness bilkul same, no boost
 #define NL_SATURATION 0.85             // grass green aur kam - was 0.95
 #define NL_TINT                        // ON: subtle teal-orange cinematic split-tone

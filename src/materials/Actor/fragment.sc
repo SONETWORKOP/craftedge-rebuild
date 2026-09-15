@@ -50,8 +50,7 @@ void main() {
 
   albedo = applyOverlayColor(albedo, OverlayColor);
 
-  // tone.txt: sRGB -> linear (replaces albedo*albedo)
-  albedo.rgb = sRGBtoLinear(albedo.rgb);
+  albedo *= albedo;
 
   vec4 light = v_light;
   #if defined(EMISSIVE) || defined(EMISSIVE_ONLY)
