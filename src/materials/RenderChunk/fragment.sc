@@ -281,6 +281,13 @@ void main() {
 
   diffuse.rgb = mix(diffuse.rgb, v_fog.rgb, v_fog.a);
 
+  // water.txt (Download/water.txt): underwater extinction, tonemap se pehle.
+  // v_sunMoon.w = camera underwater flag (vertex packs it), v_extra.b = water pixels.
+  if (v_sunMoon.w > 0.5) {
+    float uwWaterFlag = step(0.9, v_extra.b);
+    diffuse.rgb = nlUnderwaterScatter(diffuse.rgb, normalize(v_reflSun.xyz), uwWaterFlag);
+  }
+
   diffuse.rgb = colorCorrection(diffuse.rgb);
 
   gl_FragColor = diffuse;

@@ -97,4 +97,20 @@ vec4 nlWater(
   return vec4(waterRefl, fresnel);
 }
 
+// ---- water.txt port (Download/water.txt): underwater extinction ----
+// litColor = diffuse after lighting (+fog mix). waterFlag 1.0 = water pixels.
+// NOTE: snippet ke fogfactor/scatter/uwFogColor lines usme dead hain (kahin
+// apply nahi hote), isliye live lines (extinction + moon scale) port ki hain.
+// saturate() -> clamp() (bgfx-safe, same cheez).
+vec3 nlUnderwaterScatter(vec3 litColor, vec3 sunDir, float waterFlag) {
+  float moonVisibility = clamp(-sunDir.y, 0.0, 1.0);
+
+  // red jaldi absorb, blue bachta hai (murky depth tint, non-water pixels par)
+  const vec3 extinctionCoeffs = vec3(0.15, 0.08, 0.01);
+  litColor *= mix(exp(-extinctionCoeffs * 8.0), vec3(1.0, 1.0, 1.0), waterFlag);
+  litColor *= mix(2.0 - 0.5 * moonVisibility, 1.0, waterFlag);
+
+  return litColor;
+}
+
 #endif

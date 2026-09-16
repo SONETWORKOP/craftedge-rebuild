@@ -120,6 +120,9 @@ void main() {
   fogColor.rgb = nlRenderSky(skycol, env, viewDir, t, true);
   fogColor.a = nlRenderFogFade(relativeDist, FogColor.rgb, FogAndDistanceControl.xy, env.end);
   fogColor.a = nlRenderHeightFog(fogColor.a, worldPos.y, relativeDist);
+  // fog.txt (Download/fog.txt): sunset/rain/nether/underwater curve.
+  // Pack fade jahan halka hai wahan snippet jeetta hai (max), baaki same.
+  fogColor.a = max(fogColor.a, nlGetFog(relativeDist, vec2(0.35, 0.55), env.rainFactor, nlSunsetGlow(FogColor.rgb), env.underwater, env.nether));
   #if defined(NL_GODRAY) && defined(NL_FOG)
     float godRayAmount = min(NL_GODRAY*nlRenderGodRayIntensity(cPos, worldPos, t, uv1, relativeDist, FogColor.rgb), 1.0);
     fogColor.rgb = mix(fogColor.rgb, nlGodRayTint(FogColor.rgb), godRayAmount);
@@ -197,11 +200,12 @@ void main() {
   v_position = worldPos;
   // viewDir (surface->camera) in xyz, rainFactor in w
   v_reflPbr = vec4(viewDir, env.rainFactor);
-  // real sun dir in xyz, dayFactor in w; real moon dir in v_sunMoon.xyz.
+  // real sun dir in xyz, dayFactor in w; real moon dir in v_sunMoon.xyz,
+  // camera-underwater flag in v_sunMoon.w (water.txt underwater block ke liye).
   // The fragment picks sun vs moon by the sun's height above the horizon
   // (v_reflSun.y), so the sun leaves the water the moment it visually sets.
   v_reflSun = vec4(env.sunDir, env.dayFactor);
-  v_sunMoon = vec4(env.moonDir, 0.0);
+  v_sunMoon = vec4(env.moonDir, env.underwater ? 1.0 : 0.0);
 
   #else
 

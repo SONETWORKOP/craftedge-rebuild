@@ -65,4 +65,30 @@ vec3 nlGodRayTint(vec3 FOG_COLOR) {
   return mix(dayRayTint, dawnRayTint, dawnDusk);
 }
 
+// ---- fog.txt port (Download/fog.txt) ----
+// Sunset glow cue 0..1 from fog color (godrays wali same trick).
+float nlSunsetGlow(vec3 fogColor) {
+  return clamp(3.0*(fogColor.r - fogColor.b), 0.0, 1.0);
+}
+// fog.txt getFog(): linear+quadratic exp fog with sunset/rain/nether/
+// underwater rules. Engine-scale numbers pack space me map kiye:
+//   fogDensity = relativeDist (0..1) space, *15.0 -> *4.0,
+//   nether 30.0 -> 3.0 (30.0 pack me sab kuch 100% fog kar deta).
+// Underwater exp(-dist*12.0) exact rakha (self-normalizing hai).
+float nlGetFog(float dist, vec2 fogDensity, float rain, float sunsetSunrise, bool underwater, bool nether) {
+  float fogStrength = mix(0.4, 0.6, sunsetSunrise);
+  fogStrength = mix(fogStrength, 1.2, rain);
+  if (nether) fogStrength = 3.0;
+
+  float q1 = dist * fogDensity.x * fogStrength;
+  float q2 = dist * dist * fogDensity.y * fogStrength * fogStrength;
+  float fogFactor = 1.0 - exp(-(q1 + q2) * 4.0);
+
+  if (underwater) {
+    fogFactor = 1.0 - exp(-dist * 12.0);
+  }
+
+  return clamp(fogFactor, 0.0, 1.0);
+}
+
 #endif
