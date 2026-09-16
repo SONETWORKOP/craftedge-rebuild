@@ -92,9 +92,11 @@ vec3 colorCorrection(vec3 col) {
 
   // vibrance: pheeke rang uthao, jalte-neon chhodo.
   // Luma ke around mix = brightness lock. satAmt zyda = boost kam.
+  // (max/min 2-args nested - shader me 3-args nahi chalta)
   {
     float lumV = luminance(col);
-    float satAmt = max(max(col.r, col.g, col.b) - min(col.r, min(col.g, col.b)), 0.0);
+    float satAmt = max(col.r, max(col.g, col.b)) - min(col.r, min(col.g, col.b));
+    satAmt = max(satAmt, 0.0);
     float vib = CE_VIBRANCE * (1.0 - clamp(satAmt * 1.5, 0.0, 1.0));
     col = mix(vec3_splat(lumV), col, 1.0 + vib);
   }
@@ -107,7 +109,8 @@ vec3 colorCorrectionInv(vec3 col) {
   // vibrance inverse (approx, fog-range me accurate - vib chhota hai)
   {
     float lumV = luminance(col);
-    float satAmt = max(max(col.r, col.g, col.b) - min(col.r, min(col.g, col.b)), 0.0);
+    float satAmt = max(col.r, max(col.g, col.b)) - min(col.r, min(col.g, col.b));
+    satAmt = max(satAmt, 0.0);
     float vib = CE_VIBRANCE * (1.0 - clamp(satAmt * 1.5, 0.0, 1.0));
     col = mix(vec3_splat(lumV), col, 1.0 / (1.0 + vib));
   }
