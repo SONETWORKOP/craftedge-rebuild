@@ -12,6 +12,10 @@
 #define TONE_GAMMA       1.45  // mids balance (decode-farak absorber)
 #define TONE_SHADOW_LIFT 0.0   // andhera floor (0.0 off)
 
+// ---- vibrance strength (saturation ka samajhdaar bhai) ----
+// pheeke rang uthao, jalte-neon chhodo. 0.0 off ~ 0.5 tez.
+#define CE_VIBRANCE 0.25
+
 vec3 sRGBtoLinear(vec3 sRGB) {
   return max(mix(sRGB / 12.92, pow(0.947867*sRGB + 0.0521327, vec3_splat(2.4)), step(0.04045, sRGB)), 0.0);
 }
@@ -86,11 +90,27 @@ vec3 colorCorrection(vec3 col) {
     col *= mix(NL_TINT_LOW, NL_TINT_HIGH, col);
   #endif
 
+  // vibrance: pheeke rang uthao, jalte-neon chhodo.
+  // Luma ke around mix = brightness lock. satAmt zyda = boost kam.
+  {
+    float lumV = luminance(col);
+    float satAmt = max(max(col.r, col.g, col.b) - min(col.r, min(col.g, col.b)), 0.0);
+    float vib = CE_VIBRANCE * (1.0 - clamp(satAmt * 1.5, 0.0, 1.0));
+    col = mix(vec3_splat(lumV), col, 1.0 + vib);
+  }
+
   return col;
 }
 
 // inv used in fogcolor for nether
 vec3 colorCorrectionInv(vec3 col) {
+  // vibrance inverse (approx, fog-range me accurate - vib chhota hai)
+  {
+    float lumV = luminance(col);
+    float satAmt = max(max(col.r, col.g, col.b) - min(col.r, min(col.g, col.b)), 0.0);
+    float vib = CE_VIBRANCE * (1.0 - clamp(satAmt * 1.5, 0.0, 1.0));
+    col = mix(vec3_splat(lumV), col, 1.0 / (1.0 + vib));
+  }
   #if NL_TONEMAP_TYPE == 4
     // tone.txt path ka ulta (order reverse): sat -> tint -> shadow -> gamma
     // -> encode -> desat(skip, fog-range me ~0) -> ACES -> exposure
