@@ -39,7 +39,9 @@ void main() {
 
   vec4 light = nlGlint(v_light, v_glintuv, s_GlintTexture, GlintColor, TileLightColor, albedo);
 
-  albedo.rgb *= albedo.rgb * light.rgb;
+  // tone.txt: sRGB -> linear (replaces albedo*albedo)
+  albedo.rgb = sRGBtoLinear(albedo.rgb);
+  albedo.rgb *= light.rgb;
 
   albedo.rgb = mix(albedo.rgb, v_fog.rgb, v_fog.a);
 

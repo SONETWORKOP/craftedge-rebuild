@@ -33,7 +33,9 @@ void main() {
     }
   #endif
 
-  albedo.rgb *= albedo.rgb * v_light.rgb;
+  // tone.txt: sRGB -> linear (replaces albedo*albedo)
+  albedo.rgb = sRGBtoLinear(albedo.rgb);
+  albedo.rgb *= v_light.rgb;
 
   albedo.rgb = mix(albedo.rgb, v_fog.rgb, v_fog.a);
 
