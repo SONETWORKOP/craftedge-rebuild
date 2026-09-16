@@ -72,7 +72,8 @@ float nlSunsetGlow(vec3 fogColor) {
 }
 // fog.txt getFog(): linear+quadratic exp fog with sunset/rain/nether/
 // underwater rules. Engine-scale numbers pack space me map kiye:
-//   fogDensity = relativeDist (0..1) space, *15.0 -> *4.0,
+//   fogDensity = relativeDist (0..1) space, *15.0 -> *6.0 (clear din me
+//   pack fade jeette, sunset/rain me snippet jeete - change dikhega),
 //   nether 30.0 -> 3.0 (30.0 pack me sab kuch 100% fog kar deta).
 // Underwater exp(-dist*12.0) exact rakha (self-normalizing hai).
 float nlGetFog(float dist, vec2 fogDensity, float rain, float sunsetSunrise, bool underwater, bool nether) {
@@ -82,7 +83,7 @@ float nlGetFog(float dist, vec2 fogDensity, float rain, float sunsetSunrise, boo
 
   float q1 = dist * fogDensity.x * fogStrength;
   float q2 = dist * dist * fogDensity.y * fogStrength * fogStrength;
-  float fogFactor = 1.0 - exp(-(q1 + q2) * 4.0);
+  float fogFactor = 1.0 - exp(-(q1 + q2) * 6.0);
 
   if (underwater) {
     fogFactor = 1.0 - exp(-dist * 12.0);
