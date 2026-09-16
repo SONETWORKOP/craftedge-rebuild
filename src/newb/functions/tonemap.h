@@ -45,11 +45,25 @@ vec3 colorCorrection(vec3 col) {
     col *= mix(NL_TINT_LOW, NL_TINT_HIGH, col);
   #endif
 
+  // cinematic grade (tonemap-side): teal shadows + warm highlights.
+  // Luma ke hisaab se smooth blend + luma lock = brightness same, sirf mood.
+  {
+    float cl = luminance(col);
+    vec3 cine = col * mix(vec3(0.96,0.98,1.03), vec3(1.03,1.0,0.97), smoothstep(0.0, 1.0, cl));
+    col = cine * (cl / max(luminance(cine), 1e-5));
+  }
+
   return col;
 }
 
 // inv used in fogcolor for nether
 vec3 colorCorrectionInv(vec3 col) {
+  // cinematic grade inverse (approx, fog-range me accurate)
+  {
+    float cl = luminance(col);
+    vec3 ck = mix(vec3(0.96,0.98,1.03), vec3(1.03,1.0,0.97), smoothstep(0.0, 1.0, cl));
+    col /= max(ck, vec3_splat(1e-4));
+  }
   #ifdef NL_TINT
     col /= mix(NL_TINT_LOW, NL_TINT_HIGH, col); // not accurate inverse
   #endif

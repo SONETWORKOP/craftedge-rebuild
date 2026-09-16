@@ -13,8 +13,8 @@
 #define NL_EXPOSURE 1.0                // neutral (lighting enhance tonemap-side hai)
 #define NL_SATURATION 0.90             // day lively - neon nahi (was 0.85)
 #define NL_TINT                        // ON: subtle teal-orange cinematic split-tone
-#define NL_TINT_LOW  vec3(0.82,0.90,1.10)  // shadows deeper teal-cinematic (was 0.85,0.92,1.08)
-#define NL_TINT_HIGH vec3(1.10,1.0,0.84)   // highlights warm golden-cinematic (was 1.08,1.0,0.86)
+#define NL_TINT_LOW  vec3(0.85,0.92,1.08)  // original subtle (cinematic grade ab tonemap.h me)
+#define NL_TINT_HIGH vec3(1.08,1.0,0.86)   // original subtle (cinematic grade ab tonemap.h me)
 
 /* Lighting - BSL-like strong directional light */
 #define NL_SUNLIGHT_INTENSITY   3.8    // blocks bright fix - was 4.2
