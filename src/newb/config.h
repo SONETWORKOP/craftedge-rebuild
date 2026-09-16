@@ -11,7 +11,7 @@
 #define NL_TONEMAP_TYPE 4              // ACES filmic - pack original
 #define NL_GAMMA 1.2                   // legacy (TYPE 1-3 backup slots ke liye)
 #define NL_EXPOSURE 1.0                // neutral (lighting enhance tonemap-side hai)
-#define NL_SATURATION 0.90             // day lively - neon nahi (was 0.85)
+#define NL_SATURATION 0.82             // natural colours - was 0.90 (too colourful)
 #define NL_TINT                        // ON: subtle teal-orange cinematic split-tone
 #define NL_TINT_LOW  vec3(0.85,0.92,1.08)  // original subtle (cinematic grade ab tonemap.h me)
 #define NL_TINT_HIGH vec3(1.08,1.0,0.86)   // original subtle (cinematic grade ab tonemap.h me)
