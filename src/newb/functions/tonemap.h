@@ -22,6 +22,10 @@ vec3 colorCorrection(vec3 col) {
     const float e = 0.14;
     col *= 0.85;
     col = clamp((col*(a*col + b)) / (col*(c*col + d) + e), 0.0, 1.0);
+    // natural colours (single edit): highlights ka neon nikaldo.
+    // Luma ki taraf mix = brightness bilkul same, sirf jalte rang shaant.
+    float hd = luminance(col);
+    col = mix(col, vec3_splat(hd), smoothstep(0.55, 1.0, hd) * 0.4);
   #elif NL_TONEMAP_TYPE == 2
     // simple reinhard tonemap
     col = col/(1.0+col);
