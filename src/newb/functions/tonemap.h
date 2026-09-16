@@ -8,7 +8,7 @@
 // purana diffuse*diffuse(0.25) vs sRGB-decode(0.214) ka farak GAMMA 1.45
 // absorb kar leta hai (mids 0.566->0.564, highlights 0.878->0.881, ~same).
 // TONE_EXPOSURE = NL_EXPOSURE (upar apply hota hai, yahan dobara nahi).
-#define TONE_ACES_SCALE  0.65  // thoda dark (was 0.75) - highlights pehle dabenge
+#define TONE_ACES_SCALE  0.55  // aur dark (was 0.65)
 #define TONE_GAMMA       1.45  // mids balance (decode-farak absorber)
 #define TONE_SHADOW_LIFT 0.0   // andhera floor (0.0 off)
 
