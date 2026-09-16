@@ -3,50 +3,55 @@
 
 #include "utils.h"
 
-vec3 colorCorrection(vec3 col) {
+// ---- CraftEdge Vivid Light: vivid lighting, over-bright nahi ----
+// Poori file fresh hai (purana sab delete). Display-referred grade:
+//   airy toe: deep shadows halke lift (vibrant-visuals jaisi hawa),
+//     zyada se zyada +0.03, raat gehri hi rehti hai
+//   mids: punchy, identity ke paas (colours exact, vivid)
+//   shoulder: hot highlights (suraj/sky/noon) firmly 1.0 me samaao,
+//     white-clip/blowout impossible
+//   colours: highlight slow desat-to-white + muted sat + teal-orange,
+//     sab luminance-locked (neon nahi, natural + cinematic)
+// Hue kahin nahi badalta (sirf uniform scale). Output pakka <= ~1.0.
+// Fog ke liye neeche exact inverse hai.
+vec3 craftEdgeVividLight(vec3 col) {
   #ifdef NL_EXPOSURE
-    col *= NL_EXPOSURE;
+    col *= NL_EXPOSURE; // 1.0 neutral par no-op
   #endif
 
-  // ref - https://64.github.io/tonemapping/
-  #if NL_TONEMAP_TYPE == 3
-    // extended reinhard tonemap - BSL-like highlight rolloff
-    const float whiteScale = 0.068;
-    col = col*(1.0+col*whiteScale)/(1.0+col);
-  #elif NL_TONEMAP_TYPE == 4
-    // aces tonemap
-    const float a = 1.04;
-    const float b = 0.03;
-    const float c = 0.93;
-    const float d = 0.56;
-    const float e = 0.14;
-    col *= 0.85;
-    col = clamp((col*(a*col + b)) / (col*(c*col + d) + e), 0.0, 1.0);
-    // halka lighting enhance (tonemap-side, exposure untouched):
-    // bright hisso me soft lift, max +8%. Raat/shadows (lum<0.15) zero change.
-    float el = luminance(col);
-    col *= 1.0 + 0.08 * smoothstep(0.15, 0.9, el);
-  #elif NL_TONEMAP_TYPE == 2
-    // simple reinhard tonemap
-    col = col/(1.0+col);
-  #elif NL_TONEMAP_TYPE == 1
-    // exponential tonemap
-    col = 1.0-exp(-col*0.8);
-  #endif
+  float L = luminance(col);
+  // airy toe + firm shoulder, knee blend se judaa (banding nahi)
+  const float KNEE = 0.5;
+  const float AIRY = 0.5;  // shadow lift strength (max +0.03)
+  const float SLOPE = 0.8; // hot range firmly tame
+  const float A = (1.0 - KNEE) / SLOPE;
+  float Ltoe = L + AIRY * L * (KNEE - L); // L=0 -> 0, L=KNEE -> KNEE
+  float u    = L - KNEE;
+  float Lsh  = KNEE + (1.0 - KNEE) * u / (A + u); // L>KNEE-A par valid
+  float Lc = mix(Ltoe, Lsh, smoothstep(KNEE - 0.06, KNEE + 0.06, L));
+  col *= Lc / max(L, 1e-5); // uniform scale = hue-safe
 
-  // gamma correction
-  col = pow(col, vec3_splat(1.0/NL_GAMMA));
+  // highlights me slow desat-to-white (neon clipping khatam, natural look)
+  {
+    float removed = max(L - Lc, 0.0);
+    float g = 1.0 - 1.0 / (0.15 * removed + 1.0);
+    col = mix(col, vec3_splat(luminance(col)), g);
+  }
+
+  // display encode (restrained: darker-realistic)
+  col = pow(col, vec3_splat(1.0 / 1.08));
 
   #ifdef NL_SATURATION
     col = mix(vec3_splat(luminance(col)), col, NL_SATURATION);
   #endif
 
   #ifdef NL_TINT
-    col *= mix(NL_TINT_LOW, NL_TINT_HIGH, col);
+    float lumG = luminance(col);
+    vec3 tinted = col * mix(NL_TINT_LOW, NL_TINT_HIGH, col);
+    col = tinted * (lumG / max(luminance(tinted), 1e-5));
   #endif
 
-  // cinematic grade (tonemap-side): teal shadows + warm highlights.
-  // Luma ke hisaab se smooth blend + luma lock = brightness same, sirf mood.
+  // cinematic finish (tonemap-side): teal shadows + warm highlights, luma lock
   {
     float cl = luminance(col);
     vec3 cine = col * mix(vec3(0.96,0.98,1.03), vec3(1.03,1.0,0.97), smoothstep(0.0, 1.0, cl));
@@ -56,32 +61,48 @@ vec3 colorCorrection(vec3 col) {
   return col;
 }
 
-// inv used in fogcolor for nether
+vec3 colorCorrection(vec3 col) {
+  return craftEdgeVividLight(max(col, vec3_splat(0.0)));
+}
+
+// inv used in fogcolor (toe+shoulder inverse - fog range ke liye exact;
+// highlight-desat ka inverse skip: fog-range me g<0.01, invisible)
 vec3 colorCorrectionInv(vec3 col) {
-  // cinematic grade inverse (approx, fog-range me accurate)
+  // cinematic finish inverse (approx, fog-range me accurate)
   {
     float cl = luminance(col);
     vec3 ck = mix(vec3(0.96,0.98,1.03), vec3(1.03,1.0,0.97), smoothstep(0.0, 1.0, cl));
     col /= max(ck, vec3_splat(1e-4));
   }
   #ifdef NL_TINT
-    col /= mix(NL_TINT_LOW, NL_TINT_HIGH, col); // not accurate inverse
+    vec3 k = mix(NL_TINT_LOW, NL_TINT_HIGH, col);
+    col /= max(k, vec3_splat(1e-4));
   #endif
-
   #ifdef NL_SATURATION
     col = mix(vec3_splat(dot(col,vec3(0.21, 0.71, 0.08))), col, 1.0/NL_SATURATION);
   #endif
-
-  // incomplete
-  // extended reinhard only
-  float ws = 0.7966;
-  col = pow(col, vec3_splat(NL_GAMMA));
-  col = col*(ws + col)/(ws + col*(1.0 - ws));
-
+  col = pow(col, vec3_splat(1.08));
+  {
+    const float KNEE = 0.5;
+    const float AIRY = 0.5;
+    const float SLOPE = 0.8;
+    const float A = (1.0 - KNEE) / SLOPE;
+    float Lc = luminance(col);
+    float L;
+    if (Lc <= KNEE) {
+      // toe inverse: AIRY*L^2 - (1+AIRY*KNEE)*L + Lc = 0 (exact quadratic)
+      float b = 1.0 + AIRY * KNEE;
+      float disc = max(b * b - 4.0 * AIRY * Lc, 0.0);
+      L = (b - sqrt(disc)) / (2.0 * AIRY);
+    } else {
+      float t = clamp((Lc - KNEE) / (1.0 - KNEE), 0.0, 0.999);
+      L = KNEE + A * t / (1.0 - t);
+    }
+    col *= L / max(Lc, 1e-5);
+  }
   #ifdef NL_EXPOSURE
     col /= NL_EXPOSURE;
   #endif
-
   return col;
 }
 
