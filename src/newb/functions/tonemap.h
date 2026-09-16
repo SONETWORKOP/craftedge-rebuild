@@ -51,11 +51,13 @@ vec3 craftEdgeVividLight(vec3 col) {
     col = tinted * (lumG / max(luminance(tinted), 1e-5));
   #endif
 
-  // cinematic finish (tonemap-side): teal shadows + warm highlights, luma lock
+  // BSL-style warm grade (research): BSL ki pehchan saturation nahi,
+  // golden-warm sunlight hai. Soft cool shadows + golden highlights.
+  // Luma ke hisaab se smooth blend + luma lock = brightness same, sirf mood.
   {
     float cl = luminance(col);
-    vec3 cine = col * mix(vec3(0.96,0.98,1.03), vec3(1.03,1.0,0.97), smoothstep(0.0, 1.0, cl));
-    col = cine * (cl / max(luminance(cine), 1e-5));
+    vec3 warm = col * mix(vec3(0.97,0.985,1.03), vec3(1.05,1.0,0.93), smoothstep(0.0, 1.0, cl));
+    col = warm * (cl / max(luminance(warm), 1e-5));
   }
 
   return col;
@@ -68,10 +70,10 @@ vec3 colorCorrection(vec3 col) {
 // inv used in fogcolor (toe+shoulder inverse - fog range ke liye exact;
 // highlight-desat ka inverse skip: fog-range me g<0.01, invisible)
 vec3 colorCorrectionInv(vec3 col) {
-  // cinematic finish inverse (approx, fog-range me accurate)
+  // warm grade inverse (approx, fog-range me accurate)
   {
     float cl = luminance(col);
-    vec3 ck = mix(vec3(0.96,0.98,1.03), vec3(1.03,1.0,0.97), smoothstep(0.0, 1.0, cl));
+    vec3 ck = mix(vec3(0.97,0.985,1.03), vec3(1.05,1.0,0.93), smoothstep(0.0, 1.0, cl));
     col /= max(ck, vec3_splat(1e-4));
   }
   #ifdef NL_TINT
