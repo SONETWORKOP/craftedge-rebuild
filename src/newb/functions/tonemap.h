@@ -9,7 +9,7 @@
 // absorb kar leta hai (mids 0.566->0.564, highlights 0.878->0.881, ~same).
 // TONE_EXPOSURE = NL_EXPOSURE (upar apply hota hai, yahan dobara nahi).
 #define TONE_ACES_SCALE  0.55  // aur dark (was 0.65)
-#define TONE_GAMMA       1.45  // mids balance (decode-farak absorber)
+#define TONE_GAMMA       1.60  // mids dark (was 1.45)
 #define TONE_SHADOW_LIFT 0.0   // andhera floor (0.0 off)
 
 // ---- vibrance strength (saturation ka samajhdaar bhai) ----
