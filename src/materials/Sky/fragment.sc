@@ -85,6 +85,21 @@ void main() {
       }
     #endif
 
+    // ESTN-style sunbeams SKY par (suraj ke around radial kiranen).
+    // Suraj ko dekhne par Sky dikhta hai (terrain nahi) - readme wali look
+    // yahan se aati hai. Additive glow: din/dawn me, ufuq (horizon) se upar.
+    #ifdef NL_BEAMS
+    if (!env.underwater && env.dayFactor > 0.0 && viewDir.y > 0.0) {
+      float skyFacing;
+      float skyPat = nlSunBeamPattern(viewDir * 100.0, env.sunDir, skyFacing);
+      float dayGate = clamp(env.dayFactor, 0.0, 1.0)
+        * smoothstep(0.0, 0.15, viewDir.y)
+        * (1.0 - 0.7 * env.rainFactor);
+      vec3 skyBeamCol = sunLightTint(env.dayFactor, env.rainFactor) * 1.5 + vec3_splat(0.2);
+      skyColor += skyBeamCol * skyPat * skyFacing * dayGate * NL_BEAM_STRENGTH;
+    }
+    #endif
+
     skyColor = colorCorrection(skyColor);
 
     gl_FragColor = vec4(skyColor, 1.0);
