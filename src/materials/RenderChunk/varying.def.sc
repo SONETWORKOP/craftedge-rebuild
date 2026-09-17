@@ -19,3 +19,4 @@ vec4 v_extra      : TEXCOORD3;
 vec4 v_reflPbr    : TEXCOORD4;
 vec4 v_reflSun    : TEXCOORD9;
 vec4 v_sunMoon    : TEXCOORD10;
+vec3 v_beam       : TEXCOORD11; // ESTN screenPos (clip/(z+1)), denomiator guarded

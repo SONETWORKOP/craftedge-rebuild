@@ -1,4 +1,4 @@
-$input v_color0, v_color1, v_fog, v_refl, v_texcoord0, v_lightmapUV, v_extra, v_position, v_reflPbr, v_reflSun, v_sunMoon
+$input v_color0, v_color1, v_fog, v_refl, v_texcoord0, v_lightmapUV, v_extra, v_position, v_reflPbr, v_reflSun, v_sunMoon, v_beam
 
 #include <bgfx_shader.sh>
 SAMPLER2D_AUTOREG(s_NoiseTexture);
@@ -288,20 +288,24 @@ void main() {
     diffuse.rgb = nlUnderwaterScatter(diffuse.rgb, normalize(v_reflSun.xyz), uwWaterFlag);
   }
 
-  // ESTN-style sunbeams (suraj se radial kiranen).
-  // v_position PEHLE SE camera-relative hai (vertex: gPos = worldPos +
-  // CameraPosition), isliye dobara minus NAHI - wahi double-subtract bug tha.
+  // ESTN BEAMS full trio: (1) ABSOLUTE world par angular noise (duniya me
+  // fixed, ESTN world_pos jaisa), (2) screen-center mask (v_beam se),
+  // (3) ESTN beamFog gate (dayA x (1-nightA)^4, sirf din). Fog-colour mix.
+  // Paani ke andar off - bas itna deviation hai ESTN se.
   #ifdef NL_BEAMS
-    if (v_sunMoon.w < 0.5 && v_reflSun.y > -0.05) {
-      float beamFacing;
-      float beamPat = nlSunBeamPattern(v_position, v_reflSun.xyz, beamFacing);
-      float beamDist = length(v_position);
-      float beamGate = v_lightmapUV.y * max(v_fog.a, smoothstep(10.0, 35.0, beamDist));
-      beamGate *= smoothstep(0.0, 0.25, v_reflSun.w); // din/dhalta-suraj only (ESTN dayA jaisa), raat zero
-      float beamLum = luminance(v_fog.rgb * 1.6);
-      vec3 beamCol = mix(vec3_splat(beamLum), v_fog.rgb * 1.6, 1.2);
-      float beamAmt = clamp(beamPat * beamFacing * beamGate * NL_BEAM_STRENGTH, 0.0, 1.0);
-      diffuse.rgb = mix(diffuse.rgb, beamCol, beamAmt);
+    if (v_sunMoon.w < 0.5) {
+      vec3 wAbs = v_position + CameraPosition.xyz;
+      float esDayA = pow(clamp(1.0 - FogColor.b * 1.2, 0.0, 1.0), 0.5);
+      float esNightA = pow(clamp(1.0 - FogColor.r * 1.5, 0.0, 1.0), 1.2);
+      float esBeamFog = clamp(length(v_position) / 24.0, 0.0, 0.64) * esDayA * pow(1.0 - esNightA, 4.0);
+      float esBeamFar = clamp(abs(wAbs.x) / 60.0, 0.0, 1.0);
+      float esSunBeam = pow(esBeamNoise(atan(wAbs.y, wAbs.z) * 0.15915494 * 75.1), 1.75) * 1.75;
+      esSunBeam = (1.0 - smoothstep(0.2, 1.0, length(v_beam * v_beam * v_beam)))
+        * mix(clamp(esSunBeam, 0.0, 1.0) * smoothstep(0.2, 1.0, length(wAbs.yz) / 16.0), 1.0, esBeamFar * esBeamFar * esBeamFar);
+      float esLum = luminance(FogColor.rgb * 1.6);
+      vec3 esBeamCol = mix(vec3_splat(esLum), FogColor.rgb * 1.6, 1.2);
+      float esGate = clamp(esBeamFog * v_lightmapUV.y, 0.0, 1.0) * NL_BEAM_STRENGTH;
+      diffuse.rgb = mix(diffuse.rgb, esBeamCol * esSunBeam, clamp(esGate, 0.0, 1.0));
     }
   #endif
 

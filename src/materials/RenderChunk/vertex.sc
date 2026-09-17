@@ -2,7 +2,7 @@ $input a_color0, a_position, a_texcoord0, a_texcoord1
 #ifdef INSTANCING
   $input i_data0, i_data1, i_data2, i_data3
 #endif
-$output v_color0, v_color1, v_fog, v_refl, v_texcoord0, v_lightmapUV, v_extra, v_position, v_reflPbr, v_reflSun, v_sunMoon
+$output v_color0, v_color1, v_fog, v_refl, v_texcoord0, v_lightmapUV, v_extra, v_position, v_reflPbr, v_reflSun, v_sunMoon, v_beam
 
 #include <bgfx_shader.sh>
 #include <newb/main.sh>
@@ -212,6 +212,10 @@ void main() {
   vec4 pos = mul(u_viewProj, vec4(worldPos, 1.0));
 
   #endif
+
+  // ESTN screenPos port: clip xyz/(clip z+1). max() guard - camera ke peeche
+  // pos.z+1 zero hota (NaN failta), isliye bounded. v50 wala render issue fix.
+  v_beam = pos.xyz / max(pos.z + 1.0, 0.05);
 
   gl_Position = pos;
 }
