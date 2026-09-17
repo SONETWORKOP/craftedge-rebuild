@@ -288,23 +288,33 @@ void main() {
     diffuse.rgb = nlUnderwaterScatter(diffuse.rgb, normalize(v_reflSun.xyz), uwWaterFlag);
   }
 
-  // BEAMS hybrid v2: pattern SURAJ-SE-ANCHORED + screen mask (ESTN feel).
-  // Gate pack-native hai (suraj-height x sky-light x fog/doori) - ESTN ke
-  // dayA/nightA formulas HATAE kyunki wo LDR kohre ke liye hain; hamara
-  // HDR kohra (blue 1.1+) unhe hamesha zero kar deta tha = gate kabhi
-  // khulta hi nahi tha (v57/v58 invisible ki jad).
+  // ESTN BEAMS verbatim port (renderchunk.fragment lines ~92-95 + 241-244).
+  // Same formulas, sirf naam/plumbing pack ke: atan absolute world par,
+  // screen-center mask, near-pattern/far-wash, fog-colour mix, fog*skylight.
+  // 2 safety deviations (proven broken otherwise):
+  //  (a) v_beam denominator guarded (peeche camera NaN = render cook),
+  //  (b) paani ke andar off.
+  // dayA/nightA FogColor formulas ki jagah dayFactor gate - ESTN wale LDR
+  // kohre par bane hain, hamare HDR kohre (blue 1.1+) par hamesha zero.
   #ifdef NL_BEAMS
     if (v_sunMoon.w < 0.5) {
-      float beamFacing;
-      float beamPat = nlSunBeamPattern(v_position, v_reflSun.xyz, beamFacing);
-      float beamDist = length(v_position);
-      float sunUp = smoothstep(-0.05, 0.15, v_reflSun.y); // suraj ufuq se upar
-      float beamGate = v_lightmapUV.y * max(v_fog.a, smoothstep(10.0, 35.0, beamDist)) * sunUp;
-      float esCenter = 1.0 - smoothstep(0.2, 1.0, length(v_beam * v_beam * v_beam));
+      vec3 wAbs = v_position + CameraPosition.xyz;
+      float esDist = length(v_position);
+      float esRainA = v_reflPbr.w;
+      float esHeightFog = mix(64.0, 32.0, esRainA);
+      float esHeight2 = wAbs.y < 0.0 ? -(wAbs.y / 45.0) * abs(wAbs.y / 45.0) : 0.0;
+      float esFog3 = esDist / 24.0;
+      float esFog2 = esDist / esHeightFog;
+      float esDayGate = smoothstep(-0.05, 0.3, v_reflSun.w);
+      float esBeamFog = clamp(mix(esFog3, sqrt(max(esFog2, 0.0)), esHeight2), 0.0, 0.64) * esDayGate;
+      float esBeamFar = clamp(abs(wAbs.x) / (128.0 / 1.6), 0.0, 1.0); // RD=128 stand-in
+      float esSunBeam = pow(esBeamNoise(atan(wAbs.y, wAbs.z) * 0.15915494 * 75.1), 1.75) * 1.75;
+      esSunBeam = (1.0 - smoothstep(0.2, 1.0, length(v_beam * v_beam * v_beam)))
+        * mix(clamp(esSunBeam, 0.0, 1.0) * smoothstep(0.2, 1.0, length(wAbs.yz) / 16.0), 1.0, esBeamFar * esBeamFar * esBeamFar);
       float esLum = luminance(FogColor.rgb * 1.6);
       vec3 esBeamCol = mix(vec3_splat(esLum), FogColor.rgb * 1.6, 1.2);
-      float esGate = clamp(beamGate, 0.0, 1.0) * NL_BEAM_STRENGTH;
-      diffuse.rgb = mix(diffuse.rgb, esBeamCol * beamPat * beamFacing * esCenter, clamp(esGate, 0.0, 1.0));
+      float esGate = clamp(esBeamFog * v_lightmapUV.y, 0.0, 1.0) * NL_BEAM_STRENGTH;
+      diffuse.rgb = mix(diffuse.rgb, esBeamCol * esSunBeam, clamp(esGate, 0.0, 1.0));
     }
   #endif
 
