@@ -297,6 +297,7 @@ void main() {
       float beamPat = nlSunBeamPattern(v_position, v_reflSun.xyz, beamFacing);
       float beamDist = length(v_position);
       float beamGate = v_lightmapUV.y * max(v_fog.a, smoothstep(10.0, 35.0, beamDist));
+      beamGate *= smoothstep(0.0, 0.25, v_reflSun.w); // din/dhalta-suraj only (ESTN dayA jaisa), raat zero
       float beamLum = luminance(v_fog.rgb * 1.6);
       vec3 beamCol = mix(vec3_splat(beamLum), v_fog.rgb * 1.6, 1.2);
       float beamAmt = clamp(beamPat * beamFacing * beamGate * NL_BEAM_STRENGTH, 0.0, 1.0);
