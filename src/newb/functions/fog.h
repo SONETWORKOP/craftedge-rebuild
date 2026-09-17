@@ -65,48 +65,6 @@ vec3 nlGodRayTint(vec3 FOG_COLOR) {
   return mix(dayRayTint, dawnRayTint, dawnDusk);
 }
 
-// ---- ESTN sunbeams port: exact vnoise (quintic, functionLib.fxh jaisa) ----
-float esBeamNoise(float p) {
-  float i = floor(p);
-  float f = p - i;
-  float u = f * f * f * (f * (f * 6.0 - 15.0) + 10.0);
-  float a = fract(sin(i * 12.9898) * 43758.5453);
-  float b = fract(sin((i + 1.0) * 12.9898) * 43758.5453);
-  return mix(a, b, u);
-}
-
-// ---- adapted sunbeams helper (Sky dome use karta hai) ----
-// Self-contained 1D value noise (koi include nahi chahiye).
-float nlBeamNoise(float x) {
-  float i = floor(x);
-  float f = x - i;
-  float u = f * f * (3.0 - 2.0 * f);
-  float a = fract(sin(i * 12.9898) * 43758.5453);
-  float b = fract(sin((i + 1.0) * 12.9898) * 43758.5453);
-  return mix(a, b, u);
-}
-// rel = camera-se-pixel ray (blocks), sunDir = suraj disha.
-// facing = suraj ki taraf dekhne ka lobe (out), return = kiran pattern 0..~1.
-// Center-seam guard: bilkul suraj-axis par pattern 0 (sparkle nahi).
-float nlSunBeamPattern(vec3 rel, vec3 sunDir, out float facing) {
-  vec3 sd = normalize(sunDir);
-  vec3 up = abs(sd.y) > 0.99 ? vec3(1.0, 0.0, 0.0) : vec3(0.0, 1.0, 0.0);
-  vec3 t1 = normalize(cross(sd, up));
-  vec3 t2 = cross(sd, t1);
-  float dist = max(length(rel), 1e-4);
-  vec3 rd = rel / dist;
-  float sunAmt = max(dot(rd, sd), 0.0);
-  // sun-hug cone: 20° saaf, 30° faint, 45°+ hard zero.
-  // Chaudha lobe hi moon/ulti-taraf illusion tha (30-50° ke streaks).
-  facing = pow(sunAmt, 24.0) * smoothstep(0.4, 0.75, sunAmt);
-  float perp = length(vec2(dot(rd, t1), dot(rd, t2)));
-  float ang = atan(dot(rd, t2), dot(rd, t1));
-  float pattern = pow(nlBeamNoise(ang * 0.15915494 * 75.1), 1.75) * 1.75;
-  pattern *= smoothstep(0.0, 0.05, perp);
-  pattern *= smoothstep(8.0, 40.0, dist); // paas ka geometry clean
-  return pattern;
-}
-
 // ---- fog.txt port (Download/fog.txt) ----
 // Sunset glow cue 0..1 from fog color (godrays wali same trick).
 float nlSunsetGlow(vec3 fogColor) {
