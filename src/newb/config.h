@@ -203,7 +203,7 @@
 #define NL_MOON_TILT       45.0
 
 /* Godrays - strong volumetric light shafts (ray-traced light look) */
-#define NL_GODRAY 1.2
+#define NL_GODRAY 2.0
 
 /* PBR block reflection (from "block reflection V3") - fragment-stage
    normal-mapped, TBN-distorted, Cook-Torrance mirror on smooth blocks */
