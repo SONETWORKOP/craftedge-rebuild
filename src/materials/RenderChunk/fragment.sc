@@ -288,22 +288,22 @@ void main() {
     diffuse.rgb = nlUnderwaterScatter(diffuse.rgb, normalize(v_reflSun.xyz), uwWaterFlag);
   }
 
-  // BEAMS hybrid (mirror fix): pattern SURAJ-SE-ANCHORED (helper me tight
-  // cone + anti-sun kill - suraj jahan, kirnein wahan; sunrise east, sunset
-  // west, ulta impossible), screen-center mask (ESTN feel, kinare clean),
-  // beamFog x sky-light gate (sirf din). Fog-colour mix.
-  // Paani ke andar off - bas itna deviation hai ESTN se.
+  // BEAMS hybrid v2: pattern SURAJ-SE-ANCHORED + screen mask (ESTN feel).
+  // Gate pack-native hai (suraj-height x sky-light x fog/doori) - ESTN ke
+  // dayA/nightA formulas HATAE kyunki wo LDR kohre ke liye hain; hamara
+  // HDR kohra (blue 1.1+) unhe hamesha zero kar deta tha = gate kabhi
+  // khulta hi nahi tha (v57/v58 invisible ki jad).
   #ifdef NL_BEAMS
     if (v_sunMoon.w < 0.5) {
       float beamFacing;
       float beamPat = nlSunBeamPattern(v_position, v_reflSun.xyz, beamFacing);
+      float beamDist = length(v_position);
+      float sunUp = smoothstep(-0.05, 0.15, v_reflSun.y); // suraj ufuq se upar
+      float beamGate = v_lightmapUV.y * max(v_fog.a, smoothstep(10.0, 35.0, beamDist)) * sunUp;
       float esCenter = 1.0 - smoothstep(0.2, 1.0, length(v_beam * v_beam * v_beam));
-      float esDayA = pow(clamp(1.0 - FogColor.b * 1.2, 0.0, 1.0), 0.5);
-      float esNightA = pow(clamp(1.0 - FogColor.r * 1.5, 0.0, 1.0), 1.2);
-      float esBeamFog = clamp(length(v_position) / 24.0, 0.0, 0.64) * esDayA * pow(1.0 - esNightA, 4.0);
       float esLum = luminance(FogColor.rgb * 1.6);
       vec3 esBeamCol = mix(vec3_splat(esLum), FogColor.rgb * 1.6, 1.2);
-      float esGate = clamp(esBeamFog * v_lightmapUV.y, 0.0, 1.0) * NL_BEAM_STRENGTH;
+      float esGate = clamp(beamGate, 0.0, 1.0) * NL_BEAM_STRENGTH;
       diffuse.rgb = mix(diffuse.rgb, esBeamCol * beamPat * beamFacing * esCenter, clamp(esGate, 0.0, 1.0));
     }
   #endif
