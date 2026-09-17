@@ -1,4 +1,4 @@
-$input v_color0, v_color1, v_fog, v_refl, v_texcoord0, v_lightmapUV, v_extra, v_position, v_reflPbr, v_reflSun, v_sunMoon, v_beam
+$input v_color0, v_color1, v_fog, v_refl, v_texcoord0, v_lightmapUV, v_extra, v_position, v_reflPbr, v_reflSun, v_sunMoon
 
 #include <bgfx_shader.sh>
 SAMPLER2D_AUTOREG(s_NoiseTexture);
@@ -288,20 +288,18 @@ void main() {
     diffuse.rgb = nlUnderwaterScatter(diffuse.rgb, normalize(v_reflSun.xyz), uwWaterFlag);
   }
 
-  // ESTN BEAMS exact port (same formulas): ABSOLUTE world par angular noise,
-  // screen-center mask, near-pattern/far-wash, fog*skylight gate.
-  // (reversed smoothstep ko seedha likha - result same, har GPU par safe.)
-  // Paani ke andar off (v_sunMoon.w) - bas itna deviation hai ESTN se.
+  // ESTN-style sunbeams (suraj se radial kiranen): fogged outdoor me.
+  // Gate ESTN jaisa: fog x sky-light (sunrise me bhi khula; dayFactor nahi
+  // kyunki wo sunrise par 0 hota hai). Paani ke andar nahi.
   #ifdef NL_BEAMS
-    if (v_sunMoon.w < 0.5) {
-      float esBeamFar = clamp(v_fog.a * 1.5, 0.0, 1.0); // RD-scale stand-in: |x|/(RD/1.6)
-      float esSunBeam = pow(esBeamNoise(atan(v_position.y, v_position.z) * 0.15915494 * 75.1), 1.75) * 1.75;
-      esSunBeam = (1.0 - smoothstep(0.2, 1.0, length(v_beam * v_beam * v_beam)))
-        * mix(clamp(esSunBeam, 0.0, 1.0) * smoothstep(0.2, 1.0, length(v_position.yz) / 16.0), 1.0, esBeamFar * esBeamFar * esBeamFar);
-      float esLum = luminance(FogColor.rgb * 1.6);
-      vec3 esBeamCol = mix(vec3_splat(esLum), FogColor.rgb * 1.6, 1.2);
-      float esGate = clamp(v_fog.a * v_lightmapUV.y, 0.0, 1.0) * NL_BEAM_STRENGTH;
-      diffuse.rgb = mix(diffuse.rgb, esBeamCol * esSunBeam, clamp(esGate, 0.0, 1.0));
+    if (v_sunMoon.w < 0.5 && v_reflSun.y > -0.05) {
+      float beamFacing;
+      float beamPat = nlSunBeamPattern(v_position - CameraPosition.xyz, v_reflSun.xyz, beamFacing);
+      float beamGate = v_fog.a * v_lightmapUV.y;
+      float beamLum = luminance(v_fog.rgb * 1.6);
+      vec3 beamCol = mix(vec3_splat(beamLum), v_fog.rgb * 1.6, 1.2);
+      float beamAmt = clamp(beamPat * beamFacing * beamGate * NL_BEAM_STRENGTH, 0.0, 1.0);
+      diffuse.rgb = mix(diffuse.rgb, beamCol, beamAmt);
     }
   #endif
 

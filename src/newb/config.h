@@ -207,8 +207,8 @@
 
 /* Sunbeams - ESTN-style radial kiranen suraj ke around (godrays se alag:
    ye zameen par nahi, suraj se nikalti lines hain, fogged din me) */
-#define NL_BEAMS                 // ON: ESTN sunbeam rays (readme wali kiranen)
-#define NL_BEAM_STRENGTH 1.0     // ESTN raw (0.0 off ~ 1.0 full)
+#define NL_BEAMS                 // ON: sunbeam rays
+#define NL_BEAM_STRENGTH 0.6     // 0.0 off ~ 1.0 tez kiranen
 
 /* PBR block reflection (from "block reflection V3") - fragment-stage
    normal-mapped, TBN-distorted, Cook-Torrance mirror on smooth blocks */
