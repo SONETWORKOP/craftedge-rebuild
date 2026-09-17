@@ -86,10 +86,9 @@ float nlSunBeamPattern(vec3 rel, vec3 sunDir, out float facing) {
   float dist = max(length(rel), 1e-4);
   vec3 rd = rel / dist;
   float sunAmt = max(dot(rd, sd), 0.0);
-  // tight sun lobe + anti-sun hemisphere DEAD (moon side par zero).
-  // ESTN screen-center mask ka 3D equivalent - v51 me wide tha isliye
-  // chand ke piche aur suraj se door bagal me dikha. 60°+ par hard zero.
-  facing = pow(sunAmt, 6.0) * smoothstep(0.05, 0.5, sunAmt);
+  // tight sun cone: 25° me visible, 45° faint, 60°+ hard zero (moon dead).
+  // ESTN screen-mask ka 3D equivalent - dheela lobe hi bagal-moon issue tha.
+  facing = pow(sunAmt, 8.0) * smoothstep(0.15, 0.55, sunAmt);
   float perp = length(vec2(dot(rd, t1), dot(rd, t2)));
   float ang = atan(dot(rd, t2), dot(rd, t1));
   float pattern = pow(nlBeamNoise(ang * 0.15915494 * 75.1), 1.75) * 1.75;
