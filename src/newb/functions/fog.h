@@ -65,7 +65,17 @@ vec3 nlGodRayTint(vec3 FOG_COLOR) {
   return mix(dayRayTint, dawnRayTint, dawnDusk);
 }
 
-// ---- ESTN-style sunbeams (suraj se nikalti radial kiranen) ----
+// ---- ESTN sunbeams port: exact vnoise (quintic, functionLib.fxh jaisa) ----
+float esBeamNoise(float p) {
+  float i = floor(p);
+  float f = p - i;
+  float u = f * f * f * (f * (f * 6.0 - 15.0) + 10.0);
+  float a = fract(sin(i * 12.9898) * 43758.5453);
+  float b = fract(sin((i + 1.0) * 12.9898) * 43758.5453);
+  return mix(a, b, u);
+}
+
+// ---- adapted sunbeams helper (Sky dome use karta hai) ----
 // Self-contained 1D value noise (koi include nahi chahiye).
 float nlBeamNoise(float x) {
   float i = floor(x);
