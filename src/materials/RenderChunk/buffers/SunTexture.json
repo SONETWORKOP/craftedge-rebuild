@@ -1,12 +1,12 @@
 {
   "name": "SunTexture",
-  "reg1": 9,
-  "reg2": 9,
+  "register_slot": 9,
+  "binding_slot": 9,
   "access": "readonly",
   "precision": "lowp",
   "type": "texture2D",
   "texture_format": "",
-  "always_one": 1,
+  "slot_count": 1,
   "texture_path": "textures/environment/sun",
   "default_texture": "",
   "sampler_state": {

@@ -1,14 +1,14 @@
 {
   "name": "NoiseTexture",
-  "reg1": 3,
-  "reg2": 3,
+  "register_slot": 3,
+  "binding_slot": 3,
   "type": "texture2D",
   "precision": "lowp",
   "access": "readonly",
   "texture_format": "",
   "default_texture": "",
   "unordered_access": false,
-  "always_one": 1,
+  "slot_count": 1,
   "texture_path": "textures/environment/clouds",
   "sampler_state": {
     "filter": "Bilinear",
