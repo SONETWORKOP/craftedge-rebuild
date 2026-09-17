@@ -86,7 +86,7 @@ float nlSunBeamPattern(vec3 rel, vec3 sunDir, out float facing) {
   float dist = max(length(rel), 1e-4);
   vec3 rd = rel / dist;
   float sunAmt = max(dot(rd, sd), 0.0);
-  facing = sunAmt * sunAmt * sunAmt;
+  facing = sunAmt * sunAmt; // wide lobe taaki sunrise me bhi dikhe
   float perp = length(vec2(dot(rd, t1), dot(rd, t2)));
   float ang = atan(dot(rd, t2), dot(rd, t1));
   float pattern = pow(nlBeamNoise(ang * 0.15915494 * 75.1), 1.75) * 1.75;

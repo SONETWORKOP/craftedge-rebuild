@@ -288,13 +288,14 @@ void main() {
     diffuse.rgb = nlUnderwaterScatter(diffuse.rgb, normalize(v_reflSun.xyz), uwWaterFlag);
   }
 
-  // ESTN-style sunbeams (suraj se radial kiranen): fogged outdoor din me.
-  // Paani ke andar nahi (v_sunMoon.w), suraj upar ho tabhi (v_reflSun.y).
+  // ESTN-style sunbeams (suraj se radial kiranen): fogged outdoor me.
+  // Gate ESTN jaisa: fog x sky-light (sunrise me bhi khula; dayFactor nahi
+  // kyunki wo sunrise par 0 hota hai). Paani ke andar nahi.
   #ifdef NL_BEAMS
-    if (v_sunMoon.w < 0.5 && v_reflSun.y > 0.0) {
+    if (v_sunMoon.w < 0.5 && v_reflSun.y > -0.05) {
       float beamFacing;
       float beamPat = nlSunBeamPattern(v_position - CameraPosition.xyz, v_reflSun.xyz, beamFacing);
-      float beamGate = v_fog.a * v_lightmapUV.y * clamp(v_reflSun.w, 0.0, 1.0);
+      float beamGate = v_fog.a * v_lightmapUV.y;
       float beamLum = luminance(v_fog.rgb * 1.6);
       vec3 beamCol = mix(vec3_splat(beamLum), v_fog.rgb * 1.6, 1.2);
       float beamAmt = clamp(beamPat * beamFacing * beamGate * NL_BEAM_STRENGTH, 0.0, 1.0);
