@@ -1,6 +1,6 @@
 name = "CraftEdge Visuals"
 version = [1, 0, 0]
-min_supported_mc_version = [1, 26, 40]
+min_supported_mc_version = [1, 26, 50]
 description = '''
 §c%w
 §7- Vivid & realistic visuals for Minecraft!
