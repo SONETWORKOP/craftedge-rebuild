@@ -5,8 +5,9 @@ import platform
 
 CONF_FILE = "tool/data/.builder.pkl"
 NS_DEV_ASSET_URL_PREFIX = "https://api.github.com/repos/devendrn/newb-shader/releases/assets/"
-NS_DEV_MAT_SRC_URL = NS_DEV_ASSET_URL_PREFIX + "382320205"
-NS_DEV_MAT_SRC_SHA256 = "45ba7129a55cbc19c38504af2fecac25b954ddaacf316bb2bdfe4ec30ec50089"
+NS_DEV_RELEASE = "https://github.com/devendrn/newb-shader/releases/download/dev/"
+NS_DEV_MAT_SRC_URL = NS_DEV_RELEASE + "src-materials-1.26.40.zip"
+NS_DEV_MAT_SRC_SHA256 = "a8ff79dd8e050e268d52c1d91097e0df42b8eefc80262994a4593bd8f6bf20fa"
 NS_DEV_SHADERC_ASSETS = {
     "android-arm": "186072253",
     "android-arm64": "186072261",

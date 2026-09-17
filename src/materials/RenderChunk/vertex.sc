@@ -11,9 +11,7 @@ uniform vec4 RenderChunkFogAlpha;
 uniform vec4 FogAndDistanceControl;
 uniform vec4 ViewPositionAndTime;
 uniform vec4 FogColor;
-uniform vec4 DimensionID;
 uniform vec4 TimeOfDay;
-uniform vec4 Day;
 uniform vec4 CameraPosition;
 
 SAMPLER2D_AUTOREG(s_MatTexture);
@@ -87,7 +85,7 @@ void main() {
     bool isTree = false;
   #endif
 
-  nl_environment env = nlDetectEnvironment(DimensionID.x, TimeOfDay.x, Day.x, FogColor.rgb, FogAndDistanceControl.xyz);
+  nl_environment env = nlDetectEnvironment(TimeOfDay.x, FogColor.rgb, FogAndDistanceControl.xyz);
   nl_skycolor skycol = nlSkyColors(env);
 
   // time
@@ -118,6 +116,15 @@ void main() {
 
   vec4 fogColor;
   fogColor.rgb = nlRenderSky(skycol, env, viewDir, t, true);
+  // ATMO sunset palette (ESTN jaisa): dawn/dusk me kohra sunset-rang pakde.
+  // Sirf overworld, paani/nether/end me nahi. dawnF: noon+night 0, dusk 1.
+  #ifdef NL_ATMO
+    if (!env.end && !env.nether && !env.underwater) {
+      float dawnF = clamp(1.0 - env.dayFactor * env.dayFactor, 0.0, 1.0);
+      dawnF *= dawnF;
+      fogColor.rgb = mix(fogColor.rgb, NL_ATMO_SUNSET, NL_ATMO * dawnF);
+    }
+  #endif
   fogColor.a = nlRenderFogFade(relativeDist, FogColor.rgb, FogAndDistanceControl.xy, env.end);
   fogColor.a = nlRenderHeightFog(fogColor.a, worldPos.y, relativeDist);
   // fog.txt (Download/fog.txt): sunset/rain/nether/underwater curve.

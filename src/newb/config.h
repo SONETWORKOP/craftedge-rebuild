@@ -56,6 +56,10 @@
 #define NL_SKY_VOID_DARKNESS   0.3
 #define NL_SKY_RAIN_MIX_FACTOR 0.95
 
+/* ATMO sunset palette (ESTN jaisa): dawn/dusk kohra-rang, 0.0 off */
+#define NL_ATMO 0.35
+#define NL_ATMO_SUNSET vec3(1.4,0.55,0.20)  // sunset orange kiss
+
 /* Sky colors - warm realistic sky */
 #define NL_DAWN_ZENITH_COL   vec3(0.45,0.30,0.50)     // warm twilight purple (less pink)
 #define NL_DAWN_HORIZON_COL  vec3(3.2,0.85,0.20)      // golden orange sunrise
