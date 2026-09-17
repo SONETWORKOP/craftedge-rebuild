@@ -220,7 +220,7 @@
 #define NL_PBR_SPEC_CLAMP 0.6          // caps GGX spikes -> kills golden fireflies
 #define NL_PBR_NORMAL_STRENGTH 0.7     // bump strength (2.0 was too noisy)
 #define NL_PBR_RAIN_BOOST 1.4          // extra mirror strength when raining (wet ground)
-#define NL_PBR_ATLAS_TEXEL vec2(0.0009765625, 0.001953125) // 1024x512 terrain atlas
+#define NL_PBR_ATLAS_TEXEL vec2(0.0009765625, 0.001953125) // legacy (ab dynamic texel use hota hai)
 
 /* Ground reflection - reflective wet ground (fakes ray-traced GI look) */
 #define NL_GROUND_REFL 1.2              // ON: strong mirror-like reflection (RTX look)

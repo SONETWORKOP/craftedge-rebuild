@@ -39,13 +39,15 @@ void lanternWave(
 #endif
 
 #ifdef NL_EXTRA_PLANTS_WAVE
-void extraPlantsFlag(inout bool shouldWave, vec2 uv0, bool isTop) {
+void extraPlantsFlag(inout bool shouldWave, vec2 uv0, bool isTop, vec2 grid) {
   // 1.26.40-1.26.43 (1024x512) vanilla atlas
   // not meant to be used
 
-  // count texture atlas in left-to-right row wise order (64X32)
+  // count texture atlas in left-to-right row wise order, grid dynamic
+  // (nlAtlasGrid se) - atlas resize-proof. Tile index RANGES vanilla order
+  // par hain (upstream #108 jab map dega tab update honge).
   // starts from 0
-  int texN = 64*int(uv0.y*32.0) + int(uv0.x*64.0);
+  int texN = int(grid.x)*int(uv0.y*grid.y) + int(uv0.x*grid.x);
 
   if ( // full
     (texN>=18 && texN<=20) || // Azeala Leaves and Flowering Azeala Leaves
@@ -114,8 +116,9 @@ void nlWave(
   float waveFade = 2.0*max((camDist/NL_WAVE_RANGE) - 0.5, 0.0);
   waveFade *= waveFade;
 
-  // texture atlas has 64x32 textures (uv0.xy division)
-  float texPosY = fract(uv0.y*vec2(textureSize(terrainTex, 0)).y/16.0);
+  // atlas grid dynamic (nlAtlasGrid): resize-proof tile math
+  vec2 atlasGrid = nlAtlasGrid(terrainTex);
+  float texPosY = fract(uv0.y*atlasGrid.y);
 
   // x and z distance from block center
   vec2 bPosC = abs(bPos.xz-0.5);
@@ -129,8 +132,8 @@ void nlWave(
   bool isLeafLitter = bPos.y==0.015625 && (bPosH.x+bPosH.y)==0.0;
 
   // Detect neutral-tinted leaves that vanilla RenderChunk fails to flag as
-  // isTree (cherry, azalea). Use the 64x32 texture atlas index like extraPlants.
-  int texN = 64*int(uv0.y*32.0) + int(uv0.x*64.0);
+  // isTree (cherry, azalea). Grid dynamic hai, index RANGES vanilla order par.
+  int texN = int(atlasGrid.x)*int(uv0.y*atlasGrid.y) + int(uv0.x*atlasGrid.x);
   bool isSpecialLeaves =
     (texN>=18 && texN<=20) ||   // Azalea / Flowering Azalea Leaves
     (texN>=186 && texN<=187) || // Cherry Leaves
@@ -152,7 +155,7 @@ void nlWave(
 
   #ifdef NL_PLANTS_WAVE
     #ifdef NL_EXTRA_PLANTS_WAVE
-      extraPlantsFlag(shouldWave, uv0, isTop);
+      extraPlantsFlag(shouldWave, uv0, isTop, atlasGrid);
     #endif
 
     if (shouldWave) {
