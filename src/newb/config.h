@@ -179,8 +179,8 @@
 #define NL_AURORA_TEX_COL1 vec3(6.0,2.0,9.0)  // magenta-pink ribbons, near layers (you.jpg jaisa)
 #define NL_AURORA_TEX_COL2 vec3(0.4,5.5,8.5)  // cyan ribbons, far layers
 #define NL_AURORA_VELOCITY 0.03
-#define NL_AURORA_SCALE 0.04
-#define NL_AURORA_WIDTH 0.18
+#define NL_AURORA_SCALE 0.025
+#define NL_AURORA_WIDTH 0.28
 #define NL_AURORA_COL1 vec3(0.65,0.30,1.0)   // purple-pink base
 #define NL_AURORA_COL2 vec3(0.30,0.85,1.0)  // cyan top
 #define NL_CLOUD_AURORA_REFLECTION
