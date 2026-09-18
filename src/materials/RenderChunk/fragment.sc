@@ -259,9 +259,7 @@ void main() {
         // so wet surfaces keep the existing high-quality PBR response.
         vec3 texNormal = vec3(0.0, 0.0, 1.0);
         if (rainFactor > 0.001) {
-          // atlas texel dynamic (version-proof) instead of fixed 1024x512
-          vec2 rtTexel = vec2_splat(1.0) / vec2(textureSize(s_MatTexture, 0));
-          texNormal = nlTexNormal(s_MatTexture, v_texcoord0, rtTexel, NL_PBR_NORMAL_STRENGTH);
+          texNormal = nlTexNormal(s_MatTexture, v_texcoord0, NL_PBR_ATLAS_TEXEL, NL_PBR_NORMAL_STRENGTH);
         }
 
         // rain makes the ground wetter -> stronger, smoother mirror

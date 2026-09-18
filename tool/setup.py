@@ -107,40 +107,6 @@ def check_and_apply_termux_fix():
         shutil.copyfile(termux_lib_file, lib_path + "/libc++_shared.so")
 
 
-def convert_mat_json_v1_to_v2(mat_path):
-    # lazurite 0.10+ needs minimal-JSON format v2 + material version 26
-    # (game 1.26.50+). v1 data (1.26.40 zip) ko convert karo:
-    # format 1->2, version 25->26, pass defaults -> full flag_domain
-    # (default value FIRST taaki variant behaviour same rahe).
-    import json
-    for name in sorted(os.listdir(mat_path)):
-        if not name.endswith(".material.json"):
-            continue
-        p = os.path.join(mat_path, name)
-        with open(p, 'r') as f:
-            obj = json.load(f)
-        if not isinstance(obj, list) or obj[0] != 1:
-            continue
-        flag_defs = obj[4]
-        flag_names = list(flag_defs.keys())
-        for passage in obj[9]:
-            old = passage[4] or {}
-            domain = {}
-            for k, v in old.items():
-                fname = flag_names[int(k)]
-                full = list(flag_defs[fname])
-                default = full[v]
-                domain[fname] = [default] + [x for x in full if x != default]
-            if not domain:
-                domain = {n: list(vals) for n, vals in flag_defs.items()}
-            passage[4] = domain
-        obj[0] = 2
-        obj[1] = 26
-        with open(p, 'w') as f:
-            json.dump(obj, f)
-        progress.console.print(f"Converted {name} to material format v26")
-
-
 def run(args):
     conf = load_conf()
 
@@ -185,15 +151,12 @@ def run(args):
             _download_file(
                 NS_DEV_MAT_SRC_URL,
                 mat_filename,
-                "src-materials-1.26.40.zip",
+                "src-materials-1.26.10.zip",
                 NS_DEV_MAT_SRC_SHA256,
             )
             with zipfile.ZipFile(mat_filename, 'r') as zip_ref:
                 zip_ref.extractall(mat_path)
             os.remove(mat_filename)
-
-        # lazurite 0.10+ (game 1.26.50+) needs v2 material data (cached/stale safe)
-        convert_mat_json_v1_to_v2(mat_path)
 
     conf["arch"] = arch
     conf["os_name"] = os_name
