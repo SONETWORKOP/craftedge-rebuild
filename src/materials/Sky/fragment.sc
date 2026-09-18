@@ -46,17 +46,21 @@ void main() {
       skyColor += NL_GALAXY_STARS*nlRenderGalaxy(viewDir, env.fogCol, env, v_underwaterRainTimeDay.z);
     #endif
 
-    // aurora borealis (night only, hidden by rain and underwater)
+    // aurora borealis (night only, hidden by rain and underwater).
+    // Tonemap ke BAAD add hota hai (neeche) taaki ribbons dab na jayein -
+    // clouds ka cover track hota hai taaki parde badalon ke PEECHE rahen.
+    vec3 auroraCol = vec3_splat(0.0);
+    float auroraOcc = 0.0;
+    float nightF = 0.0;
     if (!env.underwater) {
       float VdotU = clamp(viewDir.y, 0.0, 1.0);
-      float nightFactor = 1.0 - smoothstep(-0.02, 0.32, env.dayFactor);
-      if (nightFactor > 0.001 && VdotU > 0.15) {
+      nightF = 1.0 - smoothstep(-0.02, 0.32, env.dayFactor);
+      if (nightF > 0.001 && VdotU > 0.15) {
         float dither = fract(sin(dot(viewDir.xy, vec2(12.9898, 78.233))) * 43758.5453);
-        vec3 aurora = nlAuroraBorealis(
+        auroraCol = nlAuroraBorealis(
           viewDir, VdotU, dither, env.rainFactor,
           CameraPosition.xz, v_underwaterRainTimeDay.z
         );
-        skyColor += NL_AURORA_TEX*aurora*nightFactor;
       }
     }
 
@@ -70,7 +74,9 @@ void main() {
 
         // cloud color tinted by sky/sun, darker at night
         vec3 cloudCol = nlVibrantCloudColor(env.dayFactor, sunLightTint(env.dayFactor, env.rainFactor));
-        skyColor.rgb = mix(skyColor.rgb, cloudCol, clamp(cloudA, 0.0, 1.0));
+        cloudA = clamp(cloudA, 0.0, 1.0);
+        skyColor.rgb = mix(skyColor.rgb, cloudCol, cloudA);
+        auroraOcc = cloudA;
       }
     #else
       // raymarched rounded clouds (RoundedClouds from cloud.txt), the default
@@ -81,10 +87,14 @@ void main() {
         float opacity = smoothstep(0.1, 0.3, viewDir.y);
         float cloudMask = clouds.a * 0.5 * opacity;
         skyColor.rgb = mix(skyColor.rgb, clouds.rgb, cloudMask);
+        auroraOcc = clamp(cloudMask, 0.0, 1.0);
       }
     #endif
 
     skyColor = colorCorrection(skyColor);
+
+    // aurora ribbons (display space - full pop, clouds ke peeche)
+    skyColor += NL_AURORA_TEX * auroraCol * nightF * (1.0 - auroraOcc);
 
     gl_FragColor = vec4(skyColor, 1.0);
   #else

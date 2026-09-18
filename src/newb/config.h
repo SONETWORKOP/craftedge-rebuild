@@ -73,8 +73,8 @@
 
 // midnight boost for the night sky: multiplies night colors so the cyan
 // survives the atmosphere dimmer + ACES tonemap. 0 = no boost (old behavior)
-// 1.0 = night dark (boost off) - day sky bright same rahega
-#define NL_NIGHT_SKY_BRIGHTNESS 1.0
+// 0.4 = gehra dark night (ribbons pop ke liye, tha 1.0)
+#define NL_NIGHT_SKY_BRIGHTNESS 0.4
 #define NL_RAIN_ZENITH_COL   vec3(0.35,0.38,0.42)     // overcast grey
 #define NL_RAIN_HORIZON_COL  vec3(0.48,0.5,0.52)
 #define NL_END_ZENITH_COL    vec3(0.32,0.004,0.4)
@@ -174,7 +174,7 @@
 
 /* Aurora */
 #define NL_AURORA 1.7
-#define NL_AURORA_TEX 1.6          // bright ribbons (was 1.0)
+#define NL_AURORA_TEX 0.8          // post-tonemap ribbons (pehle 1.6 pre-tonemap crush hota tha)
 #define NL_AURORA_TEX_LAYERS 10    // curtain layers - main cost knob (2 taps each)
 #define NL_AURORA_TEX_COL1 vec3(6.0,2.0,9.0)  // magenta-pink ribbons, near layers (you.jpg jaisa)
 #define NL_AURORA_TEX_COL2 vec3(0.4,5.5,8.5)  // cyan ribbons, far layers
