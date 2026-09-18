@@ -176,13 +176,13 @@
 #define NL_AURORA 1.3
 #define NL_AURORA_TEX 1.0          // texture-based sky aurora brightness (night only)
 #define NL_AURORA_TEX_LAYERS 10    // curtain layers - main cost knob (2 taps each)
-#define NL_AURORA_TEX_COL1 vec3(0.6,7.5,9.5)  // cool cyan, near layers
-#define NL_AURORA_TEX_COL2 vec3(0.2,4.2,8.0)  // deeper teal-blue, far layers
+#define NL_AURORA_TEX_COL1 vec3(6.0,2.0,9.0)  // magenta-pink ribbons, near layers (you.jpg jaisa)
+#define NL_AURORA_TEX_COL2 vec3(0.4,5.5,8.5)  // cyan ribbons, far layers
 #define NL_AURORA_VELOCITY 0.03
 #define NL_AURORA_SCALE 0.04
 #define NL_AURORA_WIDTH 0.18
-#define NL_AURORA_COL1 vec3(0.2,0.6,1.0)   // sky blue
-#define NL_AURORA_COL2 vec3(0.35,0.85,1.0)  // bright cyan-blue
+#define NL_AURORA_COL1 vec3(0.65,0.30,1.0)   // purple-pink base
+#define NL_AURORA_COL2 vec3(0.30,0.85,1.0)  // cyan top
 #define NL_CLOUD_AURORA_REFLECTION
 
 /* Shooting star - 4 streaks fire together every NL_SHOOTING_STAR_PERIOD seconds */
