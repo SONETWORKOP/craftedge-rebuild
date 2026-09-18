@@ -173,8 +173,8 @@
 #define NL_CLOUD3_SHADOW_OFFSET 0.3
 
 /* Aurora */
-#define NL_AURORA 1.3
-#define NL_AURORA_TEX 1.0          // texture-based sky aurora brightness (night only)
+#define NL_AURORA 1.7
+#define NL_AURORA_TEX 1.6          // bright ribbons (was 1.0)
 #define NL_AURORA_TEX_LAYERS 10    // curtain layers - main cost knob (2 taps each)
 #define NL_AURORA_TEX_COL1 vec3(6.0,2.0,9.0)  // magenta-pink ribbons, near layers (you.jpg jaisa)
 #define NL_AURORA_TEX_COL2 vec3(0.4,5.5,8.5)  // cyan ribbons, far layers
