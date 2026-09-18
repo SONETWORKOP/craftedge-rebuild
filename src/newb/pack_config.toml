@@ -1,5 +1,5 @@
 name = "CraftEdge Visuals"
-version = [1, 0, 1]
+version = [1, 0, 2]
 min_supported_mc_version = [1, 26, 40]
 description = '''
 §c%w
@@ -9,7 +9,7 @@ description = '''
 ''' # %w = patch warning, %v = version
 authors = ["Shivam"]
 url = ""
-uuid = "ac1e50f9-319f-4d3d-a32c-3a7073ddaf32" # Use https://www.uuidgenerator.net/version4
+uuid = "46c67d56-ee38-490a-a55d-9ac22ff988b7" # fresh identity (cache-bust)
 materials = ["Sky", "RenderChunk", "Actor", "ActorGlint", "EndSky", "Clouds", "SunMoon", "Weather", "ItemInHandTextured", "ItemInHandColor", "ItemInHandColorGlint", "Stars"]
 
 [info] 
