@@ -79,6 +79,25 @@ void main() {
         auroraOcc = cloudA;
       }
     #else
+      // ESTN-style clouds (Low subpack, NO_REFLECTIONS): soft bright puffs,
+      // white tops -> blue-grey shade, day-driven + dawn warm kiss.
+      // Vibrant func reuse (tested) with ESTN palette + bigger shapes.
+      #ifdef NO_REFLECTIONS
+      if (!env.underwater && viewDir.y > 0.001) {
+        float scale = 0.45 / viewDir.y;
+        float cloudA = nlVibrantClouds(viewDir.xz*scale, 0.004*scale, v_underwaterRainTimeDay.z);
+        cloudA *= smoothstep(0.05, 0.35, viewDir.y);
+        cloudA = clamp(cloudA*1.15, 0.0, 1.0);
+        float dayLight = clamp(env.dayFactor*0.5 + 0.5, 0.0, 1.0);
+        float shade = clamp(cloudA, 0.0, 1.0);
+        vec3 estnCol = mix(vec3(0.55,0.62,0.72), vec3(1.05,1.03,1.0), shade);
+        estnCol *= 0.12 + 0.88*dayLight;
+        float dawnF = clamp(1.0 - env.dayFactor*env.dayFactor, 0.0, 1.0);
+        estnCol = mix(estnCol, vec3(1.1,0.75,0.55), dawnF*dawnF*0.35);
+        skyColor.rgb = mix(skyColor.rgb, estnCol, cloudA);
+        auroraOcc = cloudA;
+      }
+      #else
       // raymarched rounded clouds (RoundedClouds from cloud.txt), the default
       // replacement for the old blocky box clouds
       if (!env.underwater && viewDir.y > 0.001) {
@@ -89,6 +108,7 @@ void main() {
         skyColor.rgb = mix(skyColor.rgb, clouds.rgb, cloudMask);
         auroraOcc = clamp(cloudMask, 0.0, 1.0);
       }
+      #endif
     #endif
 
     skyColor = colorCorrection(skyColor);
