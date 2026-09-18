@@ -19,7 +19,7 @@
 /* Lighting - BSL-like strong directional light */
 #define NL_SUNLIGHT_INTENSITY   3.8    // blocks bright fix - was 4.2
 #define NL_TORCHLIGHT_INTENSITY 1.2    // torch 1.2 - was 1.4
-#define NL_SHADOW_INTENSITY     1.7    // slightly deeper shadows for cinematic mood
+#define NL_SHADOW_INTENSITY     1.2    // halke shadows (was 1.7 too dark)
 #define NL_MIN_LIGHTING_BOOST   0.82   // balanced ambient - dark nights but visible
 //#define NL_BLINKING_TORCH
 #define NL_CLOUD_SHADOW

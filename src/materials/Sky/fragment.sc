@@ -72,24 +72,24 @@ void main() {
         vec3 cloudCol = nlVibrantCloudColor(env.dayFactor, sunLightTint(env.dayFactor, env.rainFactor));
         skyColor.rgb = mix(skyColor.rgb, cloudCol, clamp(cloudA, 0.0, 1.0));
       }
-    #else
-      // ESTN-style clouds (Low subpack, NO_REFLECTIONS): bade gada safed
-      // puffs (vibrant/rounded se alag shape), white tops -> blue-grey base.
-      #ifdef NO_REFLECTIONS
+      // Medium second layer (my-style top echo, ESTN DCLOUDS jaisa):
+      // sparse bade puffs vibrant base ke upar.
+      #ifdef MEDIUM
       if (!env.underwater && viewDir.y > 0.001) {
-        float scale = 0.28 / viewDir.y;
-        float cloudA = nlVibrantClouds(viewDir.xz*scale, 0.004*scale, v_underwaterRainTimeDay.z);
-        cloudA *= smoothstep(0.05, 0.35, viewDir.y);
-        cloudA = clamp(cloudA*1.35, 0.0, 1.0);
-        float dayLight = clamp(env.dayFactor*0.5 + 0.5, 0.0, 1.0);
-        float shade = clamp(cloudA, 0.0, 1.0);
-        vec3 estnCol = mix(vec3(0.60,0.66,0.75), vec3(1.08,1.06,1.02), shade*shade);
-        estnCol *= 0.12 + 0.88*dayLight;
-        float dawnF = clamp(1.0 - env.dayFactor*env.dayFactor, 0.0, 1.0);
-        estnCol = mix(estnCol, vec3(1.1,0.75,0.55), dawnF*dawnF*0.35);
-        skyColor.rgb = mix(skyColor.rgb, estnCol, cloudA);
+        float scale2 = 0.3 / viewDir.y;
+        float cloudA2 = nlVibrantClouds(viewDir.xz*scale2 + vec2(3.7,9.1), 0.004*scale2, v_underwaterRainTimeDay.z + 40.0);
+        cloudA2 *= smoothstep(0.05, 0.35, viewDir.y);
+        cloudA2 = clamp((cloudA2-0.55)*1.6, 0.0, 1.0)*0.7;
+        float dayLight2 = clamp(env.dayFactor*0.5 + 0.5, 0.0, 1.0);
+        vec3 topCol = mix(vec3(0.60,0.66,0.75), vec3(1.08,1.06,1.02), clamp(cloudA2, 0.0, 1.0));
+        topCol *= 0.12 + 0.88*dayLight2;
+        skyColor.rgb = mix(skyColor.rgb, topCol, clamp(cloudA2, 0.0, 1.0)*NL_SKY_CLOUD_OPACITY);
       }
-      #else
+      #endif
+    #else
+      // Low (NO_REFLECTIONS): dome clean - box-mesh ESTN clouds cover karte
+      // hain (double-draw nahi). Baaki sab rounded dome.
+      #ifndef NO_REFLECTIONS
       // raymarched rounded clouds (RoundedClouds from cloud.txt), the default
       // replacement for the old blocky box clouds
       if (!env.underwater && viewDir.y > 0.001) {
