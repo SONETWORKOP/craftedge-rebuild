@@ -73,6 +73,23 @@ void main() {
         skyColor.rgb = mix(skyColor.rgb, cloudCol, clamp(cloudA, 0.0, 1.0));
       }
     #else
+      // ESTN-style clouds (Low subpack, NO_REFLECTIONS): bade gada safed
+      // puffs (vibrant/rounded se alag shape), white tops -> blue-grey base.
+      #ifdef NO_REFLECTIONS
+      if (!env.underwater && viewDir.y > 0.001) {
+        float scale = 0.28 / viewDir.y;
+        float cloudA = nlVibrantClouds(viewDir.xz*scale, 0.004*scale, v_underwaterRainTimeDay.z);
+        cloudA *= smoothstep(0.05, 0.35, viewDir.y);
+        cloudA = clamp(cloudA*1.35, 0.0, 1.0);
+        float dayLight = clamp(env.dayFactor*0.5 + 0.5, 0.0, 1.0);
+        float shade = clamp(cloudA, 0.0, 1.0);
+        vec3 estnCol = mix(vec3(0.60,0.66,0.75), vec3(1.08,1.06,1.02), shade*shade);
+        estnCol *= 0.12 + 0.88*dayLight;
+        float dawnF = clamp(1.0 - env.dayFactor*env.dayFactor, 0.0, 1.0);
+        estnCol = mix(estnCol, vec3(1.1,0.75,0.55), dawnF*dawnF*0.35);
+        skyColor.rgb = mix(skyColor.rgb, estnCol, cloudA);
+      }
+      #else
       // raymarched rounded clouds (RoundedClouds from cloud.txt), the default
       // replacement for the old blocky box clouds
       if (!env.underwater && viewDir.y > 0.001) {
@@ -82,6 +99,7 @@ void main() {
         float cloudMask = clouds.a * 0.5 * opacity;
         skyColor.rgb = mix(skyColor.rgb, clouds.rgb, cloudMask);
       }
+      #endif
     #endif
 
     skyColor = colorCorrection(skyColor);
