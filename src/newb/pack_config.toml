@@ -1,5 +1,5 @@
 name = "CraftEdge Visuals"
-version = [1, 0, 0]
+version = [1, 0, 1]
 min_supported_mc_version = [1, 26, 40]
 description = '''
 §c%w
