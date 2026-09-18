@@ -73,8 +73,8 @@
 
 // midnight boost for the night sky: multiplies night colors so the cyan
 // survives the atmosphere dimmer + ACES tonemap. 0 = no boost (old behavior)
-// 0.4 = gehra dark night (ribbons pop ke liye, tha 1.0)
-#define NL_NIGHT_SKY_BRIGHTNESS 0.4
+// 1.0 = pehle jaisa (no change)
+#define NL_NIGHT_SKY_BRIGHTNESS 1.0
 #define NL_RAIN_ZENITH_COL   vec3(0.35,0.38,0.42)     // overcast grey
 #define NL_RAIN_HORIZON_COL  vec3(0.48,0.5,0.52)
 #define NL_END_ZENITH_COL    vec3(0.32,0.004,0.4)
