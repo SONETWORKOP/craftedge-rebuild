@@ -52,7 +52,7 @@ void main() {
       color.a *= smoothstep(0.0, 0.7, vDir.y);
     #else
       color = renderOldClouds(
-        vDir, CameraPosition.xz, v_color2.w, v_color1.w, v_color2.rgb
+        vDir, CameraPosition.xz, v_color2.w, v_color1.w, v_color2.rgb, v_color1.rgb
       );
       color.a *= v_color0.w;
     #endif
