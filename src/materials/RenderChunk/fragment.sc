@@ -37,7 +37,7 @@ uniform vec4 MoonPhase;
   sky exactly and keep the same size at any camera height.
 */
 vec4 waterCloudReflection(
-  vec3 surfacePos, vec3 viewDir, float rain, float dayFactor, vec3 horizonCol, highp float t
+  vec3 surfacePos, vec3 viewDir, float rain, float dayFactor, vec3 horizonCol, vec3 zenithCol, highp float t
 ) {
   vec3 V = normalize(viewDir);
 
@@ -76,12 +76,12 @@ vec4 waterCloudReflection(
     vec2 domeUV = reflDir.xz*domeScale + depthShift*0.0025 + wobble;
     float mask = nlVibrantClouds(domeUV, 0.004*domeScale, t);
     mask *= smoothstep(0.05, 0.35, reflDir.y)*NL_SKY_CLOUD_OPACITY;
-    clouds = vec4(nlVibrantCloudColor(dayFactor, sunLightTint(dayFactor, rain)), mask);
+    clouds = vec4(nlVibrantCloudColor(dayFactor, sunLightTint(dayFactor, rain), horizonCol, zenithCol), mask);
   #else
     // raymarched rounded clouds (same function the sky uses), so the water
     // mirror lines up with the sky's RoundedClouds exactly
     float jitter = fract(sin(dot(reflDir.xy, vec2(12.9898, 78.233))) * 43758.5453);
-    clouds = nlRoundedClouds(reflDir, t, jitter);
+    clouds = nlRoundedClouds(reflDir, t, jitter, horizonCol, zenithCol);
   #endif
 
   // the night sky's textured aurora - sampled on the same reflected ray as
@@ -202,7 +202,7 @@ void main() {
         nl_skycolor wskycol = nlOverworldSkyColors(wenv);
         vec4 cloudReflection = waterCloudReflection(
           surfacePos, v_reflPbr.xyz, wenv.rainFactor, wenv.dayFactor,
-          wskycol.horizonEdge, ViewPositionAndTime.w
+          wskycol.horizonEdge, wskycol.zenith, ViewPositionAndTime.w
         );
         diffuse.rgb = mix(diffuse.rgb,cloudReflection.rgb,cloudReflection.a);
       #endif

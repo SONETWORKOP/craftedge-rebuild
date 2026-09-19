@@ -5,6 +5,18 @@
 #include "noise.h"
 #include "sky.h"
 
+// sky-match helpers: din me 0, raat me ~1.
+// raat me clouds sky ke rang me ghul jaye, safed patch na lage.
+vec3 nlCloudSkyTint(vec3 horizonCol, vec3 zenithCol) {
+  float lum = dot(horizonCol, vec3_splat(0.33));
+  float nightBlend = 1.0 - clamp(lum*0.85, 0.0, 1.0);
+  float w = 0.15 + 0.45*nightBlend;
+  return mix(horizonCol, zenithCol, w);
+}
+float nlCloudNightBlend(vec3 skyTint) {
+  return 1.0 - clamp(dot(skyTint, vec3_splat(0.33))*0.85, 0.0, 1.0);
+}
+
 // simple clouds 2D noise
 float cloudNoise2D(vec2 p, highp float t, float rain) {
   t *= NL_CLOUD1_SPEED;
@@ -60,7 +72,7 @@ float nlOldCloudCell(vec2 uv, float size, float radius, float softness) {
 }
 
 vec4 renderOldClouds(
-    vec3 viewDir, vec2 cameraPos, highp float time, float rain, vec3 horizonCol
+    vec3 viewDir, vec2 cameraPos, highp float time, float rain, vec3 horizonCol, vec3 zenithCol
 ) {
   float invY = 0.8/max(viewDir.y,0.025);
   vec2 uv = viewDir.xz*invY+cameraPos*0.0025;
@@ -99,6 +111,11 @@ vec4 renderOldClouds(
 
   vec3 shadowCol = mix(horizonCol*0.55,vec3(0.48,0.55,0.7),0.4);
   vec3 color = mix(vec3_splat(1.0),shadowCol,0.3*shade);
+  // raat me sky se match: safed top ko sky-tint me gholo
+  vec3 skyTintO = nlCloudSkyTint(horizonCol, zenithCol);
+  float nightO = nlCloudNightBlend(skyTintO);
+  vec3 nightColO = mix(skyTintO*1.05, skyTintO*0.65, 0.3*shade);
+  color = mix(color, nightColO, nightO);
   color *= 1.0-0.6*rain;
   return vec4(color,alpha);
 }
@@ -159,9 +176,14 @@ float nlVibrantClouds(vec2 uv, float px, highp float time) {
 }
 
 // sunTint comes from sunLightTint() (lighting.h is included after this header)
-vec3 nlVibrantCloudColor(float dayFactor, vec3 sunTint) {
+vec3 nlVibrantCloudColor(float dayFactor, vec3 sunTint, vec3 horizonCol, vec3 zenithCol) {
   vec3 col = vec3_splat(1.1)*mix(0.35, 1.0, clamp(dayFactor+0.25, 0.0, 1.0));
-  return col*(0.7+0.5*sunTint);
+  col = col*(0.7+0.5*sunTint);
+  // raat me sky se match
+  vec3 skyTint = nlCloudSkyTint(horizonCol, zenithCol);
+  float nightB = nlCloudNightBlend(skyTint);
+  col = mix(col, skyTint*0.95, nightB*0.85);
+  return col;
 }
 
 // soft multi-octave value noise (fBm) - smooth amorphous cloud shapes.
@@ -219,7 +241,6 @@ vec4 renderCloudsSimple(nl_skycolor skycol, vec3 pos, highp float t, float rain,
 
   // box-style crisp puffy edges
   vec4 col = vec4(cloudBase, smoothstep(0.05, 0.55, d));
-
   // stronger brightness ramp on thick/tall cloud cores for a puffier, more
   // voluminous look instead of a flat wash of white
   float brightness = smoothstep(0.2, 0.7, d);
@@ -246,6 +267,11 @@ vec4 renderCloudsSimple(nl_skycolor skycol, vec3 pos, highp float t, float rain,
   // slight extra saturation push so clouds don't wash out flat white
   float cloudLum = dot(col.rgb, vec3(0.299, 0.587, 0.114));
   col.rgb = mix(vec3_splat(cloudLum), col.rgb, 1.15);
+
+  // raat me sky se match: poora cloud tint sky me gholo
+  vec3 skyTintS = nlCloudSkyTint(skycol.horizonEdge, skycol.zenith);
+  float nightS = nlCloudNightBlend(skyTintS);
+  col.rgb = mix(col.rgb, skyTintS*(0.65 + 0.4*smoothstep(0.0, 0.6, d)), nightS*0.9);
 
   // darken during rain
   col.rgb *= 1.0 - 0.7*rain;
@@ -315,6 +341,10 @@ vec4 renderCloudsRounded(
   vec3 cloudBottom = mix(vec3(0.5, 0.55, 0.65), horizonCol * 0.6, 0.3);
   vec4 col = vec4(mix(cloudBottom, cloudTop, d.y), d.x);
   col.rgb += dot(col.rgb, vec3(0.12,0.1,0.08))*d.y*d.y;
+  // raat me sky se match
+  vec3 skyTintR = nlCloudSkyTint(horizonCol, zenithCol);
+  float nightR = nlCloudNightBlend(skyTintR);
+  col.rgb = mix(col.rgb, skyTintR*(0.65 + 0.4*d.y), nightR*0.9);
   col.rgb *= 1.0 - 0.75*rain;
   return col;
 }
@@ -358,6 +388,10 @@ vec4 renderClouds(vec2 p, float t, float rain, vec3 horizonCol, vec3 zenithCol, 
   vec3 cloudWhite = vec3(0.93, 0.95, 1.0);
   vec3 cloudShadow = mix(horizonCol * 0.5, vec3(0.5, 0.55, 0.65), 0.4);
   col.rgb = mix(cloudShadow, cloudWhite, shadow*mix(b, d, c));
+  // raat me sky se match
+  vec3 skyTintC = nlCloudSkyTint(horizonCol, zenithCol);
+  float nightC = nlCloudNightBlend(skyTintC);
+  col.rgb = mix(col.rgb, skyTintC*0.9, nightC*0.85);
   col.rgb *= 1.0-0.65*rain;
 
   return col;
@@ -373,17 +407,20 @@ float nlCloudFbm(vec3 p) {
   return texture2D(s_NoiseTexture, uv).r;
 }
 
-vec4 nlRoundedClouds(vec3 viewDir, float time, float jitter) {
+vec4 nlRoundedClouds(vec3 viewDir, float time, float jitter, vec3 horizonCol, vec3 zenithCol) {
   float cloudBase = 1.1;
   float cloudTop = 1.3;
   int steps = 32;
-  vec3 bottomColor = vec3(0.5, 0.55, 0.6);
-  vec3 sideColor = vec3(0.9, 0.95, 1.0);
+  vec3 skyTintD = nlCloudSkyTint(horizonCol, zenithCol);
+  float nightD = nlCloudNightBlend(skyTintD);
+  // din me original rang, raat me sky-match
+  vec3 bottomColor = mix(vec3(0.5, 0.55, 0.6), skyTintD*0.65, nightD*0.9);
+  vec3 sideColor = mix(vec3(0.9, 0.95, 1.0), skyTintD*1.0, nightD*0.9);
   vec3 colors = mix(sideColor, bottomColor, 0.5);
   float stepSize = (cloudTop - cloudBase) / float(steps);
 
   vec3 rayOrigin = vec3(0.0, 0.0, 0.0);
-  vec3 cloudAccum = vec3(0.35, 0.35, 0.35);
+  vec3 cloudAccum = mix(vec3(0.35, 0.35, 0.35), skyTintD*0.75, nightD*0.9);
   float alphaAccum = 0.0;
   float viewLift = step(0.0, viewDir.y);
 
@@ -409,8 +446,8 @@ vec4 nlRoundedClouds(vec3 viewDir, float time, float jitter) {
     float alpha = 1.0 - smoothstep(0.01, 0.0, density);
     alpha *= (1.0 - alphaAccum) * viewLift;
 
-    vec3 TopColor = vec3(1.0, 0.925, 0.875);
-    vec3 BottomColor = vec3(0.0, 0.15, 0.25);
+    vec3 TopColor = mix(vec3(1.0, 0.925, 0.875), skyTintD*1.05, nightD*0.9);
+    vec3 BottomColor = mix(vec3(0.0, 0.15, 0.25), skyTintD*0.6, nightD*0.9);
     float heightNormal = smoothstep(-0.2, 1.0, heightNorm);
     vec3 coloredScattering = mix(BottomColor, TopColor, heightNormal);
     cloudAccum += vec3(1.0, 1.0, 1.0) * coloredScattering * alpha;
