@@ -6,9 +6,11 @@
 #include "sky.h"
 
 // raat ke clouds fix halka cyan (config.h: NL_NIGHT_CLOUD_COL).
-// horizonCol din me bright / raat me dark hota hai, usi se night blend nikalta hai.
+// horizonCol din me bright (~1.4) / raat me dark (~0.33) hota hai.
+// purani curve 0.71 pe atakti thi + dome ko dawn-orange light milti thi,
+// isliye white bachta tha. ye curve raat me poora 1.0 deti hai.
 vec3 nlNightCyan(vec3 dayCol, vec3 horizonCol) {
-  float nightB = 1.0 - clamp(dot(horizonCol, vec3_splat(0.33))*0.85, 0.0, 1.0);
+  float nightB = 1.0 - smoothstep(0.35, 0.9, dot(horizonCol, vec3_splat(0.33)));
   return mix(dayCol, NL_NIGHT_CLOUD_COL, nightB);
 }
 
