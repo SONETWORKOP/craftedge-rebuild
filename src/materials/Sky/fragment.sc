@@ -83,6 +83,10 @@ void main() {
         float dayLight2 = clamp(env.dayFactor*0.5 + 0.5, 0.0, 1.0);
         vec3 topCol = mix(vec3(0.60,0.66,0.75), vec3(1.08,1.06,1.02), clamp(cloudA2, 0.0, 1.0));
         topCol *= 0.12 + 0.88*dayLight2;
+        // raat me sky se match
+        vec3 skyTint2 = mix(skycol.horizonEdge, skycol.zenith, 0.45);
+        float night2 = 1.0 - clamp(dot(skyTint2, vec3_splat(0.33))*0.85, 0.0, 1.0);
+        topCol = mix(topCol, skyTint2*0.6, night2);
         skyColor.rgb = mix(skyColor.rgb, topCol, clamp(cloudA2, 0.0, 1.0)*NL_SKY_CLOUD_OPACITY);
       }
       #endif
