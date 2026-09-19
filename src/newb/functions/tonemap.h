@@ -10,7 +10,7 @@
 // TONE_EXPOSURE = NL_EXPOSURE (upar apply hota hai, yahan dobara nahi).
 #define TONE_ACES_SCALE  0.65  // was 0.55
 #define TONE_GAMMA       1.80  // wapas 1.8 (was 2.50)
-#define TONE_SHADOW_LIFT 0.0   // andhera floor (0.0 off)
+#define TONE_SHADOW_LIFT 0.03  // shadows fix (was 0.0 off) - sirf andhera, ujala same
 
 // ---- vibrance strength (saturation ka samajhdaar bhai) ----
 // pheeke rang uthao, jalte-neon chhodo. 0.0 off ~ 0.5 tez.
