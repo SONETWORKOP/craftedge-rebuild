@@ -52,22 +52,6 @@ void main() {
       pos.y *= (NL_CLOUD0_THICKNESS + rain*(NL_CLOUD0_RAIN_THICKNESS - NL_CLOUD0_THICKNESS));
       worldPos = mul(model, vec4(pos, 1.0)).xyz;
 
-      #ifdef NO_REFLECTIONS
-        // ESTN full copy (Low subpack): box-mesh gradient clouds.
-        // Day/sunset/night palettes + rain + distance fade, ESTN formulas.
-        // (CloudColor uniform nahi hai yahan - dayV dayFactor se.)
-        float grad = clamp(a_position.y, 0.0, 1.0);
-        float dayV = clamp(env.dayFactor*0.5 + 0.5, 0.0, 1.0);
-        dayV = clamp((dayV*1.2 - 0.35) / 0.65, 0.0, 1.0);
-        vec3 estnPal = mix(mix(vec3(0.0,0.15,0.3), vec3(0.75,0.5,1.0), clamp(dayV*2.0, 0.0, 1.0)), vec3(1.0,1.2,1.2), clamp(dayV*2.0-1.0, 0.0, 1.0));
-        estnPal = mix(estnPal, FogColor.rgb + vec3(0.12,0.12,0.12), rain);
-        color.rgb = estnPal * mix(1.0, 0.8, grad);
-        // distance fade: fog_fade ABSOLUTE coords ke liye hai (estnDepth
-        // relative samajh ke alpha zero kar raha tha - wahi bug tha)
-        color.a = mix(1.0, 0.64, grad) * fog_fade(worldPos.xyz);
-        color.a *= 1.0 - 0.65*rain;
-        color.rgb = colorCorrection(color.rgb);
-      #else
       // realistic white/grey cloud color with stronger volumetric contrast
       // deeper, cooler shadowed base and a brighter sunlit top for more depth
       float vGrad = a_position.y*a_position.y*(3.0 - 2.0*a_position.y); // smootherstep for punchy top/bottom
@@ -93,7 +77,6 @@ void main() {
           color.a = 0.0;
         #endif
       }
-      #endif // NO_REFLECTIONS (ESTN copy end)
     #else
       pos.y *= 0.01;
       worldPos.xyz = mul(model, vec4(pos, 1.0)).xyz;

@@ -276,7 +276,7 @@
   #define NL_NO_WATER_CLOUD_REFL
 #endif
 
-#if defined(VIBRANT_CLOUD) || defined(MEDIUM)
+#if defined(VIBRANT_CLOUD) || defined(NO_REFLECTIONS)
   #undef NL_CLOUD_TYPE
   #define NL_CLOUD_TYPE 0
   #define NL_SKY_CLOUDS

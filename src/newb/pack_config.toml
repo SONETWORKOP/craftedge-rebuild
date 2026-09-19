@@ -34,7 +34,7 @@ define = "NO_REFLECTIONS"
 materials = ["RenderChunk", "Clouds", "Sky"]
 description = '''
 Low
-Ground, block & water reflections are turned off + ESTN-style soft clouds.
+Vibrant painted clouds. Ground, block & water reflections are turned off.
 The lightest option.
 '''
 
@@ -43,7 +43,7 @@ define = "MEDIUM"
 materials = ["RenderChunk", "Clouds", "Sky"]
 description = '''
 Medium
-Vibrant painted clouds. Cloud & aurora reflections on water are turned off
+Default rounded clouds. Cloud & aurora reflections on water are turned off
 for better performance. Sun/Moon mirror and ground reflections stay on.
 '''
 

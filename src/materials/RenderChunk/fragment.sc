@@ -70,7 +70,7 @@ vec4 waterCloudReflection(
   );
 
   vec4 clouds;
-  #if defined(VIBRANT_CLOUD) || defined(MEDIUM)
+  #ifdef VIBRANT_CLOUD
     // sky-dome clouds are camera-locked, so mirror them the same way
     float domeScale = 0.8/max(reflDir.y, 0.045);
     vec2 domeUV = reflDir.xz*domeScale + depthShift*0.0025 + wobble;
