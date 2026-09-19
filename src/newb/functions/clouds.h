@@ -5,14 +5,9 @@
 #include "noise.h"
 #include "sky.h"
 
-// raat ke clouds fix halka cyan (config.h: NL_NIGHT_CLOUD_COL).
-// horizonCol din me bright (~1.4) / raat me dark (~0.33) hota hai.
-// purani curve 0.71 pe atakti thi + dome ko dawn-orange light milti thi,
-// isliye white bachta tha. ye curve raat me poora 1.0 deti hai.
-vec3 nlNightCyan(vec3 dayCol, vec3 horizonCol) {
-  float nightB = 1.0 - smoothstep(0.35, 0.9, dot(horizonCol, vec3_splat(0.33)));
-  return mix(dayCol, NL_NIGHT_CLOUD_COL, nightB);
-}
+// suraj-based night factor (-1 raat .. 1 din). brightness se nahi,
+// seedha dayFactor se - raat ke boost se dhokha nahi khata (horror pattern).
+float nlNightF(float dayFactor) { return 1.0 - smoothstep(-0.08, 0.12, dayFactor); }
 
 // simple clouds 2D noise
 float cloudNoise2D(vec2 p, highp float t, float rain) {
@@ -107,7 +102,7 @@ vec4 renderOldClouds(
   alpha *= smoothstep(0.05,0.35,viewDir.y);
 
   vec3 shadowCol = mix(horizonCol*0.55,vec3(0.48,0.55,0.7),0.4);
-  vec3 color = nlNightCyan(mix(vec3_splat(1.0),shadowCol,0.3*shade), horizonCol);
+  vec3 color = mix(vec3_splat(1.0),shadowCol,0.3*shade);
   color *= 1.0-0.6*rain;
   return vec4(color,alpha);
 }
@@ -168,9 +163,9 @@ float nlVibrantClouds(vec2 uv, float px, highp float time) {
 }
 
 // sunTint comes from sunLightTint() (lighting.h is included after this header)
-vec3 nlVibrantCloudColor(float dayFactor, vec3 sunTint, vec3 horizonCol) {
+vec3 nlVibrantCloudColor(float dayFactor, vec3 sunTint) {
   vec3 col = vec3_splat(1.1)*mix(0.35, 1.0, clamp(dayFactor+0.25, 0.0, 1.0));
-  return nlNightCyan(col*(0.7+0.5*sunTint), horizonCol);
+  return col*(0.7+0.5*sunTint);
 }
 
 // soft multi-octave value noise (fBm) - smooth amorphous cloud shapes.
@@ -255,7 +250,6 @@ vec4 renderCloudsSimple(nl_skycolor skycol, vec3 pos, highp float t, float rain,
   // slight extra saturation push so clouds don't wash out flat white
   float cloudLum = dot(col.rgb, vec3(0.299, 0.587, 0.114));
   col.rgb = mix(vec3_splat(cloudLum), col.rgb, 1.15);
-  col.rgb = nlNightCyan(col.rgb, skycol.horizonEdge);
 
   // darken during rain
   col.rgb *= 1.0 - 0.7*rain;
@@ -325,7 +319,6 @@ vec4 renderCloudsRounded(
   vec3 cloudBottom = mix(vec3(0.5, 0.55, 0.65), horizonCol * 0.6, 0.3);
   vec4 col = vec4(mix(cloudBottom, cloudTop, d.y), d.x);
   col.rgb += dot(col.rgb, vec3(0.12,0.1,0.08))*d.y*d.y;
-  col.rgb = nlNightCyan(col.rgb, horizonCol);
   col.rgb *= 1.0 - 0.75*rain;
   return col;
 }
@@ -369,7 +362,6 @@ vec4 renderClouds(vec2 p, float t, float rain, vec3 horizonCol, vec3 zenithCol, 
   vec3 cloudWhite = vec3(0.93, 0.95, 1.0);
   vec3 cloudShadow = mix(horizonCol * 0.5, vec3(0.5, 0.55, 0.65), 0.4);
   col.rgb = mix(cloudShadow, cloudWhite, shadow*mix(b, d, c));
-  col.rgb = nlNightCyan(col.rgb, horizonCol);
   col.rgb *= 1.0-0.65*rain;
 
   return col;
@@ -385,7 +377,7 @@ float nlCloudFbm(vec3 p) {
   return texture2D(s_NoiseTexture, uv).r;
 }
 
-vec4 nlRoundedClouds(vec3 viewDir, float time, float jitter, vec3 horizonCol) {
+vec4 nlRoundedClouds(vec3 viewDir, float time, float jitter) {
   float cloudBase = 1.1;
   float cloudTop = 1.3;
   int steps = 32;
@@ -431,7 +423,7 @@ vec4 nlRoundedClouds(vec3 viewDir, float time, float jitter, vec3 horizonCol) {
     if (alphaAccum > 0.98 && viewDir.y < 0.9) break;
   }
 
-  return vec4(nlNightCyan(cloudAccum, horizonCol), alphaAccum);
+  return vec4(cloudAccum, alphaAccum);
 }
 #endif
 

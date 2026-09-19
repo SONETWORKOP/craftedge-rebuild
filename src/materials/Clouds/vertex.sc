@@ -2,7 +2,7 @@ $input a_color0, a_position
 #ifdef INSTANCING
   $input i_data0, i_data1, i_data2, i_data3
 #endif
-$output v_color0
+$output v_color0, v_dayFactor
 #include <newb/config.h>
 #if NL_CLOUD_TYPE >= 2
   $output v_color1, v_color2, v_fogColor
@@ -41,6 +41,7 @@ void main() {
   env = calculateSunParams(env, TimeOfDay.x);
 
   nl_skycolor skycol = nlOverworldSkyColors(env);
+  v_dayFactor = env.dayFactor; // suraj-based (-1 raat), horror pattern
   vec3 pos = a_position;
   vec3 worldPos;
 
@@ -61,7 +62,7 @@ void main() {
       // saturation push so clouds keep sky-blue shadowing instead of flat grey
       float cLum = dot(color.rgb, vec3(0.299,0.587,0.114));
       color.rgb = mix(vec3_splat(cLum), color.rgb, 1.12);
-      color.rgb = nlNightCyan(color.rgb, skycol.horizonEdge);
+      color.rgb = mix(color.rgb, NL_NIGHT_CLOUD_COL, nlNightF(env.dayFactor));
       color.rgb *= 1.0 - 0.65*rain;
       color.rgb = colorCorrection(color.rgb);
       color.a = NL_CLOUD0_OPACITY * fog_fade(worldPos.xyz);
@@ -106,6 +107,7 @@ void main() {
         #endif
 
         color.a *= fade;
+        color.rgb = mix(color.rgb, NL_NIGHT_CLOUD_COL, nlNightF(env.dayFactor));
         color.rgb = colorCorrection(color.rgb);
       #else // NL_CLOUD_TYPE 2
         v_fogColor = FogColor.rgb;

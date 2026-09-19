@@ -1,4 +1,4 @@
-$input v_color0
+$input v_color0, v_dayFactor
 #include <newb/config.h>
 #if NL_CLOUD_TYPE >= 2
   $input v_color1, v_color2, v_fogColor
@@ -57,6 +57,7 @@ void main() {
       color.a *= v_color0.w;
     #endif
 
+    color.rgb = mix(color.rgb, NL_NIGHT_CLOUD_COL, nlNightF(v_dayFactor));
     color.rgb = colorCorrection(color.rgb);
   #endif
 
