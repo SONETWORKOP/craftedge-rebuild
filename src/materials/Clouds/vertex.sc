@@ -62,9 +62,9 @@ void main() {
         vec3 estnPal = mix(mix(vec3(0.0,0.15,0.3), vec3(0.75,0.5,1.0), clamp(dayV*2.0, 0.0, 1.0)), vec3(1.0,1.2,1.2), clamp(dayV*2.0-1.0, 0.0, 1.0));
         estnPal = mix(estnPal, FogColor.rgb + vec3(0.12,0.12,0.12), rain);
         color.rgb = estnPal * mix(1.0, 0.8, grad);
-        float estnDepth = length(worldPos) / FogAndDistanceControl.z;
-        float estnFog = clamp(estnDepth - 0.9, 0.0, 1.0);
-        color.a = mix(1.0, 0.64, grad) * (1.0 - estnFog);
+        // distance fade: fog_fade ABSOLUTE coords ke liye hai (estnDepth
+        // relative samajh ke alpha zero kar raha tha - wahi bug tha)
+        color.a = mix(1.0, 0.64, grad) * fog_fade(worldPos.xyz);
         color.a *= 1.0 - 0.65*rain;
         color.rgb = colorCorrection(color.rgb);
       #else
