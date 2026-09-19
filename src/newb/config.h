@@ -72,6 +72,7 @@
 #define NL_NIGHT_EDGE_COL    vec3(0.08,0.38,0.55)    // bright cyan edge (zyda cyan)
 /* Raat ke clouds ka fixed rang - halka cyan (din me asar nahi) */
 #define NL_NIGHT_CLOUD_COL   vec3(0.55,0.75,0.88)    // halka cyan night clouds
+#define NL_NIGHT_CLOUD_BLEND 0.65  // raat me kitna cyan mix ho (1.0 = full cyan, kam = shading zyada dikhegi)
 
 // midnight boost for the night sky: multiplies night colors so the cyan
 // survives the atmosphere dimmer + ACES tonemap. 0 = no boost (old behavior)

@@ -7,7 +7,8 @@
 
 // suraj-based night factor (-1 raat .. 1 din). brightness se nahi,
 // seedha dayFactor se - raat ke boost se dhokha nahi khata (horror pattern).
-float nlNightF(float dayFactor) { return 1.0 - smoothstep(-0.08, 0.12, dayFactor); }
+// BLEND: full replace nahi, original shading ke saath cyan mix (config: BLEND).
+float nlNightF(float dayFactor) { return (1.0 - smoothstep(-0.08, 0.12, dayFactor)) * NL_NIGHT_CLOUD_BLEND; }
 
 // simple clouds 2D noise
 float cloudNoise2D(vec2 p, highp float t, float rain) {
