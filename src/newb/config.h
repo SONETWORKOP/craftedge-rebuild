@@ -70,6 +70,8 @@
 #define NL_NIGHT_ZENITH_COL  vec3(0.04,0.20,0.38)    // deep cyan zenith (zyda cyan)
 #define NL_NIGHT_HORIZON_COL vec3(0.06,0.30,0.48)    // cyan horizon (zyda cyan)
 #define NL_NIGHT_EDGE_COL    vec3(0.08,0.38,0.55)    // bright cyan edge (zyda cyan)
+/* Raat ke clouds ka fixed rang - halka cyan (din me asar nahi) */
+#define NL_NIGHT_CLOUD_COL   vec3(0.55,0.75,0.88)    // halka cyan night clouds
 
 // midnight boost for the night sky: multiplies night colors so the cyan
 // survives the atmosphere dimmer + ACES tonemap. 0 = no boost (old behavior)

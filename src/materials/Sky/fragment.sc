@@ -69,7 +69,7 @@ void main() {
         cloudA *= NL_SKY_CLOUD_OPACITY;
 
         // cloud color tinted by sky/sun, darker at night
-        vec3 cloudCol = nlVibrantCloudColor(env.dayFactor, sunLightTint(env.dayFactor, env.rainFactor), skycol.horizonEdge, skycol.zenith);
+        vec3 cloudCol = nlVibrantCloudColor(env.dayFactor, sunLightTint(env.dayFactor, env.rainFactor), skycol.horizonEdge);
         skyColor.rgb = mix(skyColor.rgb, cloudCol, clamp(cloudA, 0.0, 1.0));
       }
       // Medium second layer (my-style top echo, ESTN DCLOUDS jaisa):
@@ -83,10 +83,7 @@ void main() {
         float dayLight2 = clamp(env.dayFactor*0.5 + 0.5, 0.0, 1.0);
         vec3 topCol = mix(vec3(0.60,0.66,0.75), vec3(1.08,1.06,1.02), clamp(cloudA2, 0.0, 1.0));
         topCol *= 0.12 + 0.88*dayLight2;
-        // raat me sky se match
-        vec3 skyTint2 = mix(skycol.horizonEdge, skycol.zenith, 0.45);
-        float night2 = 1.0 - clamp(dot(skyTint2, vec3_splat(0.33))*0.85, 0.0, 1.0);
-        topCol = mix(topCol, skyTint2*0.6, night2);
+        topCol = nlNightCyan(topCol, skycol.horizonEdge);
         skyColor.rgb = mix(skyColor.rgb, topCol, clamp(cloudA2, 0.0, 1.0)*NL_SKY_CLOUD_OPACITY);
       }
       #endif
@@ -98,7 +95,7 @@ void main() {
       // replacement for the old blocky box clouds
       if (!env.underwater && viewDir.y > 0.001) {
         float jitter = fract(sin(dot(viewDir.xy, vec2(12.9898, 78.233))) * 43758.5453);
-        vec4 clouds = nlRoundedClouds(viewDir, v_underwaterRainTimeDay.z, jitter, skycol.horizonEdge, skycol.zenith);
+        vec4 clouds = nlRoundedClouds(viewDir, v_underwaterRainTimeDay.z, jitter, skycol.horizonEdge);
         float opacity = smoothstep(0.1, 0.3, viewDir.y);
         float cloudMask = clouds.a * 0.5 * opacity;
         skyColor.rgb = mix(skyColor.rgb, clouds.rgb, cloudMask);
