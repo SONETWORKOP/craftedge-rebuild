@@ -125,7 +125,8 @@ vec4 nlRefl(
         // strong mirror fresnel (r0 higher = more mirror) for RTX-like
         // reflective blocks - reads as a clear mirror on smooth surfaces.
         // Wet ground is smoother, so raise base reflectance while raining.
-        float r0 = 0.09;
+        // TEST: mirror visibility test ke liye tez (baad me tune karna)
+        float r0 = 0.30;
         #ifdef NL_RAIN_REFL_STRENGTH
           r0 = mix(r0, 0.18, env.rainFactor);
         #endif
@@ -134,7 +135,8 @@ vec4 nlRefl(
         float clipFade = clamp(1.0 - camDist/endDist, 0.0, 1.0);
         wetRefl.a *= clipFade*clipFade*(3.0-2.0*clipFade);
         // alpha lift so the reflection reads as a strong mirror
-        wetRefl.a = min(wetRefl.a*1.35, 1.0);
+        // TEST: visibility test ke liye tez lift (baad me tune karna)
+        wetRefl.a = min(wetRefl.a*2.2, 1.0);
       }
     }
 
