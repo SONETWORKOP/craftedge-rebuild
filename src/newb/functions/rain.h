@@ -93,20 +93,6 @@ vec4 nlRefl(
         vec4 cloudRefl = nlCloudAuroraReflection(skycol, env, reflDir, wPos, CAMERA_POS, t, 1.0);
         wetRefl.rgb = mix(wetRefl.rgb, cloudRefl.rgb, cloudRefl.a*0.6);
 
-        // overworld time-wise reflection tint (End/Nether untouched).
-        // torch/glint ke PEHLE taaki sirf sky+cloud mirror tint ho.
-        #if defined(NL_DAY_REFL_TINT) && defined(NL_DUSK_REFL_TINT) && defined(NL_NIGHT_REFL_TINT)
-          if (!env.end && !env.nether) {
-            float nightF = step(env.dayFactor, 0.0);
-            float dawnF = 1.0 - env.dayFactor*env.dayFactor;
-            dawnF *= dawnF*dawnF;
-            dawnF *= mix(1.0, dawnF*dawnF, nightF);
-            vec3 timeTint = mix(NL_DAY_REFL_TINT, NL_NIGHT_REFL_TINT, nightF);
-            timeTint = mix(timeTint, NL_DUSK_REFL_TINT, dawnF*(1.0-nightF));
-            wetRefl.rgb *= timeTint;
-          }
-        #endif
-
         // torch light
         wetRefl.rgb += torchColor*lit.x*NL_TORCHLIGHT_INTENSITY;
 
