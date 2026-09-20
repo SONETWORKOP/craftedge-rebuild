@@ -151,12 +151,19 @@ def run(args):
             _download_file(
                 NS_DEV_MAT_SRC_URL,
                 mat_filename,
-                "src-materials-1.26.10.zip",
+                "src-materials-1.26.50.zip",
                 NS_DEV_MAT_SRC_SHA256,
             )
             with zipfile.ZipFile(mat_filename, 'r') as zip_ref:
                 zip_ref.extractall(mat_path)
             os.remove(mat_filename)
+            # flatten single top-level folder (GitHub codeload archives)
+            entries = os.listdir(mat_path)
+            if len(entries) == 1 and os.path.isdir(os.path.join(mat_path, entries[0])):
+                inner = os.path.join(mat_path, entries[0])
+                for name in os.listdir(inner):
+                    shutil.move(os.path.join(inner, name), os.path.join(mat_path, name))
+                os.rmdir(inner)
 
     conf["arch"] = arch
     conf["os_name"] = os_name
