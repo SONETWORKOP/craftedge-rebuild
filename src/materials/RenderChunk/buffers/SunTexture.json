@@ -13,5 +13,7 @@
     "filter": "Bilinear",
     "wrapping": "Clamp"
   },
-  "custom_type_info": {}
+  "custom_type_info": {},
+  "register_slot": 9,
+  "binding_slot": 9
 }

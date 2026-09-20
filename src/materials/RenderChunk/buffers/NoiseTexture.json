@@ -14,5 +14,7 @@
     "filter": "Bilinear",
     "wrapping": "Repeat"
   },
-  "custom_type_info": {}
+  "custom_type_info": {},
+  "register_slot": 3,
+  "binding_slot": 3
 }

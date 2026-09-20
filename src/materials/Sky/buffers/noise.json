@@ -10,9 +10,11 @@
   "unordered_access": false,
   "always_one": 1,
   "texture_path": "textures/newb/noisevoxels",
-   "sampler_state": {
+  "sampler_state": {
     "filter": "Bilinear",
     "wrapping": "Repeat"
   },
-  "custom_type_info": {}
+  "custom_type_info": {},
+  "register_slot": 8,
+  "binding_slot": 8
 }
