@@ -236,6 +236,11 @@
 /* End reflection boost - End me mirror aur tez (overworld/nether untouched) */
 #define NL_END_REFL_BOOST 1.5          // 1.0 = no change, zyada = tez pink mirror
 
+/* Overworld reflection tint - time wise (End/Nether untouched, 1.0 = pure sky mirror) */
+#define NL_DAY_REFL_TINT   vec3(0.92, 1.0, 1.08)   // din: halka cool crisp blue
+#define NL_DUSK_REFL_TINT  vec3(1.0, 1.0, 1.0)     // sunrise/sunset: pure golden sky
+#define NL_NIGHT_REFL_TINT vec3(0.85, 1.0, 1.10)   // raat: halka cyan (clouds se match)
+
 /* Entity */
 #define NL_ENTITY_BRIGHTNESS     0.68
 #define NL_ENTITY_EDGE_HIGHLIGHT 0.42
