@@ -80,8 +80,8 @@
 #define NL_NIGHT_SKY_BRIGHTNESS 1.0
 #define NL_RAIN_ZENITH_COL   vec3(0.35,0.38,0.42)     // overcast grey
 #define NL_RAIN_HORIZON_COL  vec3(0.48,0.5,0.52)
-#define NL_END_ZENITH_COL    vec3(0.32,0.004,0.4)
-#define NL_END_HORIZON_COL   vec3(1.2,0.04,1.2)
+#define NL_END_ZENITH_COL    vec3(0.20,0.003,0.26)
+#define NL_END_HORIZON_COL   vec3(0.78,0.025,0.85)
 
 /* End black hole */
 #define NL_END_BLACK_HOLE
@@ -232,6 +232,9 @@
 
 /* Rain reflection - strong wet/puddle mirror only while raining */
 #define NL_RAIN_REFL_STRENGTH 1.5      // 0 = off, higher = stronger wet ground mirror
+
+/* End reflection boost - End me mirror aur tez (overworld/nether untouched) */
+#define NL_END_REFL_BOOST 1.5          // 1.0 = no change, zyada = tez pink mirror
 
 /* Entity */
 #define NL_ENTITY_BRIGHTNESS     0.68

@@ -74,6 +74,14 @@ vec4 nlRefl(
 
       reflective = min(reflective, 1.0);
 
+      // End me mirror boost (overworld/nether me zero asar).
+      // alpha aage min() se clamped hai, sirf glint tez hota hai.
+      #ifdef NL_END_REFL_BOOST
+        if (env.end) {
+          reflective *= NL_END_REFL_BOOST;
+        }
+      #endif
+
       if (wPos.y < 0.0) {
         vec3 reflDir = viewDir;
         reflDir.y = -reflDir.y;
