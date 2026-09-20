@@ -237,7 +237,7 @@
 #define NL_END_REFL_BOOST 1.5          // 1.0 = no change, zyada = tez pink mirror
 
 /* Overworld reflection tint - time wise (End/Nether untouched, 1.0 = pure sky mirror) */
-#define NL_DAY_REFL_TINT   vec3(1.25, 1.0, 0.75)    // TEST: unmistakable golden (tune later)
+#define NL_DAY_REFL_TINT   vec3(1.10, 0.82, 0.50)    // din: full golden, white clip nahi hoga
 #define NL_DUSK_REFL_TINT  vec3(1.0, 1.0, 1.0)     // sunrise/sunset: pure golden sky
 #define NL_NIGHT_REFL_TINT vec3(0.85, 1.0, 1.10)   // raat: halka cyan (clouds se match)
 
