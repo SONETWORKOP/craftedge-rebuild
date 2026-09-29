@@ -107,11 +107,11 @@
 #define NL_WAVE_SPEED 2.8
 #define NL_WAVE_RANGE 14.0
 
-/* Water - vivid, realistic reflections */
-#define NL_WATER_TRANSPARENCY 0.94      // clearer, less murky water
-#define NL_WATER_BUMP 0.28              // stronger ripples -> sharper reflection detail
-#define NL_WATER_WAVE_SPEED  0.6        // calmer, more natural wave motion
-#define NL_WATER_TEX_OPACITY 0.18       // let reflections read through more than texture
+/* Water - clear pretty water + smooth waves */
+#define NL_WATER_TRANSPARENCY 0.72      // clear: neeche tak dikhe
+#define NL_WATER_BUMP 0.32              // smooth swell + fine chop
+#define NL_WATER_WAVE_SPEED  0.85       // thoda lively leher
+#define NL_WATER_TEX_OPACITY 0.07       // milky texture hataya
 #define NL_WATER_SUN_DISC    0.35       // per-pixel sun disc mirror strength on water (0 = off)
 #define NL_WATER_SUN_QUAD_TAN 0.1283    // tan of half the sun quad angular size (35*NL_SUN_SIZE/300)
 #define NL_WATER_MOON_QUAD_TAN 0.1167   // tan of half the moon quad angular size (35*NL_MOON_SIZE/300)
@@ -121,7 +121,16 @@
 #define NL_WATER_CLOUD_REFL_RIPPLE 0.012 // very subtle swell drift (0.0 = dead-flat mirror)
 #define NL_WATER_WAVE
 //#define NL_WATER_REFL_MASK             // OFF: full reflection instead of patchy masked reflection
-#define NL_WATER_TINT vec3(0.28,0.7,0.88)  // slightly deeper, more natural blue-green
+#define NL_WATER_TINT vec3(0.30,0.78,0.92)  // clear tropical blue
+#define NL_WATER_GLITTER 1.25           // sun glitter (pretty sparkle path)
+
+/* Rain splash - sirf barish me (bina barish rivers saaf) */
+#define NL_WATER_SPLASH
+#define NL_WATER_SPLASH_SCALE 1.4       // cell density
+#define NL_WATER_SPLASH_SPEED 1.1       // ring expand speed
+#define NL_WATER_SPLASH_INTENSITY 1.25  // foam chamak
+#define NL_WATER_SPLASH_NORMAL 0.35     // normal hilna
+#define NL_WATER_SPLASH_RAIN_BOOST 1.0  // barish tez factor
 
 /* Underwater */
 #define NL_UNDERWATER_BRIGHTNESS 0.85
@@ -270,6 +279,7 @@
   #undef NL_CLOUDY_FOG
   #undef NL_ENTITY_EDGE_HIGHLIGHT
   #undef NL_PBR_BLOCK_REFL
+  #undef NL_WATER_SPLASH
   // halve the aurora curtain: 2 texture taps per layer per sky pixel
   #undef NL_AURORA_TEX_LAYERS
   #define NL_AURORA_TEX_LAYERS 5

@@ -241,6 +241,22 @@ void main() {
         diffuse.rgb += sunTex*sunCol*NL_WATER_SUN_DISC*bodyVisible;
       }
     #endif
+
+    // ---- RAIN-ONLY splash rings - bina barish rivers saaf, barish me chhalle ----
+    #ifdef NL_WATER_SPLASH
+      {
+        vec3 splashWorld = v_position + CameraPosition.xyz;
+        float splashDist = length(v_position.xz);
+        float splashFade = clamp(1.0 - splashDist/24.0, 0.0, 1.0);
+        float rainGate = smoothstep(0.02, 0.25, v_reflPbr.w);
+        if (splashFade*rainGate > 0.002) {
+          float splashAmp = 2.0*v_reflPbr.w*rainGate;
+          float sp = nlRainSplash(splashWorld.xz, ViewPositionAndTime.w);
+          float dayLight = clamp(v_reflSun.w*0.5 + 0.5, 0.25, 1.0);
+          diffuse.rgb += sp*splashFade*splashAmp*NL_WATER_SPLASH_INTENSITY*vec3(0.75, 0.88, 1.0)*dayLight;
+        }
+      }
+    #endif
   } else if (v_refl.a > 0.0) {
     // reflective effect - only on xz plane (ground / flat smooth blocks)
     float dy = abs(dFdy(v_extra.g));
@@ -279,6 +295,28 @@ void main() {
       #endif
     }
   }
+
+  // ---- GROUND rain splash - sirf barish me, thos zameen, pattiyon par nahi ----
+  #ifdef NL_WATER_SPLASH
+  #ifndef ALPHA_TEST
+    if (v_extra.b < 0.9) {
+      float grain = v_reflPbr.w;
+      if (grain > 0.02) {
+        vec3 gWorld = v_position + CameraPosition.xyz;
+        float gDist = length(v_position.xz);
+        float gFade = clamp(1.0 - gDist/22.0, 0.0, 1.0);
+        float flatM = 1.0 - smoothstep(0.0002, 0.0012, abs(dFdy(v_extra.g)));
+        float vegGreen = diffuse.g - max(diffuse.r, diffuse.b);
+        float vegM = 1.0 - smoothstep(0.015, 0.09, vegGreen);
+        float gLight = clamp(v_lightmapUV.y*1.4, 0.12, 1.0);
+        if (gFade*flatM*vegM > 0.003) {
+          float gsp = nlRainSplashGround(gWorld.xz*1.25 + 7.7, ViewPositionAndTime.w*1.15);
+          diffuse.rgb += gsp*gFade*grain*flatM*vegM*gLight*NL_WATER_SPLASH_INTENSITY*0.6*vec3(0.7, 0.82, 0.95);
+        }
+      }
+    }
+  #endif
+  #endif
 
   diffuse.rgb = mix(diffuse.rgb, v_fog.rgb, v_fog.a);
 
