@@ -68,9 +68,9 @@ void main() {
         cloudA *= smoothstep(0.05, 0.35, viewDir.y);   // horizon fade
         cloudA *= NL_SKY_CLOUD_OPACITY;
 
-        // cloud color tinted by sky/sun, raat me halka cyan (suraj-based)
-        vec3 cloudCol = nlVibrantCloudColor(env.dayFactor, sunLightTint(env.dayFactor, env.rainFactor));
-        cloudCol = mix(cloudCol, NL_NIGHT_CLOUD_COL, nlNightF(env.dayFactor));
+        // cloud color POORA sky-rang me: din safed, sunset narangi,
+        // raat gehra neela, barish grey
+        vec3 cloudCol = nlVibrantCloudColor(env.dayFactor, sunLightTint(env.dayFactor, env.rainFactor), skycol.horizon, env.rainFactor);
         skyColor.rgb = mix(skyColor.rgb, cloudCol, clamp(cloudA, 0.0, 1.0));
       }
       // Medium second layer (my-style top echo, ESTN DCLOUDS jaisa):
@@ -84,7 +84,14 @@ void main() {
         float dayLight2 = clamp(env.dayFactor*0.5 + 0.5, 0.0, 1.0);
         vec3 topCol = mix(vec3(0.60,0.66,0.75), vec3(1.08,1.06,1.02), clamp(cloudA2, 0.0, 1.0));
         topCol *= 0.12 + 0.88*dayLight2;
-        topCol = mix(topCol, NL_NIGHT_CLOUD_COL, nlNightF(env.dayFactor));
+        // POORA sky-rang: horizon dye + sunset kiss + raat dark + barish
+        topCol *= skycol.horizon*0.85 + vec3_splat(0.35);
+        #ifdef NL_ATMO_SUNSET
+          topCol = mix(topCol, topCol*(NL_ATMO_SUNSET*1.2 + vec3(0.35,0.12,0.10)), nlDuskF(env.dayFactor)*0.7);
+        #endif
+        topCol = mix(topCol, NL_NIGHT_CLOUD_COL*0.7, nlNightF(env.dayFactor));
+        topCol *= 1.0 - 0.45*(1.0 - smoothstep(-0.08, 0.12, env.dayFactor));
+        topCol *= 1.0 - 0.30*env.rainFactor;
         skyColor.rgb = mix(skyColor.rgb, topCol, clamp(cloudA2, 0.0, 1.0)*NL_SKY_CLOUD_OPACITY);
       }
       #endif
@@ -97,7 +104,8 @@ void main() {
       if (!env.underwater && viewDir.y > 0.001) {
         float jitter = fract(sin(dot(viewDir.xy, vec2(12.9898, 78.233))) * 43758.5453);
         vec4 clouds = nlRoundedClouds(viewDir, v_underwaterRainTimeDay.z, jitter);
-        clouds.rgb = mix(clouds.rgb, NL_NIGHT_CLOUD_COL, nlNightF(env.dayFactor));
+        // POORA sky-rang + dark: sunset narangi, raat gehra, barish grey
+        clouds.rgb = nlSkyCloudTint(clouds.rgb, skycol.horizon, env.dayFactor, env.rainFactor);
         float opacity = smoothstep(0.1, 0.3, viewDir.y);
         float cloudMask = clouds.a * 0.5 * opacity;
         skyColor.rgb = mix(skyColor.rgb, clouds.rgb, cloudMask);

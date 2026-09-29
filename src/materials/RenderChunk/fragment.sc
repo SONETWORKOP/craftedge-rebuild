@@ -20,97 +20,8 @@ uniform vec4 ViewPositionAndTime;
 uniform vec4 FogColor;
 uniform vec4 MoonPhase;
 
-/*
-  Water cloud mirror.
-
-  The sky renders its clouds as a dome that is sampled purely by view
-  direction, so a true mirror only needs the *reflected direction* - not a
-  projection onto a cloud plane. The old plane-projection version broke in
-  three ways:
-    - it aimed the sampler at a fixed 4-block depth, which collapsed all
-      parallax and left a flat smear,
-    - `NL_WATER_CLOUD_HEIGHT - CameraPosition.y` flipped sign above y=192, so
-      clouds vanished when the player climbed,
-    - a 144..256 block distance fade erased the reflection as soon as the
-      camera pulled away from the water.
-  Sampling by direction fixes all three: the reflected clouds now match the
-  sky exactly and keep the same size at any camera height.
-*/
-vec4 waterCloudReflection(
-  vec3 surfacePos, vec3 viewDir, float rain, float dayFactor, vec3 horizonCol, highp float t
-) {
-  vec3 V = normalize(viewDir);
-
-  // Flat mirror. Perturbing the normal before reflect() looks correct on
-  // paper but the dome projection below divides by reflDir.y, so a tiny tilt
-  // near the horizon is amplified by ~1/y^2 - that is what tore the reflected
-  // clouds into warping, shape-shifting blobs. A flat normal keeps the
-  // mirrored shapes identical to the sky.
-  vec3 reflDir = vec3(-V.x, V.y, -V.z);
-  // below the horizon there is no sky to mirror (also true when underwater,
-  // where the reflected ray points down)
-  if (reflDir.y <= 0.004) return vec4_splat(0.0);
-
-  // Surface motion is applied here, in sky-UV space, where it is a bounded
-  // translation: the clouds drift gently like a real swell instead of
-  // stretching. Slow and low-frequency on purpose.
-  vec2 wobble = vec2(
-    sin(surfacePos.x*0.09 + 0.30*t) + sin(surfacePos.z*0.06 - 0.21*t),
-    cos(surfacePos.z*0.08 + 0.26*t) + cos(surfacePos.x*0.05 - 0.18*t)
-  );
-  wobble *= 0.5*NL_WATER_CLOUD_REFL_RIPPLE;
-
-  // Depth cue: shift the sampled cloud image sideways as if the mirror sat
-  // NL_WATER_CLOUD_REFLECTION_DEPTH blocks below the surface. This is a
-  // translation, never a scale, so the reflected clouds keep the exact same
-  // size as the sky ones. Clamped so it can't blow up near the horizon.
-  vec2 depthShift = clamp(
-    NL_WATER_CLOUD_REFLECTION_DEPTH*reflDir.xz/max(reflDir.y, 0.08),
-    -vec2_splat(64.0), vec2_splat(64.0)
-  );
-
-  vec4 clouds;
-  #ifdef VIBRANT_CLOUD
-    // sky-dome clouds are camera-locked, so mirror them the same way
-    float domeScale = 0.8/max(reflDir.y, 0.045);
-    vec2 domeUV = reflDir.xz*domeScale + depthShift*0.0025 + wobble;
-    float mask = nlVibrantClouds(domeUV, 0.004*domeScale, t);
-    mask *= smoothstep(0.05, 0.35, reflDir.y)*NL_SKY_CLOUD_OPACITY;
-    clouds = vec4(mix(nlVibrantCloudColor(dayFactor, sunLightTint(dayFactor, rain)), NL_NIGHT_CLOUD_COL, nlNightF(dayFactor)), mask);
-  #else
-    // raymarched rounded clouds (same function the sky uses), so the water
-    // mirror lines up with the sky's RoundedClouds exactly
-    float jitter = fract(sin(dot(reflDir.xy, vec2(12.9898, 78.233))) * 43758.5453);
-    clouds = nlRoundedClouds(reflDir, t, jitter);
-    clouds.rgb = mix(clouds.rgb, NL_NIGHT_CLOUD_COL, nlNightF(dayFactor));
-  #endif
-
-  // the night sky's textured aurora - sampled on the same reflected ray as
-  // the clouds, from the exact function the Sky dome draws, so the water
-  // mirror shows the identical aurora shape (night only, rain fades it like
-  // the sky version). Added to the cloud reflection, so both are scaled
-  // together by the fresnel/mirror factors below.
-  #ifdef NL_AURORA_REFLECTION
-    float VdotU = clamp(reflDir.y, 0.0, 1.0);
-    float nightFactor = 1.0 - smoothstep(-0.02, 0.32, dayFactor);
-    if (nightFactor > 0.001 && VdotU > 0.15) {
-      float dither = fract(sin(dot(reflDir.xy, vec2(12.9898, 78.233))) * 43758.5453);
-      vec3 aurora = NL_AURORA_TEX*nightFactor*nlAuroraBorealis(
-        reflDir, VdotU, dither, rain, CameraPosition.xz, t
-      );
-      clouds.rgb += aurora;
-      clouds.a = max(clouds.a, clamp(dot(aurora, vec3(0.2126, 0.7152, 0.0722)), 0.0, 1.0));
-    }
-  #endif
-
-  // water is more mirror-like at grazing angles
-  float fresnel = calculateFresnel(V.y, 0.02);
-  clouds.a *= NL_WATER_CLOUD_MIRROR*mix(0.55, 1.0, sqrt(fresnel));
-  clouds.rgb *= 1.0 - 0.45*rain;
-  // distance falloff is left to the fog blend below, which already matches the
-  // sky - an extra fade here is what made far reflections disappear
-  return clouds;
-}
+// (Water cloud-mirror HATAYA - paani me clouds reflection nahi.
+// Sirf aurora aks + sun/moon disc mirror main() me rahenge.)
 
 /*
   Real textured sun/moon mirror on water.
@@ -196,16 +107,32 @@ void main() {
       wenv.moonDir = v_sunMoon.xyz;
       wenv.fogCol = FogColor.rgb;
 
-      // cloud + aurora mirror (the two heaviest layers) can be dropped by the
-      // Medium subpack while keeping the cheap sun/moon disc below
+      // cloud-mirror HATAYA - paani me clouds reflection nahi.
+      // Sirf AURORA ka aks + sun/moon disc mirror rahega.
+      // (Medium subpack me ye bhi band - perf ke liye.)
       #ifndef NL_NO_WATER_CLOUD_AURORA_REFL
-        vec3 surfacePos = v_position+CameraPosition.xyz;
-        nl_skycolor wskycol = nlOverworldSkyColors(wenv);
-        vec4 cloudReflection = waterCloudReflection(
-          surfacePos, v_reflPbr.xyz, wenv.rainFactor, wenv.dayFactor,
-          wskycol.horizonEdge, ViewPositionAndTime.w
-        );
-        diffuse.rgb = mix(diffuse.rgb,cloudReflection.rgb,cloudReflection.a);
+      #ifdef NL_AURORA_REFLECTION
+        {
+          vec3 aurV = normalize(v_reflPbr.xyz);
+          vec3 aurReflDir = vec3(-aurV.x, aurV.y, -aurV.z);
+          if (aurReflDir.y > 0.004) {
+            float aurVdotU = clamp(aurReflDir.y, 0.0, 1.0);
+            float aurNight = 1.0 - smoothstep(-0.02, 0.32, wenv.dayFactor);
+            if (aurNight > 0.001 && aurVdotU > 0.15) {
+              float aurDither = fract(sin(dot(aurReflDir.xy, vec2(12.9898, 78.233))) * 43758.5453);
+              vec3 aurora = NL_AURORA_TEX*aurNight*nlAuroraBorealis(
+                aurReflDir, aurVdotU, aurDither, wenv.rainFactor, CameraPosition.xz, ViewPositionAndTime.w
+              );
+              #ifdef NL_WATER_AURORA_MIRROR
+                float auroraAmt = NL_WATER_AURORA_MIRROR;
+              #else
+                float auroraAmt = 0.55;
+              #endif
+              diffuse.rgb += aurora*auroraAmt;
+            }
+          }
+        }
+      #endif
       #endif
 
       // real textured sun/moon mirror on water (same flat-mirror ray as the

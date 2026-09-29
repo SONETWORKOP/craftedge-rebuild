@@ -109,7 +109,7 @@
 
 /* Water - clear pretty water + smooth waves */
 #define NL_WATER_TRANSPARENCY 0.72      // clear: neeche tak dikhe
-#define NL_WATER_BUMP 0.32              // smooth swell + fine chop
+#define NL_WATER_BUMP 0.12              // bahut halki leher (pehle 0.32 tez tha)
 #define NL_WATER_WAVE_SPEED  0.85       // thoda lively leher
 #define NL_WATER_TEX_OPACITY 0.07       // milky texture hataya
 #define NL_WATER_SUN_DISC    0.35       // per-pixel sun disc mirror strength on water (0 = off)
@@ -119,6 +119,7 @@
 #define NL_WATER_CLOUD_HEIGHT 192.0     // cloud height used by legacy cloud samplers
 #define NL_WATER_CLOUD_REFLECTION_DEPTH 2.0 // clouds appear this many blocks below the surface
 #define NL_WATER_CLOUD_REFL_RIPPLE 0.012 // very subtle swell drift (0.0 = dead-flat mirror)
+#define NL_WATER_AURORA_MIRROR 0.55     // paani me aurora aks kitna tez (clouds nahi, sirf aurora)
 #define NL_WATER_WAVE
 //#define NL_WATER_REFL_MASK             // OFF: full reflection instead of patchy masked reflection
 #define NL_WATER_TINT vec3(0.30,0.78,0.92)  // clear tropical blue
@@ -138,6 +139,11 @@
 #define NL_UNDERWATER_WAVE 0.11
 #define NL_UNDERWATER_STREAKS 1.1
 #define NL_UNDERWATER_TINT vec3(0.8,0.95,1.0)
+
+/* Sky-following clouds - aasmaan ke hisaab se rang: din safed, sunset narangi,
+   raat gehra neela, barish grey (Sky dome par) */
+#define NL_CLOUD_SKY_TINT
+#define NL_CLOUD_DUSK_STRENGTH 0.8     // sunset narangi kitni tez (0 = band)
 
 /* Cloud type - old vanilla box clouds replaced by sky-dome RoundedClouds (0) */
 #define NL_CLOUD_TYPE 0            // 0=vanilla cloud (opacity 0 = disabled), default sky clouds are RoundedClouds
