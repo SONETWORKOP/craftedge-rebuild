@@ -104,9 +104,10 @@ vec4 nlWater(
   vec2 swell = nlWaterSwell(gPos.xz, t);
 
   // splash rings - RAIN-ONLY (bina barish rivers saaf), sirf top plane, paas me hi
+  // underwater camera par band (paani ke andar blocks par chhalle nahi)
   float splash = 0.0;
   #ifdef NL_WATER_SPLASH
-    if (fractCposY > 0.0 && camDist < 20.0) {
+    if (fractCposY > 0.0 && camDist < 20.0 && !env.underwater) {
       float vRainGate = smoothstep(0.02, 0.25, env.rainFactor);
       splash = nlWaterSplash(gPos.xz, t);
       splash *= clamp(1.0 - camDist/20.0, 0.0, 1.0);

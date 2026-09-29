@@ -243,13 +243,14 @@ void main() {
     #endif
 
     // ---- RAIN-ONLY splash rings - bina barish rivers saaf, barish me chhalle ----
+    // v_sunMoon.w = camera underwater flag -> andar splash band
     #ifdef NL_WATER_SPLASH
       {
         vec3 splashWorld = v_position + CameraPosition.xyz;
         float splashDist = length(v_position.xz);
         float splashFade = clamp(1.0 - splashDist/24.0, 0.0, 1.0);
         float rainGate = smoothstep(0.02, 0.25, v_reflPbr.w);
-        if (splashFade*rainGate > 0.002) {
+        if (splashFade*rainGate > 0.002 && v_sunMoon.w < 0.5) {
           float splashAmp = 2.0*v_reflPbr.w*rainGate;
           float sp = nlRainSplash(splashWorld.xz, ViewPositionAndTime.w);
           float dayLight = clamp(v_reflSun.w*0.5 + 0.5, 0.25, 1.0);
@@ -297,9 +298,10 @@ void main() {
   }
 
   // ---- GROUND rain splash - sirf barish me, thos zameen, pattiyon par nahi ----
+  // underwater camera par band
   #ifdef NL_WATER_SPLASH
   #ifndef ALPHA_TEST
-    if (v_extra.b < 0.9) {
+    if (v_extra.b < 0.9 && v_sunMoon.w < 0.5) {
       float grain = v_reflPbr.w;
       if (grain > 0.02) {
         vec3 gWorld = v_position + CameraPosition.xyz;
