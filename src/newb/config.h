@@ -78,8 +78,8 @@
 // survives the atmosphere dimmer + ACES tonemap. 0 = no boost (old behavior)
 // 1.0 = pehle jaisa (no change)
 #define NL_NIGHT_SKY_BRIGHTNESS 1.0
-#define NL_RAIN_ZENITH_COL   vec3(0.35,0.38,0.42)     // overcast grey
-#define NL_RAIN_HORIZON_COL  vec3(0.48,0.5,0.52)
+#define NL_RAIN_ZENITH_COL   vec3(0.30,0.52,0.90)     // rainy sky-blue upar (beta wala)
+#define NL_RAIN_HORIZON_COL  vec3(0.55,0.75,1.00)     // rainy sky-blue neeche (beta wala)
 #define NL_END_ZENITH_COL    vec3(0.20,0.003,0.26)
 #define NL_END_HORIZON_COL   vec3(0.78,0.025,0.85)
 
