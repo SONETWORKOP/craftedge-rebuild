@@ -41,19 +41,23 @@ float nlRenderGodRayIntensity(vec3 cPos, vec3 worldPos, float t, vec2 uv1, float
   offset = offset*offset*(3.0-2.0*offset);
 
   vec3 nrmof = normalize(worldPos);
+
   float u = nrmof.z/length(nrmof.zy);
   float diff = dot(offset,vec3(0.1,0.2,1.0)) + 0.07*t;
   float mask = nrmof.x*nrmof.x;
 
+  // enriched volume (Download/fog.h wala - extra octave, rich dhaariyan)
   float vol = sin(7.0*u + 1.5*diff)*sin(3.0*u + diff);
-  vol *= vol*mask*uv1.y*(1.0-mask*mask);
-  vol *= relativeDist*relativeDist;
-
-  // dawn/dusk only - back to original Newb Shader behavior
+  vol += sin(5.0*u + 0.4*diff)*sin(4.0*u + 0.7*diff);
+  vol *= vol*mask*uv1.y;
+  vol *= min(7.0*relativeDist*(1.0-mask), 1.0);
   vol *= clamp(3.0*(FOG_COLOR.r-FOG_COLOR.b), 0.0, 1.0);
 
-  vol = smoothstep(0.0, 0.1, vol);
-  return vol;
+  // curve + final boost
+  vol = clamp(vol, 0.0, 1.0);
+  vol = smoothstep(0.0, NL_GODRAY_SENSITIVITY, vol);
+
+  return vol * NL_GODRAY_MULTIPLICATOR;
 }
 
 vec3 nlGodRayTint(vec3 FOG_COLOR) {

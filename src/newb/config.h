@@ -225,7 +225,9 @@
 #define NL_MOON_TILT       45.0
 
 /* Godrays - strong volumetric light shafts (ray-traced light look) */
-#define NL_GODRAY 2.0
+#define NL_GODRAY 0.25 // [toggle] 0.1 subtle ~ 0.8 strong
+#define NL_GODRAY_MULTIPLICATOR 2.0 // final tez (Download/fog.h wala, 1.0 normal)
+#define NL_GODRAY_SENSITIVITY   0.03 // halke rays threshold (kam = zyada rays)
 
 /* PBR block reflection (from "block reflection V3") - fragment-stage
    normal-mapped, TBN-distorted, Cook-Torrance mirror on smooth blocks */
