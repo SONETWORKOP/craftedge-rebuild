@@ -181,7 +181,7 @@ void main() {
           float splashAmp = 2.0*v_reflPbr.w*rainGate;
           float sp = nlRainSplash(splashWorld.xz, ViewPositionAndTime.w);
           float dayLight = clamp(v_reflSun.w*0.5 + 0.5, 0.25, 1.0);
-          diffuse.rgb += sp*splashFade*splashAmp*NL_WATER_SPLASH_INTENSITY*vec3(0.75, 0.88, 1.0)*dayLight;
+          diffuse.rgb += sp*splashFade*splashAmp*NL_WATER_SPLASH_INTENSITY*vec3(0.22, 0.48, 0.95)*dayLight;
         }
       }
     #endif
@@ -240,7 +240,7 @@ void main() {
         float gLight = clamp(v_lightmapUV.y*1.4, 0.12, 1.0);
         if (gFade*flatM*vegM > 0.003) {
           float gsp = nlRainSplashGround(gWorld.xz*1.25 + 7.7, ViewPositionAndTime.w*1.15);
-          diffuse.rgb += gsp*gFade*grain*flatM*vegM*gLight*NL_WATER_SPLASH_INTENSITY*0.6*vec3(0.7, 0.82, 0.95);
+          diffuse.rgb += gsp*gFade*grain*flatM*vegM*gLight*NL_WATER_SPLASH_INTENSITY*0.6*vec3(0.28, 0.52, 0.95);
         }
       }
     }

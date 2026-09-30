@@ -11,7 +11,7 @@
 #define NL_TONEMAP_TYPE 4              // ACES filmic - pack original
 #define NL_GAMMA 1.2                   // legacy (TYPE 1-3 backup slots ke liye)
 #define NL_EXPOSURE 1.0                // neutral (lighting enhance tonemap-side hai)
-#define NL_SATURATION 0.82             // was 0.75
+#define NL_SATURATION 1.0                // vivid (beta wala)
 #define NL_TINT                        // ON: subtle teal-orange cinematic split-tone
 #define NL_TINT_LOW  vec3(0.85,0.92,1.08)  // original subtle (cinematic grade ab tonemap.h me)
 #define NL_TINT_HIGH vec3(1.08,1.0,0.86)   // original subtle (cinematic grade ab tonemap.h me)
@@ -29,7 +29,7 @@
 #define NL_END_AMBIENT    vec3(1.98,1.25,2.3)
 
 /* Sun/moon - vivid but natural */
-#define NL_DAWN_SUNLIGHT_COL   vec3(1.5,0.75,0.25)   // brighter warm orange sunrise light
+#define NL_DAWN_SUNLIGHT_COL   vec3(1.5,0.83,0.25)   // beta wala golden + yellow
 #define NL_NOON_SUNLIGHT_COL   vec3(1.15,0.98,0.80)    // warm golden noon - same brightness (was 1.1,1.0,0.85)
 #define NL_NIGHT_MOONLIGHT_COL vec3(0.05,0.12,0.32)  // cyan-tinted moonlight
 
@@ -58,12 +58,12 @@
 
 /* ATMO sunset palette (ESTN jaisa): dawn/dusk kohra-rang, 0.0 off */
 #define NL_ATMO 0.35
-#define NL_ATMO_SUNSET vec3(1.4,0.55,0.20)  // sunset orange kiss
+#define NL_ATMO_SUNSET vec3(1.4,0.63,0.20)  // beta wala yellow kiss
 
 /* Sky colors - warm realistic sky */
-#define NL_DAWN_ZENITH_COL   vec3(0.45,0.30,0.50)     // warm twilight purple (less pink)
-#define NL_DAWN_HORIZON_COL  vec3(3.2,0.85,0.20)      // golden orange sunrise
-#define NL_DAWN_EDGE_COL     vec3(3.8,1.5,0.45)       // warm golden edge (brighter)
+#define NL_DAWN_ZENITH_COL   vec3(0.45,0.33,0.50)     // beta wala, halka warm
+#define NL_DAWN_HORIZON_COL  vec3(3.2,0.95,0.20)      // beta wala golden, yellow boost
+#define NL_DAWN_EDGE_COL     vec3(3.8,1.65,0.45)      // beta wala, yellow boost
 #define NL_DAY_ZENITH_COL    vec3(0.12,0.48,2.1)      // deep realistic sky blue
 #define NL_DAY_HORIZON_COL   vec3(0.55,1.1,1.65)      // soft hazy blue horizon
 #define NL_DAY_EDGE_COL      vec3(1.2,1.45,1.65)      // light atmospheric haze

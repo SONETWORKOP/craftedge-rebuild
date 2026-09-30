@@ -151,9 +151,9 @@ vec4 nlWater(
   float tc = 0.5+0.5*sin(6.0*reflDir.x)*sin(6.0*reflDir.z);
   waterRefl += torchColor*NL_TORCHLIGHT_INTENSITY*lit.x*tc;
 
-  // splash foam chamak - RAIN-ONLY (splash gate ke andar, bina barish zero)
+  // splash foam - DARK BLUE, RAIN-ONLY (splash gate ke andar, bina barish zero)
   #ifdef NL_WATER_SPLASH
-    waterRefl += splash*NL_WATER_SPLASH_INTENSITY*(0.35 + 0.65*lit.y);
+    waterRefl += splash*NL_WATER_SPLASH_INTENSITY*(0.35 + 0.65*lit.y)*vec3(0.45, 0.62, 1.0);
   #endif
 
   // sun glitter (soft single lobe - pow 600*2.0 se blocky white pixels aate the)
