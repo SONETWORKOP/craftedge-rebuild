@@ -215,14 +215,14 @@
 #define NL_GALAXY_DAY_VISIBILITY 0.0
 
 /* Sun/Moon */
-#define NL_SUN_SIZE  1.1
-#define NL_MOON_SIZE 1.0
-#define NL_SUN_PATH_YAW    15.0
+#define NL_SUN_SIZE  2.75           // 0.3 tiny ~ 4.0 massive
+#define NL_MOON_SIZE 1.7            // 0.3 tiny ~ 4.0 massive
+#define NL_SUN_PATH_YAW    0.0      // seedha rasta (centered)
 #define NL_MOON_PATH_YAW   17.0
-#define NL_SUN_PATH_TILT   31.0
+#define NL_SUN_PATH_TILT   0.0      // 0.0 = suraj seedha upar-neeche (comment nahi kiya kyuki code me required hai)
 #define NL_MOON_PATH_TILT -28.0
-#define NL_SUN_TILT        45.0
-#define NL_MOON_TILT       45.0
+#define NL_SUN_TILT        0.0      // 0.0 = no tilt (comment nahi kiya kyuki code me required hai)
+#define NL_MOON_TILT       90.0     // 0.0 no tilt ~ 90.0 tilt of 90 degrees
 
 /* Godrays - strong volumetric light shafts (ray-traced light look) */
 #define NL_GODRAY 0.25 // [toggle] 0.1 subtle ~ 0.8 strong
