@@ -54,6 +54,14 @@ description = '''
 High
 '''
 
+[[subpack]]
+define = "REALISTIC_CLOUDS"
+materials = []
+description = '''
+Realistic Clouds
+Custom clouds.png texture + overworld cubemap files.
+'''
+
 #[[subpack]]
 #define = "LITE"
 #materials = ["Sky", "RenderChunk", "Actor", "ActorGlint", "EndSky", "Clouds", "SunMoon", "Weather", "ItemInHandTextured", "ItemInHandColor", "ItemInHandColorGlint", "Stars"]
