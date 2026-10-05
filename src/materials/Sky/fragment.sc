@@ -80,12 +80,16 @@ void main() {
     nl_skycolor skycol = nlOverworldSkyColors(env);
 
     vec3 skyColor = nlRenderSky(skycol, env, -viewDir, v_underwaterRainTimeDay.z, true);
+    // shooting stars + galaxy sirf raat me (din me nahi) - day fix
+    float nightSkyF = 1.0 - smoothstep(-0.02, 0.15, env.dayFactor);
+    if (!env.underwater && nightSkyF > 0.5) {
     #ifdef NL_SHOOTING_STAR
       skyColor += NL_SHOOTING_STAR*nlRenderShootingStar(viewDir, env.fogCol, v_underwaterRainTimeDay.z);
     #endif
     #ifdef NL_GALAXY_STARS
       skyColor += NL_GALAXY_STARS*nlRenderGalaxy(viewDir, env.fogCol, env, v_underwaterRainTimeDay.z);
     #endif
+    }
 
     // aurora borealis (night only, hidden by rain and underwater)
     if (!env.underwater) {

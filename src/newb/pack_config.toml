@@ -26,8 +26,22 @@ credits = '''
 Based on Newb Shader by devendrn (https://github.com/devendrn/newb-x-mcbe)
 '''
 
-# subpacks: High (default), then Medium (vibrant clouds), Low (ESTN clouds) last.
-# High is the default/base quality.
+# subpacks: High sabse aage (default), Realistic High ke pichhe, then Medium, Low last.
+
+[[subpack]]
+define = "DEFAULT"
+materials = []
+description = '''
+High
+'''
+
+[[subpack]]
+define = "REALISTIC_CLOUDS"
+materials = ["Sky", "Clouds"]
+description = '''
+Realistic Clouds
+heavy may cause lag
+'''
 
 [[subpack]]
 define = "NO_REFLECTIONS"
@@ -45,21 +59,6 @@ description = '''
 Medium
 Default rounded clouds. Cloud & aurora reflections on water are turned off
 for better performance. Sun/Moon mirror and ground reflections stay on.
-'''
-
-[[subpack]]
-define = "DEFAULT"
-materials = []
-description = '''
-High
-'''
-
-[[subpack]]
-define = "REALISTIC_CLOUDS"
-materials = ["Sky", "Clouds"]
-description = '''
-Realistic Clouds
-Heavy clouds may cause lag - ok.txt volumetric sky-dome clouds.
 '''
 
 #[[subpack]]
