@@ -26,7 +26,7 @@ credits = '''
 Based on Newb Shader by devendrn (https://github.com/devendrn/newb-x-mcbe)
 '''
 
-# subpacks: High sabse aage (default), Realistic High ke pichhe, then Medium, Low last.
+# subpacks: High default sabse aage, Realistic High ke pichhe, fir Medium, fir Low.
 
 [[subpack]]
 define = "DEFAULT"
@@ -44,21 +44,21 @@ heavy may cause lag
 '''
 
 [[subpack]]
-define = "NO_REFLECTIONS"
-materials = ["RenderChunk", "Clouds", "Sky"]
-description = '''
-Low
-Vibrant painted clouds. Ground, block & water reflections are turned off.
-The lightest option.
-'''
-
-[[subpack]]
 define = "MEDIUM"
 materials = ["RenderChunk", "Clouds", "Sky"]
 description = '''
 Medium
 Default rounded clouds. Cloud & aurora reflections on water are turned off
 for better performance. Sun/Moon mirror and ground reflections stay on.
+'''
+
+[[subpack]]
+define = "NO_REFLECTIONS"
+materials = ["RenderChunk", "Clouds", "Sky"]
+description = '''
+Low
+Vibrant painted clouds. Ground, block & water reflections are turned off.
+The lightest option.
 '''
 
 #[[subpack]]
