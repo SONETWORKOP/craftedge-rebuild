@@ -118,7 +118,7 @@ void main() {
       float jitter = fract(sin(dot(rd.xy, vec2(12.9898, 78.233))) * 43758.5453);
       float marchT = t0 + dt * jitter;
       float T = 1.0;
-      vec3 acc = vec3(0.0);
+      vec3 acc = vec3_splat(0.0);
       for (int i = 0; i < 5; i++) {
         if (i >= REALISTIC_STEPS) break;
         vec3 p = rd * marchT;
