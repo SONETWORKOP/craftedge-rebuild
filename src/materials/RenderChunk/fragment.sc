@@ -140,8 +140,6 @@ void main() {
       // moon dir. Which body shows is decided by the sun's actual height
       // (v_reflSun.y) - not dayFactor - so at sunset the sun leaves the
       // water exactly when it visually sets and the moon takes over.
-      // UNDERWATER REFLECTION HATAO - camera paani ke andar ho to sun/moon aks nahi.
-      if (v_sunMoon.w < 0.5) {
       vec3 sunV = normalize(v_reflPbr.xyz);
       vec3 sunReflDir = vec3(-sunV.x, sunV.y, -sunV.z);
       if (sunReflDir.y > 0.004) {
@@ -168,7 +166,6 @@ void main() {
         vec3 sunCol = sunLightTint(wenv.dayFactor, wenv.rainFactor);
         sunCol *= NL_SUNLIGHT_INTENSITY;
         diffuse.rgb += sunTex*sunCol*NL_WATER_SUN_DISC*bodyVisible;
-      }
       }
     #endif
 
