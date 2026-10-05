@@ -108,7 +108,7 @@ void main() {
       wenv.fogCol = FogColor.rgb;
 
       // cloud-mirror HATAYA - paani me clouds reflection nahi.
-      // Sirf AURORA ka aks + sun/moon disc mirror rahega.
+      // sun/moon disc mirror bhi HATAYA (v1 code remove) - sirf AURORA ka aks rahega.
       // (Medium subpack me ye bhi band - perf ke liye.)
       #ifndef NL_NO_WATER_CLOUD_AURORA_REFL
       #ifdef NL_AURORA_REFLECTION
@@ -135,38 +135,7 @@ void main() {
       #endif
       #endif
 
-      // real textured sun/moon mirror on water (same flat-mirror ray as the
-      // clouds). v_reflSun.xyz is the real sun dir, v_sunMoon.xyz the real
-      // moon dir. Which body shows is decided by the sun's actual height
-      // (v_reflSun.y) - not dayFactor - so at sunset the sun leaves the
-      // water exactly when it visually sets and the moon takes over.
-      vec3 sunV = normalize(v_reflPbr.xyz);
-      vec3 sunReflDir = vec3(-sunV.x, sunV.y, -sunV.z);
-      if (sunReflDir.y > 0.004) {
-        float sunMask;
-        vec3 sunTex;
-        float sunHeight = v_reflSun.y;
-        float sunFade = smoothstep(-0.03, 0.03, sunHeight);
-        if (sunHeight > 0.0) {
-          sunTex = celestialTextureMovement(
-            s_SunTexture, wenv.sunDir, sunReflDir, NL_WATER_SUN_QUAD_TAN,
-            vec2_splat(1.0), vec2_splat(0.0), sunMask
-          );
-        } else {
-          // moon_phases.png is a 4x2 grid (8 phases, row-major)
-          float phase = mod(floor(MoonPhase.x + 0.5), 8.0);
-          vec2 moonCell = vec2(mod(phase, 4.0), floor(phase / 4.0));
-          sunTex = celestialTextureMovement(
-            s_MoonTexture, wenv.moonDir, sunReflDir, NL_WATER_MOON_QUAD_TAN,
-            vec2(0.25, 0.5), moonCell*vec2(0.25, 0.5), sunMask
-          );
-        }
-        float bodyVisible = sunHeight > 0.0 ? sunFade : (1.0 - sunFade);
-        bodyVisible *= (1.0 - wenv.rainFactor);
-        vec3 sunCol = sunLightTint(wenv.dayFactor, wenv.rainFactor);
-        sunCol *= NL_SUNLIGHT_INTENSITY;
-        diffuse.rgb += sunTex*sunCol*NL_WATER_SUN_DISC*bodyVisible;
-      }
+      // sun/moon mirror HATAYA (sun Reflection Demo V1 code remove) - paani me sun/moon aks nahi banega.
     #endif
 
     // ---- RAIN-ONLY splash rings - bina barish rivers saaf, barish me chhalle ----
