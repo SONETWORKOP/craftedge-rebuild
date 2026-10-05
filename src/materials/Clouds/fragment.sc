@@ -12,6 +12,11 @@ uniform vec4 CameraPosition;
 #define NL_CLOUD_PARAMS(x) NL_CLOUD2##x##STEPS, NL_CLOUD2##x##THICKNESS, NL_CLOUD2##x##RAIN_THICKNESS, NL_CLOUD2##x##VELOCITY, NL_CLOUD2##x##SCALE, NL_CLOUD2##x##DENSITY, NL_CLOUD2##x##SHAPE
 
 void main() {
+  // REALISTIC_CLOUDS (ok.txt volumetric) Sky dome me banta hai,
+  // isliye mesh se double-draw nahi hona chahiye.
+  #ifdef REALISTIC_CLOUDS
+    gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+  #else
   vec4 color = v_color0;
 
   #if NL_CLOUD_TYPE >= 2
@@ -62,4 +67,5 @@ void main() {
   #endif
 
   gl_FragColor = color;
+  #endif
 }
